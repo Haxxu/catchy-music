@@ -4,8 +4,14 @@ const { Schema } = require('mongoose');
 const followSchema = new mongoose.Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        followings: { type: [Schema.Types.ObjectId], default: [] },
-        followers: { type: Number, default: 0 },
+        following: {
+            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            total: { type: Number, default: 0 },
+        },
+        follower: {
+            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            total: { type: Number, default: 0 },
+        },
     },
     { timestamps: true },
 );
