@@ -4,7 +4,7 @@ const userController = require('../app/controllers/UserController');
 const userAuth = require('../app/middlewares/userAuth');
 const adminAuth = require('../app/middlewares/adminAuth');
 
-// Get All User
+// [GET] Get All User
 router.get('/', userAuth, userController.getAllUsers);
 
 // [POST] /api/users => create user

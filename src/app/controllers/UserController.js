@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 
 const { User, validateUser } = require('../models/User');
+const { Library } = require('../models/Library');
+const { Follow } = require('../models/Follow');
 
 class UserController {
     // [GET] /
@@ -22,16 +24,19 @@ class UserController {
 
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const hashPassword = await bcrypt.hash(req.body.password, salt);
-
-        const hashRepeatPassword = await bcrypt.hash(req.body.confirm_password, salt);
-        if (hashPassword !== hashRepeatPassword)
-            return res.status(403).send({ message: 'Password and repeat password not matched' });
-
         delete req.body.confirm_password;
 
         let newUser = await new User({
             ...req.body,
             password: hashPassword,
+        }).save();
+
+        let library = await new Library({
+            owner: newUser._id,
+        }).save();
+
+        let follow = await new Follow({
+            owner: newUser._id,
         }).save();
 
         newUser.password = undefined;

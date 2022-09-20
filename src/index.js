@@ -16,4 +16,15 @@ app.use(express.json());
 // Routes init
 routes(app);
 
+async function test() {
+    const { Library } = require('./app/models/Library');
+    const { User } = require('./app/models/User');
+
+    console.log('\n\n\n-------------------------------------------');
+
+    console.log('\n\n\n-------------------------------------------');
+}
+
+test();
+
 app.listen(port, console.log(`Listening on port ${port}`));
