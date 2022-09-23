@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
         month: { type: String, required: true },
         year: { type: String, required: true },
         nation: { type: String },
-        images: { type: [String], default: [] },
+        image: { type: String },
         genres: { type: [String], default: [] },
         type: { type: String, required: true, default: 'user' },
     },

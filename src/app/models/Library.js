@@ -7,6 +7,14 @@ const librarySchema = new mongoose.Schema(
         likedTracks: { type: [String], default: [] },
         albums: { type: [String], default: [] },
         playlists: { type: [String], default: [] },
+        following: {
+            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            total: { type: Number, default: 0 },
+        },
+        follower: {
+            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            total: { type: Number, default: 0 },
+        },
     },
     { timestamps: true },
 );
