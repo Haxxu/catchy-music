@@ -17,9 +17,8 @@ app.use(express.json());
 routes(app);
 
 async function test() {
-    const { Library } = require('./app/models/Library');
-    const { User } = require('./app/models/User');
-    const { Follow } = require('./app/models/Follow');
+    // const { Library } = require('./app/models/Library');
+    // const { User } = require('./app/models/User');
 
     // const follow = await Follow.findOne({ _id: '63296e80e483993094f1551c' }).populate('followings').exec();
 

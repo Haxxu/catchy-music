@@ -2,10 +2,9 @@ const bcrypt = require('bcrypt');
 
 const { User, validateUser } = require('../models/User');
 const { Library } = require('../models/Library');
-const { Follow } = require('../models/Follow');
 
 class UserController {
-    // [GET] /
+    // get all users
     async getAllUsers(req, res, next) {
         await res.json({ message: 'Get all users' });
     }
@@ -35,14 +34,34 @@ class UserController {
             owner: newUser._id,
         }).save();
 
-        let follow = await new Follow({
-            owner: newUser._id,
-        }).save();
-
         newUser.password = undefined;
         newUser.__v = undefined;
 
         res.status(200).send({ data: newUser, message: 'Account created successfully!' });
+    }
+
+    // Verify artist
+    async verifyArtist(req, res, next) {
+        const user = await User.findById(req.params.id); //user_id
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        await user.updateOne({ type: 'artist' });
+
+        res.status(200).send({ message: 'Verify artist successfullly' });
+    }
+
+    // Unverify artist
+    async unverifyArtist(req, res, next) {
+        const user = await User.findById(req.params.id); //user_id
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        await user.updateOne({ type: 'user' });
+
+        res.status(200).send({ message: 'Unverify artist successfullly' });
     }
 }
 
