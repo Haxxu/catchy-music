@@ -1,12 +1,38 @@
 const bcrypt = require('bcrypt');
 
-const { User, validateUser } = require('../models/User');
+const { User, validateUser, validateUpdatedPassword } = require('../models/User');
 const { Library } = require('../models/Library');
 
 class UserController {
-    // get all users
-    async getAllUsers(req, res, next) {
-        await res.json({ message: 'Get all users' });
+    // Get user by id
+    async getUser(req, res, next) {
+        const user = await User.findOne({ _id: req.params.id });
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        user.password = undefined;
+        user.__v = undefined;
+        user.updatedAt = undefined;
+        if (user.type === 'admin') user.type = 'user';
+
+        res.status(200).send({ data: user, message: 'Get user successfully' });
+    }
+
+    // get users by context
+    async getUsersByContext(req, res, next) {
+        if (req.query.type) {
+            if (req.query.type === 'artist') {
+                const users = await User.find({ type: 'artist' }).select(['-password', '-__v']);
+                return res.status(200).send({ data: users, message: 'Get artist successfully' });
+            } else if (req.query.type === 'user') {
+                const users = await User.find({ type: 'user' }).select(['-password', '-__v']);
+                return res.status(200).send({ data: users, message: 'Get user successfully' });
+            }
+        } else {
+            const users = await User.find({ type: { $ne: 'admin' } }).select(['-password', '-__v']);
+            res.status(400).send({ data: users, message: 'Get user ' });
+        }
     }
 
     // Create user
@@ -38,6 +64,55 @@ class UserController {
         newUser.__v = undefined;
 
         res.status(200).send({ data: newUser, message: 'Account created successfully!' });
+    }
+
+    // Update user by id
+    async updateUser(req, res, next) {
+        if (req.user._id !== req.params.id) {
+            return res.status(403).send({ message: 'User does not have permisson to perform this action' });
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).select(
+            '-password -__v',
+        );
+        res.status(200).send({ data: user, message: 'Profile updated successfully' });
+    }
+
+    // remove user by id
+    async removeUser(req, res, next) {
+        const user = await User.findById(req.params.id); //user_id
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        await User.findOneAndRemove({ _id: req.params.id });
+
+        res.status(200).send({ message: 'Remove user successfully' });
+    }
+
+    // Update password
+    async updatePassword(req, res, next) {
+        const { error } = validateUpdatedPassword(req.body);
+        if (error) {
+            return res.status(400).send({ message: error.details[0].message });
+        }
+
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(400).send({ message: 'Invalid email or password' });
+        }
+
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(400).send({ message: 'Invalid email or password' });
+        }
+
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const hashNewPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+        await User.findOneAndUpdate({ email: req.body.email }, { password: hashNewPassword });
+
+        res.status(200).send({ message: 'Changed password successfully' });
     }
 
     // Verify artist

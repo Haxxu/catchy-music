@@ -3,10 +3,10 @@ const { Schema } = mongoose;
 
 const lyricSchema = new Schema(
     {
-        user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        onwer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         track: { type: Schema.Types.ObjectId, ref: 'Track', required: true },
         content: { type: String, required: true },
-        nation: { type: String, required: true, default: 'N/A' },
+        nation: { type: String, required: true },
         providedBy: { type: String, default: 'N/A' },
     },
     { timestamps: true },

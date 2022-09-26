@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const passwordComplexity = require('joi-password-complexity');
@@ -7,16 +6,15 @@ const passwordComplexity = require('joi-password-complexity');
 const userSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
-        description: { type: String },
+        description: { type: String, default: '' },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         gender: { type: String, required: true },
         date: { type: String, required: true },
         month: { type: String, required: true },
         year: { type: String, required: true },
-        nation: { type: String },
-        image: { type: String },
-        genres: { type: [String], default: [] },
+        nation: { type: String, default: '' },
+        image: { type: String, default: '' },
         type: { type: String, required: true, default: 'user' },
     },
     { timestamps: true },
@@ -54,6 +52,17 @@ const validateUser = (user) => {
     return schema.validate(user);
 };
 
+const validateUpdatedPassword = (user) => {
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: passwordComplexity().required(),
+        newPassword: passwordComplexity().required(),
+        confirm_newPassword: Joi.any().valid(Joi.ref('newPassword')).required(),
+    });
+
+    return schema.validate(user);
+};
+
 const User = mongoose.model('User', userSchema);
 
-module.exports = { User, validateUser };
+module.exports = { User, validateUser, validateUpdatedPassword };

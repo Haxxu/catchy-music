@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema } = mongoose;
 
 const librarySchema = new mongoose.Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        likedTracks: { type: [String], default: [] },
-        albums: { type: [String], default: [] },
-        playlists: { type: [String], default: [] },
+        likedTracks: [
+            {
+                track: { type: Schema.Types.ObjectId, ref: 'Track' },
+                album: { type: Schema.Types.ObjectId, ref: 'Album' },
+                dateAdded: { type: Date, default: Date.now() },
+            },
+        ],
+        albums: [{ type: Schema.Types.ObjectId, ref: 'Album' }],
+        playlists: [{ type: Schema.Types.ObjectId, ref: 'Playlist' }],
         following: {
             items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
             total: { type: Number, default: 0 },
