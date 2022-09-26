@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
@@ -9,6 +10,7 @@ const trackSchema = new Schema(
             {
                 name: { type: String },
                 id: { type: Schema.Types.ObjectId, ref: 'User' },
+                _id: false,
             },
         ],
         audio: { type: String, required: true },
@@ -18,11 +20,23 @@ const trackSchema = new Schema(
         plays: { type: Number, default: 0 },
         saved: { type: Number, default: 0 },
         lyrics: [{ type: Schema.Types.ObjectId, ref: 'Lyric' }],
-        releaseDate: { type: Date, default: Date.now() },
     },
     { timestamps: true },
 );
 
+const validateTrack = (track) => {
+    const schema = Joi.object({
+        name: Joi.string().min(1).required(),
+        audio: Joi.string().required(),
+        image: Joi.string(),
+        duration: Joi.number().required(),
+        genres: Joi.array().items(Joi.string()),
+        artists: Joi.array().items(Joi.object()),
+    });
+
+    return schema.validate(track);
+};
+
 const Track = mongoose.model('Track', trackSchema);
 
-module.exports = { Track };
+module.exports = { Track, validateTrack };

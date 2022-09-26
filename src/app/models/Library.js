@@ -9,6 +9,7 @@ const librarySchema = new mongoose.Schema(
                 track: { type: Schema.Types.ObjectId, ref: 'Track' },
                 album: { type: Schema.Types.ObjectId, ref: 'Album' },
                 dateAdded: { type: Date, default: Date.now() },
+                _id: false,
             },
         ],
         albums: [{ type: Schema.Types.ObjectId, ref: 'Album' }],

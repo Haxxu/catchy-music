@@ -1,7 +1,6 @@
 const router = require('express').Router();
 
 const userController = require('../app/controllers/UserController');
-
 const userAuth = require('../app/middlewares/userAuth');
 const adminAuth = require('../app/middlewares/adminAuth');
 const validateObjectId = require('../app/middlewares/validateObjectId');
@@ -18,6 +17,12 @@ router.post('/unverify-artist/:id', [adminAuth, validateObjectId], userControlle
 // [POST] /api/users/update-password => change password
 router.post('/update-password', userController.updatePassword);
 
+// [PATCH] /api/users/freeze/:id => freeze user by id
+router.patch('/freeze/:id', [adminAuth, validateObjectId], userController.freezeUser);
+
+// [PATCH] /api/users/unfreeze/:id => unfreeze user by id
+router.patch('/unfreeze/:id', [adminAuth, validateObjectId], userController.unfreezeUser);
+
 // [GET] /api/users/q => get users by context
 router.get('/q', adminAuth, userController.getUsersByContext);
 
@@ -28,6 +33,6 @@ router.get('/:id', [userAuth, validateObjectId], userController.getUser);
 router.put('/:id', [userAuth, validateObjectId], userController.updateUser);
 
 // [DELETE] /api/users/freeze/:id => breeze user by id
-router.delete('/:id', [adminAuth, validateObjectId], userController.removeUser);
+// router.delete('/:id', [adminAuth, validateObjectId], userController.removeUser);
 
 module.exports = router;

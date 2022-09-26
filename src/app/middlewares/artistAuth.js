@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         if (error) {
             return res.status(400).send({ message: 'Invalid token' });
         } else {
-            if (validToken.type !== 'artist') {
+            if (validToken.type !== 'artist' && validToken.type !== 'admin') {
                 return res.status(403).send({ message: "You don't have permission to access this content" });
             }
             req.user = validToken;

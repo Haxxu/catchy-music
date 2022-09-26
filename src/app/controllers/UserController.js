@@ -69,7 +69,7 @@ class UserController {
     // Update user by id
     async updateUser(req, res, next) {
         if (req.user._id !== req.params.id) {
-            return res.status(403).send({ message: 'User does not have permisson to perform this action' });
+            return res.status(403).send({ message: "User don't have permisson to perform this action" });
         }
 
         const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).select(
@@ -88,6 +88,40 @@ class UserController {
         await User.findOneAndRemove({ _id: req.params.id });
 
         res.status(200).send({ message: 'Remove user successfully' });
+    }
+
+    // breeze user by id
+    async freezeUser(req, res, next) {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        let password = user.password;
+
+        if (password[0] !== '!') {
+            password = '!' + password;
+        }
+        await User.findByIdAndUpdate(req.params.id, { password: password });
+
+        res.status(400).send({ message: 'Freeze user successfully' });
+    }
+
+    // unbreeze user by id
+    async unfreezeUser(req, res, next) {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(400).send({ message: 'User does not exist' });
+        }
+
+        let password = user.password;
+
+        if (password[0] === '!') {
+            password = password.slice(1);
+        }
+        await User.findByIdAndUpdate(req.params.id, { password: password });
+
+        res.status(400).send({ message: 'Unfreeze user successfully' });
     }
 
     // Update password
