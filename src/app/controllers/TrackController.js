@@ -48,7 +48,7 @@ class TrackController {
         res.status(200).send({ data: updatedTrack, message: 'Track updated successfully' });
     }
 
-    // Update track
+    // Remove track
     async removeTrack(req, res, next) {
         const track = await Track.findOne({ _id: req.params.id });
 

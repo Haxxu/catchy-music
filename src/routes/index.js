@@ -2,6 +2,7 @@ const userRoutes = require('./users');
 const authRoutes = require('./auth');
 const meRoutes = require('./me');
 const trackRoutes = require('./tracks');
+const lyricRoutes = require('./lyrics');
 
 const routes = (app) => {
     // - /api
@@ -22,6 +23,9 @@ const routes = (app) => {
 
     // - /api/tracks
     app.use('/api/tracks', trackRoutes);
+
+    // - /api/lyrics
+    app.use('/api/lyrics', lyricRoutes);
 };
 
 module.exports = routes;
