@@ -7,7 +7,7 @@ class LyricController {
     async addLyricToTrack(req, res, next) {
         const { error } = validateLyric(req.body);
         if (error) {
-            return res.status(400).send({ message: error.details[0].message });
+            return res.status(404).send({ message: error.details[0].message });
         }
 
         if (!mongoose.isValidObjectId(req.body.track)) {
@@ -15,7 +15,7 @@ class LyricController {
         }
         const track = await Track.findOne({ _id: req.body.track });
         if (!track) {
-            return res.status(400).send({ message: 'Track does not exist' });
+            return res.status(404).send({ message: 'Track does not exist' });
         } else {
             if (track.owner.toString() !== req.user._id) {
                 return res.status(400).send({ message: "You don't have permission to add lyric to this track" });
@@ -41,7 +41,7 @@ class LyricController {
         }
         const track = await Track.findOne({ _id: req.body.track });
         if (!track) {
-            return res.status(400).send({ message: 'Track does not exist' });
+            return res.status(404).send({ message: 'Track does not exist' });
         } else {
             if (track.owner.toString() !== req.user._id) {
                 return res.status(400).send({ message: "You don't have permission to update lyric to this track" });
@@ -63,7 +63,7 @@ class LyricController {
     async removeLyric(req, res, next) {
         const lyric = await Lyric.findById(req.params.id); //lyric_id
         if (!lyric) {
-            return res.status(400).send({ message: 'Lyric does not exist' });
+            return res.status(404).send({ message: 'Lyric does not exist' });
         }
 
         if (lyric.owner.toString() !== req.user._id) {

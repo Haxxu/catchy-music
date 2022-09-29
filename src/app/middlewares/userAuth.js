@@ -4,12 +4,12 @@ module.exports = (req, res, next) => {
     const token = req.header('x-auth-token');
 
     if (!token) {
-        return res.status(400).send({ message: 'Access denied, no token provided' });
+        return res.status(401).send({ message: 'Access denied, no token provided' });
     }
 
     jwt.verify(token, process.env.JWT_PRIVATE_KEY, (error, validToken) => {
         if (error) {
-            return res.status(400).send({ message: 'Invalid token' });
+            return res.status(401).send({ message: 'Invalid token' });
         } else {
             req.user = validToken;
             next();

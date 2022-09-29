@@ -18,7 +18,7 @@ class TrackController {
             return res.status(400).send({ message: error.details[0].message });
         }
 
-        let newTrack = await new Track({
+        const newTrack = await new Track({
             ...req.body,
             owner: req.user._id,
         }).save();
@@ -28,19 +28,18 @@ class TrackController {
 
     // Update track
     async updateTrack(req, res, next) {
-        const track = await Track.findOne({ _id: req.params.id });
+        const { error } = validateTrack(req.body);
+        if (error) {
+            return res.status(400).send({ message: error.details[0].message });
+        }
 
+        const track = await Track.findOne({ _id: req.params.id });
         if (!track) {
             return res.status(400).send({ message: 'Track does not exist' });
         }
 
         if (req.user._id !== track.owner.toString()) {
             return res.status(403).send({ message: "You don't have permission to perform this action" });
-        }
-
-        const { error } = validateTrack(req.body);
-        if (error) {
-            return res.status(400).send({ message: error.details[0].message });
         }
 
         let updatedTrack = await Track.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });

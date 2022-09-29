@@ -3,6 +3,8 @@ const authRoutes = require('./auth');
 const meRoutes = require('./me');
 const trackRoutes = require('./tracks');
 const lyricRoutes = require('./lyrics');
+const genreRotues = require('./genres');
+const albumRoutes = require('./albums');
 
 const routes = (app) => {
     // - /api
@@ -26,6 +28,12 @@ const routes = (app) => {
 
     // - /api/lyrics
     app.use('/api/lyrics', lyricRoutes);
+
+    // - /api/genres
+    app.use('/api/genres', genreRotues);
+
+    // - /api/genres
+    app.use('/api/albums', albumRoutes);
 };
 
 module.exports = routes;
