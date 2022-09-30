@@ -72,12 +72,37 @@ class AlbumController {
             }
         });
 
+        if (req.body.isReleased && !album.isReleased) {
+            req.body.releaseDate = Date.now();
+        }
+
         const updatedAlbum = await Album.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, { new: true });
 
         res.status(200).send({
             data: updatedAlbum,
             message: mes === '' ? 'Updated album successfully' : 'Can not add track to album: ' + mes,
         });
+    }
+
+    async toggleReleaseAlbum(req, res, next) {
+        const album = await Album.findOne({ _id: req.params.id });
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+        if (album.owner.toString() !== req.user._id) {
+            return res.status(403).send({ message: "You don't have permision to toggle release this album" });
+        }
+
+        var flag = await album.isReleased;
+        var message = '';
+        if (flag) {
+            message = 'Unreleased album successfully';
+        } else {
+            message = 'Released album successfully';
+        }
+        await album.updateOne({ isReleased: !flag, releaseDate: Date.now() });
+
+        res.status(200).send({ message: message });
     }
 }
 

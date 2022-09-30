@@ -25,6 +25,7 @@ const librarySchema = new mongoose.Schema(
     },
     { timestamps: true },
 );
+
 const Library = mongoose.model('Library', librarySchema);
 
 module.exports = { Library };

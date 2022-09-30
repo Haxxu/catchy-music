@@ -27,6 +27,7 @@ const validateAlbum = (album) => {
         image: Joi.string(),
         tracks: Joi.array().items(Joi.string()),
         date: Joi.string().required(),
+        isReleased: Joi.boolean(),
         month: Joi.string().required(),
         year: Joi.string().required(),
         type: Joi.string().required(),

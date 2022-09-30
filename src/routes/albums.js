@@ -15,4 +15,7 @@ router.get('/:id', albumController.getAlbumById);
 // [PUT] /api/albums/:id => update ablum by id
 router.put('/:id', [artistAuth, validateObjectId], albumController.updateAlbum);
 
+// [PUT] /api/albums/:id/release[?is_released=false] => toggle release date of album
+router.put('/:id/release', [artistAuth, validateObjectId], albumController.toggleReleaseAlbum);
+
 module.exports = router;
