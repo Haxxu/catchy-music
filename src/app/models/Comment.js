@@ -8,7 +8,7 @@ const commentSchema = new Schema(
         name: { type: String, required: true },
         content: { type: String, required: true },
         like: {
-            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            items: [{ type: String }],
             total: { type: Number, default: 0 },
         },
     },

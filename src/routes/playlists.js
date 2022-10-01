@@ -9,8 +9,14 @@ const artistAuth = require('../app/middlewares/artistAuth');
 // [POST] /api/playlists => create new playlist
 router.post('/', userAuth, playlistController.createPlaylist);
 
+// [GET] /api/playlists/:id => get playlist by id
+router.get('/:id', [userAuth, validateObjectId], playlistController.getPlaylistById);
+
 // [PUT] /api/playlists/:id => update playlist
 router.put('/:id', [userAuth, validateObjectId], playlistController.updatePlaylist);
+
+// [DELETE] /api/playlists/:id => delete playlist by id
+router.delete('/:id', [userAuth, validateObjectId], playlistController.deletePlaylist);
 
 // [POST] /api/playlists/:id/tracks => add track to playlist {track, album} (:id => playlist_id)
 router.post('/:id/tracks', [userAuth, validateObjectId], playlistController.addTrackToPlaylist);

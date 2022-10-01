@@ -1,15 +1,20 @@
+const mongoose = require('mongoose');
+
 const { Album, validateAlbum } = require('../models/Album');
 const { Track } = require('../models/Track');
 
 class AlbumController {
-    // get album by id
+    // get album by id (get released album or album artist own)
     async getAlbumById(req, res, next) {
         const album = await Album.findById(req.params.id);
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
 
-        res.status(200).send({ data: album, message: 'Get album successfully' });
+        if (album.isReleased || album.owner.toString() === req.user._id)
+            res.status(200).send({ data: album, message: 'Get album successfully' });
+
+        res.status(403).send({ message: 'Album does not release' });
     }
 
     // create new album
@@ -103,6 +108,67 @@ class AlbumController {
         await album.updateOne({ isReleased: !flag, releaseDate: Date.now() });
 
         res.status(200).send({ message: message });
+    }
+
+    async addTrackToAlbum(req, res, next) {
+        if (!mongoose.isValidObjectId(req.body.track)) {
+            return res.status(404).send({ message: 'Invalid ID' });
+        }
+
+        const album = await Album.findOne({ _id: req.params.id }).select('-__v');
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+
+        const track = await Track.findOne({ _id: req.body.track }).select('-__v');
+        if (!track) {
+            return res.status(404).send({ message: 'Track does not exist' });
+        }
+
+        if (album.owner.toString() !== req.user._id || track.owner.toString() !== req.user._id) {
+            return res.status(403).send({ message: "User don't have access to add" });
+        }
+
+        if (album.tracks.indexOf(req.body.track) !== -1) {
+            return res.status(404).send({ message: 'Track already in album' });
+        } else {
+            album.tracks.push(req.body.track);
+        }
+
+        await album.save();
+
+        res.status(200).send({ data: album, message: 'Added to album' });
+    }
+
+    async removeTrackFromAlbum(req, res, next) {
+        if (!mongoose.isValidObjectId(req.body.track)) {
+            return res.status(404).send({ message: 'Invalid ID' });
+        }
+
+        const album = await Album.findOne({ _id: req.params.id }).select('-__v');
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+
+        const track = await Track.findOne({ _id: req.body.track }).select('-__v');
+        if (!track) {
+            return res.status(404).send({ message: 'Track does not exist' });
+        }
+
+        if (album.owner.toString() !== req.user._id || track.owner.toString() !== req.user._id) {
+            return res.status(403).send({ message: "User don't have access to remove" });
+        }
+
+        var index = album.tracks.indexOf(req.body.track);
+        if (index === -1) {
+            return res.status(404).send({ message: 'Track does not in album' });
+        } else {
+            album.tracks.splice(index, 1);
+        }
+
+        await album.save();
+
+        res.status(200).send({ data: album, message: 'Removed from album' });
     }
 }
 

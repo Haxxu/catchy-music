@@ -16,7 +16,7 @@ const trackSchema = new Schema(
         audio: { type: String, required: true },
         image: { type: String, required: true },
         duration: { type: Number, required: true, default: 0 },
-        genres: [{ type: Schema.Types.ObjectId, ref: 'Genre' }],
+        genres: [String],
         plays: { type: Number, default: 0 },
         saved: { type: Number, default: 0 },
         lyrics: [{ type: Schema.Types.ObjectId, ref: 'Lyric' }],

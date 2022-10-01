@@ -12,14 +12,14 @@ const librarySchema = new mongoose.Schema(
                 _id: false,
             },
         ],
-        albums: [{ type: Schema.Types.ObjectId, ref: 'Album' }],
-        playlists: [{ type: Schema.Types.ObjectId, ref: 'Playlist' }],
+        albums: [String],
+        playlists: [String],
         following: {
-            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            items: [{ type: String }],
             total: { type: Number, default: 0 },
         },
         follower: {
-            items: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            items: [{ type: String }],
             total: { type: Number, default: 0 },
         },
     },

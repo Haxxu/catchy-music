@@ -15,6 +15,12 @@ router.get('/:id', albumController.getAlbumById);
 // [PUT] /api/albums/:id => update ablum by id
 router.put('/:id', [artistAuth, validateObjectId], albumController.updateAlbum);
 
+// [POST] /api/albums/:id/tracks => add track to album {track} (:id => album_id)
+router.post('/:id/tracks', [artistAuth, validateObjectId], albumController.addTrackToAlbum);
+
+// [DELETE] /api/albums/:id/tracks => remove track from album {track} (:id => album_id)
+router.delete('/:id/tracks', [artistAuth, validateObjectId], albumController.removeTrackFromAlbum);
+
 // [PUT] /api/albums/:id/release[?is_released=false] => toggle release date of album
 router.put('/:id/release', [artistAuth, validateObjectId], albumController.toggleReleaseAlbum);
 
