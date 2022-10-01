@@ -9,8 +9,8 @@ const playlistSchema = new mongoose.Schema(
         description: { type: String, default: '' },
         tracks: [
             {
-                track: { type: Schema.Types.ObjectId, ref: 'Track' },
-                album: { type: Schema.Types.ObjectId, ref: 'Album' },
+                track: { type: String, required: true },
+                album: { type: String, required: true },
                 dateAdded: { type: Date, default: Date.now() },
                 _id: false,
             },

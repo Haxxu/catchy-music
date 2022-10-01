@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const { Album, validateAlbum } = require('../models/Album');
+const { Library } = require('../models/Library');
+const { Playlist } = require('../models/Playlist');
 const { Track } = require('../models/Track');
 
 class AlbumController {
@@ -87,6 +89,48 @@ class AlbumController {
             data: updatedAlbum,
             message: mes === '' ? 'Updated album successfully' : 'Can not add track to album: ' + mes,
         });
+    }
+
+    async deleteAlbum(req, res, next) {
+        const album = await Album.findOne({ _id: req.params.id });
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+        if (album.owner.toString() !== req.user._id) {
+            return res.status(403).send({ message: "User doesn't have access to delete" });
+        }
+
+        // Delete album in Library
+        await Library.updateMany(
+            {},
+            {
+                $pull: {
+                    albums: req.params.id,
+                },
+            },
+        );
+        // Delete album in library likedTracks
+        await Library.updateMany(
+            {},
+            {
+                $pull: {
+                    likedTracks: { album: req.params.id },
+                },
+            },
+        );
+        // Delete album in playlists
+        await Playlist.updateMany(
+            {},
+            {
+                $pull: {
+                    tracks: { album: req.params.id },
+                },
+            },
+        );
+
+        await Album.findByIdAndRemove(req.params.id);
+
+        res.status(200).send({ message: 'Delete album successfully' });
     }
 
     async toggleReleaseAlbum(req, res, next) {

@@ -1,5 +1,9 @@
 const { Track, validateTrack } = require('../models/Track');
-
+const { Album } = require('../models/Album');
+const { Library } = require('../models/Library');
+const { Playlist } = require('../models/Playlist');
+const { Lyric } = require('../models/Lyric');
+const { Comment } = require('../models/Comment');
 class TrackController {
     // Get track by id
     async getTrack(req, res, next) {
@@ -48,7 +52,7 @@ class TrackController {
     }
 
     // Remove track
-    async removeTrack(req, res, next) {
+    async deleteTrack(req, res, next) {
         const track = await Track.findOne({ _id: req.params.id });
 
         if (!track) {
@@ -59,9 +63,20 @@ class TrackController {
             return res.status(403).send({ message: "You don't have permission to perform this action" });
         }
 
+        // Delete track in album
+        await Album.updateMany({ owner: req.user._id }, { $pull: { tracks: req.params.id } });
+        // Delete track in playlist
+        await Playlist.updateMany({}, { $pull: { tracks: { track: req.params.id } } });
+        // Delete track in likedTrack (Library)
+        await Library.updateMany({}, { $pull: { likedTracks: { track: req.params.id } } });
+        // Delete lyric of track
+        await Lyric.deleteMany({ track: req.params.id });
+        // Delete comment of track
+        await Comment.deleteMany({ track: req.params.id });
+        //Delete track
         await Track.findOneAndRemove({ _id: req.params.id });
 
-        res.status(200).send({ message: 'Remove track successfully' });
+        res.status(200).send({ message: 'Delete track successfully' });
     }
 }
 

@@ -8,7 +8,7 @@ const trackSchema = new Schema(
         name: { type: String, required: true },
         artists: [
             {
-                name: { type: String },
+                name: { type: String, required: true },
                 id: { type: Schema.Types.ObjectId, ref: 'User' },
                 _id: false,
             },
@@ -19,7 +19,7 @@ const trackSchema = new Schema(
         genres: [String],
         plays: { type: Number, default: 0 },
         saved: { type: Number, default: 0 },
-        lyrics: [{ type: Schema.Types.ObjectId, ref: 'Lyric' }],
+        lyrics: [String],
     },
     { timestamps: true },
 );

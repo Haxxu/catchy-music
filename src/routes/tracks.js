@@ -16,6 +16,6 @@ router.get('/:id', [userAuth, validateObjectId], trackController.getTrack);
 router.put('/:id', [artistAuth, validateObjectId], trackController.updateTrack);
 
 // [DELETE] /api/tracks/:id => remove track by id
-router.delete('/:id', [artistAuth, validateObjectId], trackController.removeTrack);
+router.delete('/:id', [artistAuth, validateObjectId], trackController.deleteTrack);
 
 module.exports = router;

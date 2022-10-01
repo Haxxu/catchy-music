@@ -74,7 +74,7 @@ class PlaylistController {
 
         await Playlist.findByIdAndRemove(req.params.id);
 
-        res.status(200).send({ message: 'Remove playlist successfully' });
+        res.status(200).send({ message: 'Delete playlist successfully' });
     }
 
     async addTrackToPlaylist(req, res, next) {

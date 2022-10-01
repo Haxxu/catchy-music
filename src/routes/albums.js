@@ -10,10 +10,13 @@ const artistAuth = require('../app/middlewares/artistAuth');
 router.post('/', artistAuth, albumController.createAlbum);
 
 // [GET] /api/albums/:id => get ablum by id
-router.get('/:id', albumController.getAlbumById);
+router.get('/:id', [userAuth, validateObjectId], albumController.getAlbumById);
 
 // [PUT] /api/albums/:id => update ablum by id
 router.put('/:id', [artistAuth, validateObjectId], albumController.updateAlbum);
+
+// [DELETE] /api/albums/:id => delete album by id
+router.delete('/:id', [artistAuth, validateObjectId], albumController.deleteAlbum);
 
 // [POST] /api/albums/:id/tracks => add track to album {track} (:id => album_id)
 router.post('/:id/tracks', [artistAuth, validateObjectId], albumController.addTrackToAlbum);
