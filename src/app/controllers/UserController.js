@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 
 const { User, validateUser, validateUpdatedPassword } = require('../models/User');
 const { Library } = require('../models/Library');
+const { Playlist } = require('../models/Playlist');
 
 class UserController {
     // Get user by id
@@ -171,6 +172,18 @@ class UserController {
         await user.updateOne({ type: 'user' });
 
         res.status(200).send({ message: 'Unverify artist successfullly' });
+    }
+
+    // Get user playlists
+    async getUserPlaylists(req, res, next) {
+        let playlists;
+        if (req.user._id === req.params.id) {
+            playlists = await Playlist.find({ owner: req.params.id });
+        } else {
+            playlists = await Playlist.find({ owner: req.params.id, isPublic: true });
+        }
+
+        res.status(200).send({ data: playlists, message: 'Get user playlists' });
     }
 }
 

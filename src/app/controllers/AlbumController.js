@@ -105,7 +105,7 @@ class AlbumController {
             {},
             {
                 $pull: {
-                    albums: req.params.id,
+                    albums: { album: req.params.id },
                 },
             },
         );

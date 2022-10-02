@@ -12,8 +12,20 @@ const librarySchema = new mongoose.Schema(
                 _id: false,
             },
         ],
-        albums: [String],
-        playlists: [String],
+        albums: [
+            {
+                album: { type: String, required: true },
+                dateAdded: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
+        playlists: [
+            {
+                playlist: { type: String, required: true },
+                dateAdded: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
         following: {
             items: [{ type: String }],
             total: { type: Number, default: 0 },

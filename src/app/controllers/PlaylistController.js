@@ -67,7 +67,7 @@ class PlaylistController {
             {},
             {
                 $pull: {
-                    playlists: req.params.id,
+                    playlists: { playlist: req.params.id },
                 },
             },
         );

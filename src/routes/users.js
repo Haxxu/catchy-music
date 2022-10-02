@@ -29,6 +29,9 @@ router.get('/q', adminAuth, userController.getUsersByContext);
 // [GET] /api/users/:id => get user by id
 router.get('/:id', [userAuth, validateObjectId], userController.getUser);
 
+// [GET] /api/users/:id/playlists => get user playlist by user_id
+router.get('/:id/playlists', [userAuth, validateObjectId], userController.getUserPlaylists);
+
 // [PUT] /api/users/:id => update user by id
 router.put('/:id', [userAuth, validateObjectId], userController.updateUser);
 

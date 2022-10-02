@@ -7,6 +7,8 @@ class MeController {
 
         res.status(200).send({ data: user, message: 'Get user profile successfully' });
     }
+
+    //
 }
 
 module.exports = new MeController();
