@@ -135,7 +135,7 @@ class MeController {
     }
 
     // Remove album from user library
-    async removeAlbum(req, res, next) {
+    async removeSavedAlbum(req, res, next) {
         const album = await Album.findOne({ _id: req.body.album });
         if (!album) {
             return album.status(404).send({ message: 'Album does not exist' });

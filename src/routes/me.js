@@ -24,6 +24,6 @@ router.get('/albums', userAuth, meController.getSavedAlbums);
 router.put('/albums', userAuth, meController.saveAblum);
 
 // [DELETE] /api/me/albums => remove saved album from library
-router.delete('/albums', userAuth, meController.removeAlbum);
+router.delete('/albums', userAuth, meController.removeSavedAlbum);
 
 module.exports = router;
