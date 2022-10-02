@@ -1,6 +1,7 @@
 const { User } = require('../models/User');
 const { Library } = require('../models/Library');
 const { Album } = require('../models/Album');
+const { Playlist } = require('../models/Playlist');
 
 class MeController {
     // Get current user profile
@@ -111,7 +112,7 @@ class MeController {
     async saveAblum(req, res, next) {
         const album = await Album.findOne({ _id: req.body.album });
         if (!album) {
-            return album.status(404).send({ message: 'Album does not exist' });
+            return res.status(404).send({ message: 'Album does not exist' });
         }
 
         const library = await Library.findOne({ owner: req.user._id });
@@ -138,7 +139,11 @@ class MeController {
     async removeSavedAlbum(req, res, next) {
         const album = await Album.findOne({ _id: req.body.album });
         if (!album) {
-            return album.status(404).send({ message: 'Album does not exist' });
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+
+        if (album.owner.toString() === req.user._id) {
+            return res.status(403).send({ message: 'You should not remove your album from your library' });
         }
 
         const library = await Library.findOne({ owner: req.user._id });
@@ -157,6 +162,89 @@ class MeController {
 
         await library.save();
         await album.save();
+
+        res.status(200).send({ message: 'Removed from library' });
+    }
+
+    // Get saved albums
+    async getSavedPlaylists(req, res, next) {
+        const library = await Library.findOne({ owner: req.user._id });
+
+        const playlists = [...library.playlists];
+        // Sort newest dateAdded first
+        playlists.sort((a, b) => {
+            return new Date(b.dateAdded) - new Date(a.dateAdded);
+        });
+        // Get saved playlists ( array of playlist obj)
+        const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } });
+        // array of playlist id
+        const pClean = p.map((item) => item._id.toString());
+
+        // Add album detail to savedAlbums
+        const detailSavedPlaylists = playlists.map((obj) => {
+            return {
+                playlist: p[pClean.indexOf(obj.playlist)],
+                dateAdded: obj.dateAdded,
+            };
+        });
+
+        await res.status(200).send({ data: detailSavedPlaylists, message: 'Get saved playlist successfully' });
+    }
+
+    // Save playlist to user library
+    async savePlaylist(req, res, next) {
+        const playlist = await Playlist.findOne({ _id: req.body.playlist });
+        if (!playlist) {
+            return res.status(404).send({ message: 'Playlist does not exist' });
+        }
+
+        const library = await Library.findOne({ owner: req.user._id });
+        if (!library) {
+            return res.status(404).send({ message: 'Cannot find user library' });
+        }
+
+        const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
+        if (index === -1) {
+            library.playlists.push({
+                playlist: req.body.playlist,
+                dateAdded: Date.now(),
+            });
+            playlist.saved = playlist.saved + 1;
+        }
+
+        await library.save();
+        await playlist.save();
+
+        res.status(200).send({ message: 'Saved to library' });
+    }
+
+    // Remove album from user library
+    async removeSavedPlaylist(req, res, next) {
+        const playlist = await Playlist.findOne({ _id: req.body.playlist });
+        if (!playlist) {
+            return res.status(404).send({ message: 'Playlist does not exist' });
+        }
+
+        if (playlist.owner.toString() === req.user._id) {
+            return res.status(403).send({ message: 'You should not remove your playlist from your library' });
+        }
+
+        const library = await Library.findOne({ owner: req.user._id });
+        if (!library) {
+            return res.status(404).send({ message: 'Cannot find user library' });
+        }
+
+        const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
+        if (index !== -1) {
+            library.playlists.splice(index, 1);
+            playlist.saved = playlist.saved - 1;
+            if (playlist.saved < 0) {
+                playlist.saved = 0;
+            }
+        }
+
+        await library.save();
+        await playlist.save();
 
         res.status(200).send({ message: 'Removed from library' });
     }

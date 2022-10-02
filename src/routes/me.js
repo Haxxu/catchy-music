@@ -26,4 +26,13 @@ router.put('/albums', userAuth, meController.saveAblum);
 // [DELETE] /api/me/albums => remove saved album from library
 router.delete('/albums', userAuth, meController.removeSavedAlbum);
 
+// [GET] /api/me/playlists => get saved playlists
+router.get('/playlists', userAuth, meController.getSavedPlaylists);
+
+// [PUT] /api/me/playlists => save playlist to library
+router.put('/playlists', userAuth, meController.savePlaylist);
+
+// [DELETE] /api/me/playlists => remove saved playlist from library
+router.delete('/playlists', userAuth, meController.removeSavedPlaylist);
+
 module.exports = router;

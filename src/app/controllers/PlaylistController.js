@@ -36,7 +36,7 @@ class PlaylistController {
             { $push: { playlists: { playlist: playlist._id, dateAdded: Date.now() } } },
         );
 
-        res.status(200).send({ data: playlist, message: 'Hello' });
+        res.status(200).send({ data: playlist, message: 'Playlist created successfully' });
     }
 
     async updatePlaylist(req, res, next) {
