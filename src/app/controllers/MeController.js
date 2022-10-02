@@ -150,6 +150,9 @@ class MeController {
         if (index !== -1) {
             library.albums.splice(index, 1);
             album.saved = album.saved - 1;
+            if (album.saved < 0) {
+                album.saved = 0;
+            }
         }
 
         await library.save();
