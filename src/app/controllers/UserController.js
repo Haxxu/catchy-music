@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { User, validateUser, validateUpdatedPassword } = require('../models/User');
 const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
+const { Album } = require('../models/Album');
 
 class UserController {
     // Get user by id
@@ -184,6 +185,17 @@ class UserController {
         }
 
         res.status(200).send({ data: playlists, message: 'Get user playlists' });
+    }
+
+    async getUserAlbums(req, res, next) {
+        let albums;
+        if (req.user._id === req.params.id) {
+            albums = await Album.find({ owner: req.params.id });
+        } else {
+            albums = await Album.find({ owner: req.params.id, isReleased: true });
+        }
+
+        res.status(200).send({ data: albums, message: 'Get user albums' });
     }
 }
 

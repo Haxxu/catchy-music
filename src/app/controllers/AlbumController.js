@@ -39,13 +39,18 @@ class AlbumController {
             }
         });
 
-        const newAlbum = await new Album({
+        const album = await new Album({
             ...req.body,
             owner: req.user._id,
         }).save();
 
+        await Library.updateOne(
+            { owner: req.user._id },
+            { $push: { albums: { album: album._id, dateAdded: Date.now() } } },
+        );
+
         res.status(200).send({
-            data: newAlbum,
+            data: album,
             message: mes === '' ? 'Create album successfully' : 'Can not add track to album: ' + mes,
         });
     }

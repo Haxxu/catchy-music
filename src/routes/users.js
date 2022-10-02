@@ -32,6 +32,9 @@ router.get('/:id', [userAuth, validateObjectId], userController.getUser);
 // [GET] /api/users/:id/playlists => get user playlist by user_id
 router.get('/:id/playlists', [userAuth, validateObjectId], userController.getUserPlaylists);
 
+// [GET] /api/users/:id/albums => get user albums by user_id
+router.get('/:id/albums', [userAuth, validateObjectId], userController.getUserAlbums);
+
 // [PUT] /api/users/:id => update user by id
 router.put('/:id', [userAuth, validateObjectId], userController.updateUser);
 

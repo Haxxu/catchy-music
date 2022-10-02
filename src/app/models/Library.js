@@ -26,14 +26,20 @@ const librarySchema = new mongoose.Schema(
                 _id: false,
             },
         ],
-        following: {
-            items: [{ type: String }],
-            total: { type: Number, default: 0 },
-        },
-        follower: {
-            items: [{ type: String }],
-            total: { type: Number, default: 0 },
-        },
+        following: [
+            {
+                user: { type: String, required: true },
+                dateAdded: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
+        follower: [
+            {
+                user: { type: String, required: true },
+                dateAdded: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
     },
     { timestamps: true },
 );

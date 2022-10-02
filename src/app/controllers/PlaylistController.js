@@ -31,6 +31,11 @@ class PlaylistController {
             owner: req.user._id,
         }).save();
 
+        await Library.updateOne(
+            { owner: req.user._id },
+            { $push: { playlists: { playlist: playlist._id, dateAdded: Date.now() } } },
+        );
+
         res.status(200).send({ data: playlist, message: 'Hello' });
     }
 
