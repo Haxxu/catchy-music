@@ -15,7 +15,7 @@ class MeController {
     // Get following users
     async getFollowing(req, res, next) {
         const library = await Library.findOne({ owner: req.user._id });
-        const followings = library.following.map((item) => item.user);
+        const followings = library.followings.map((item) => item.user);
         const artists = await User.find({ _id: { $in: followings }, type: 'artist' });
         const users = await User.find({ _id: { $in: followings } });
 
@@ -38,13 +38,13 @@ class MeController {
             return res.status(404).send({ message: 'Cannot find user library' });
         }
 
-        const index = library.following.map((item) => item.user).indexOf(req.body.user);
+        const index = library.followings.map((item) => item.user).indexOf(req.body.user);
         if (index === -1) {
-            library.following.push({
+            library.followings.push({
                 user: req.body.user,
                 dateAdded: Date.now(),
             });
-            userFollowLibrary.follower.push({
+            userFollowLibrary.followers.push({
                 user: req.user._id,
                 dateAdded: Date.now(),
             });
@@ -71,11 +71,11 @@ class MeController {
             return res.status(404).send({ message: 'Cannot find user library' });
         }
 
-        const indexFollowing = library.following.map((item) => item.user).indexOf(req.body.user);
+        const indexFollowing = library.followings.map((item) => item.user).indexOf(req.body.user);
         if (indexFollowing !== -1) {
-            library.following.splice(indexFollowing, 1);
-            const indexFollower = userFollowLibrary.follower.map((item) => item.user).indexOf(req.user._id);
-            userFollowLibrary.follower.splice(indexFollower, 1);
+            library.followings.splice(indexFollowing, 1);
+            const indexFollower = userFollowLibrary.followers.map((item) => item.user).indexOf(req.user._id);
+            userFollowLibrary.followers.splice(indexFollower, 1);
         }
 
         await library.save();
