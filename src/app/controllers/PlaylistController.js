@@ -104,7 +104,7 @@ class PlaylistController {
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
-        if (album.tracks.indexOf(req.body.track) === -1) {
+        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
             return res.status(404).send({ message: 'Add track to playlist failure' });
         }
 
@@ -143,7 +143,7 @@ class PlaylistController {
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
-        if (album.tracks.indexOf(req.body.track) === -1) {
+        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
             return res.status(404).send({ message: 'Add track to playlist failure' });
         }
 
@@ -182,7 +182,7 @@ class PlaylistController {
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
-        if (album.tracks.indexOf(req.body.track) === -1) {
+        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
             return res.status(404).send({ message: 'Add track to playlist failure' });
         }
 

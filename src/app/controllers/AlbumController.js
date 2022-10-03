@@ -178,10 +178,13 @@ class AlbumController {
             return res.status(403).send({ message: "User don't have access to add" });
         }
 
-        if (album.tracks.indexOf(req.body.track) !== -1) {
+        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) !== -1) {
             return res.status(404).send({ message: 'Track already in album' });
         } else {
-            album.tracks.push(req.body.track);
+            album.tracks.push({
+                track: req.body.track,
+                dateAdded: Date.now(),
+            });
         }
 
         await album.save();
@@ -208,7 +211,7 @@ class AlbumController {
             return res.status(403).send({ message: "User don't have access to remove" });
         }
 
-        var index = album.tracks.indexOf(req.body.track);
+        var index = album.tracks.map((obj) => obj.track).indexOf(req.body.track);
         if (index === -1) {
             return res.status(404).send({ message: 'Track does not in album' });
         } else {

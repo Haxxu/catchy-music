@@ -2,6 +2,7 @@ const { User } = require('../models/User');
 const { Library } = require('../models/Library');
 const { Album } = require('../models/Album');
 const { Playlist } = require('../models/Playlist');
+const { Track } = require('../models/Track');
 
 class MeController {
     // Get current user profile
@@ -245,6 +246,109 @@ class MeController {
 
         await library.save();
         await playlist.save();
+
+        res.status(200).send({ message: 'Removed from library' });
+    }
+
+    async getLikedTracks(req, res, next) {
+        const library = await Library.findOne({ owner: req.user._id });
+
+        const likedTracks = [...library.likedTracks];
+        // Sort newest dateAdded first
+        likedTracks.sort((a, b) => {
+            return new Date(b.dateAdded) - new Date(a.dateAdded);
+        });
+        // Get liked Track ( array of likedTrack obj)
+        const t = await Track.find({ _id: { $in: likedTracks.map((item) => item.track) } });
+        // array of rtack id
+        const tClean = t.map((item) => item._id.toString());
+        // get album
+        const a = await Album.find({ _id: { $in: likedTracks.map((item) => item.album) } });
+        // array of album id
+        const aClean = a.map((item) => item._id.toString());
+
+        // Add album detail to savedAlbums
+        const detailLikedTracks = likedTracks.map((obj) => {
+            return {
+                track: t[tClean.indexOf(obj.track)],
+                album: a[aClean.indexOf(obj.album)],
+                dateAdded: obj.dateAdded,
+            };
+        });
+
+        await res.status(200).send({ data: detailLikedTracks, message: 'Get saved playlist successfully' });
+    }
+
+    // Save track to user library
+    async saveTrack(req, res, next) {
+        const track = await Track.findOne({ _id: req.body.track });
+        if (!track) {
+            return res.status(404).send({ message: 'Track does not exist' });
+        }
+        const album = await Album.findOne({ _id: req.body.album });
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+
+        // Check track in album
+        const indexOfTrackInAlbum = album.tracks.map((obj) => obj.track).indexOf(req.body.track);
+        if (indexOfTrackInAlbum === -1) {
+            return res.status(404).send({ message: 'Track does not in album' });
+        }
+
+        const library = await Library.findOne({ owner: req.user._id });
+        if (!library) {
+            return res.status(404).send({ message: 'Cannot find user library' });
+        }
+
+        const index = library.likedTracks
+            .map((item) => item.track + item.album)
+            .indexOf(req.body.track + req.body.album);
+        if (index === -1) {
+            library.likedTracks.push({
+                track: req.body.track,
+                album: req.body.album,
+                dateAdded: Date.now(),
+            });
+            track.saved = track.saved + 1;
+        }
+
+        await library.save();
+        await track.save();
+
+        res.status(200).send({ message: 'Saved to library' });
+    }
+
+    // Remove track from user library
+    async removeLikedTrack(req, res, next) {
+        const track = await Track.findOne({ _id: req.body.track });
+        if (!track) {
+            return res.status(404).send({ message: 'Track does not exist' });
+        }
+
+        const album = await Album.findOne({ _id: req.body.album });
+        if (!album) {
+            return res.status(404).send({ message: 'Album does not exist' });
+        }
+
+        const library = await Library.findOne({ owner: req.user._id });
+        if (!library) {
+            return res.status(404).send({ message: 'Cannot find user library' });
+        }
+
+        const index = library.likedTracks
+            .map((item) => item.track + item.album)
+            .indexOf(req.body.track + req.body.album);
+        if (index !== -1) {
+            library.likedTracks.splice(index, 1);
+            track.saved = track.saved - 1;
+            if (track.saved < 0) {
+                track.saved = 0;
+            }
+        }
+
+        await library.save();
+        await track.save();
 
         res.status(200).send({ message: 'Removed from library' });
     }

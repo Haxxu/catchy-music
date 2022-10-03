@@ -35,4 +35,13 @@ router.put('/playlists', userAuth, meController.savePlaylist);
 // [DELETE] /api/me/playlists => remove saved playlist from library
 router.delete('/playlists', userAuth, meController.removeSavedPlaylist);
 
+// [GET] /api/me/tracks => get liked tracks
+router.get('/tracks', userAuth, meController.getLikedTracks);
+
+// [PUT] /api/me/tracks => save liked track to library
+router.put('/tracks', userAuth, meController.saveTrack);
+
+// [DELETE] /api/me/tracks => remove liked track from library
+router.delete('/tracks', userAuth, meController.removeLikedTrack);
+
 module.exports = router;

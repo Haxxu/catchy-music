@@ -8,7 +8,13 @@ const albumSchema = new mongoose.Schema(
         name: { type: String, required: true, default: '' },
         description: { type: String, default: '' },
         image: { type: String, default: '' },
-        tracks: [{ type: String, required: true }],
+        tracks: [
+            {
+                track: { type: String, required: true },
+                dateAdded: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
         isReleased: { type: Boolean, default: false },
         releaseDate: { type: Date, default: Date.now() },
         date: { type: String, required: true },
