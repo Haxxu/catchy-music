@@ -64,7 +64,7 @@ class TrackController {
         }
 
         // Delete track in album
-        await Album.updateMany({ owner: req.user._id }, { $pull: { tracks: req.params.id } });
+        await Album.updateMany({ owner: req.user._id }, { $pull: { tracks: { track: req.param.id } } });
         // Delete track in playlist
         await Playlist.updateMany({}, { $pull: { tracks: { track: req.params.id } } });
         // Delete track in likedTrack (Library)

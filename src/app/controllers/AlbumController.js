@@ -21,6 +21,7 @@ class AlbumController {
 
     // create new album
     async createAlbum(req, res, next) {
+        console.log(req.body.tracks);
         const { error } = validateAlbum(req.body);
         if (error) {
             return res.status(400).send({ message: error.details[0].message });
@@ -28,14 +29,14 @@ class AlbumController {
 
         const tracks = [...req.body.tracks];
         var mes = '';
-        tracks.forEach(async (track) => {
-            const isExist = await Track.findOne({ _id: track, owner: req.user._id });
+        tracks.forEach(async (obj) => {
+            const isExist = await Track.findOne({ _id: obj.track, owner: req.user._id });
             if (!isExist) {
-                const index = req.body.tracks.indexOf(track);
+                const index = req.body.tracks.map((i) => i.track).indexOf(obj.track);
                 if (index > -1) {
                     req.body.tracks.splice(index, 1);
                 }
-                mes = mes + track + ', ';
+                mes = mes + obj.track + ', ';
             }
         });
 
@@ -73,14 +74,14 @@ class AlbumController {
 
         var tracks = [...req.body.tracks];
         var mes = '';
-        tracks.forEach(async (track) => {
-            const isExist = await Track.findOne({ _id: track, owner: req.user._id });
+        tracks.forEach(async (obj) => {
+            const isExist = await Track.findOne({ _id: obj.track, owner: req.user._id });
             if (!isExist) {
-                const index = req.body.tracks.indexOf(track);
+                const index = req.body.tracks.map((i) => i.track).indexOf(obj.track);
                 if (index > -1) {
                     req.body.tracks.splice(index, 1);
                 }
-                mes = mes + track + ', ';
+                mes = mes + obj.track + ', ';
             }
         });
 

@@ -31,7 +31,7 @@ const validateAlbum = (album) => {
         name: Joi.string().required(),
         description: Joi.string().allow(''),
         image: Joi.string().allow(''),
-        tracks: Joi.array().items(Joi.string()),
+        tracks: Joi.array().items(Joi.object()),
         date: Joi.string().required(),
         isReleased: Joi.boolean(),
         month: Joi.string().required(),
