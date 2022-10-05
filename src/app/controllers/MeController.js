@@ -42,11 +42,11 @@ class MeController {
         if (index === -1) {
             library.followings.push({
                 user: req.body.user,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
             userFollowLibrary.followers.push({
                 user: req.user._id,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
         }
         await library.save();
@@ -89,9 +89,9 @@ class MeController {
         const library = await Library.findOne({ owner: req.user._id });
 
         const albums = [...library.albums];
-        // Sort newest dateAdded first
+        // Sort newest addedAt first
         albums.sort((a, b) => {
-            return new Date(b.dateAdded) - new Date(a.dateAdded);
+            return new Date(b.addedAt) - new Date(a.addedAt);
         });
         // Get saved albums ( array of album obj)
         const a = await Album.find({ _id: { $in: albums.map((item) => item.album) } });
@@ -102,7 +102,7 @@ class MeController {
         const detailSavedAlbums = albums.map((obj) => {
             return {
                 album: a[aClean.indexOf(obj.album)],
-                dateAdded: obj.dateAdded,
+                addedAt: obj.addedAt,
             };
         });
 
@@ -125,7 +125,7 @@ class MeController {
         if (index === -1) {
             library.albums.push({
                 album: req.body.album,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
             album.saved = album.saved + 1;
         }
@@ -172,9 +172,9 @@ class MeController {
         const library = await Library.findOne({ owner: req.user._id });
 
         const playlists = [...library.playlists];
-        // Sort newest dateAdded first
+        // Sort newest addedAt first
         playlists.sort((a, b) => {
-            return new Date(b.dateAdded) - new Date(a.dateAdded);
+            return new Date(b.addedAt) - new Date(a.addedAt);
         });
         // Get saved playlists ( array of playlist obj)
         const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } });
@@ -185,7 +185,7 @@ class MeController {
         const detailSavedPlaylists = playlists.map((obj) => {
             return {
                 playlist: p[pClean.indexOf(obj.playlist)],
-                dateAdded: obj.dateAdded,
+                addedAt: obj.addedAt,
             };
         });
 
@@ -208,7 +208,7 @@ class MeController {
         if (index === -1) {
             library.playlists.push({
                 playlist: req.body.playlist,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
             playlist.saved = playlist.saved + 1;
         }
@@ -254,9 +254,9 @@ class MeController {
         const library = await Library.findOne({ owner: req.user._id });
 
         const likedTracks = [...library.likedTracks];
-        // Sort newest dateAdded first
+        // Sort newest addedAt first
         likedTracks.sort((a, b) => {
-            return new Date(b.dateAdded) - new Date(a.dateAdded);
+            return new Date(b.addedAt) - new Date(a.addedAt);
         });
         // Get liked Track ( array of likedTrack obj)
         const t = await Track.find({ _id: { $in: likedTracks.map((item) => item.track) } });
@@ -272,7 +272,7 @@ class MeController {
             return {
                 track: t[tClean.indexOf(obj.track)],
                 album: a[aClean.indexOf(obj.album)],
-                dateAdded: obj.dateAdded,
+                addedAt: obj.addedAt,
             };
         });
 
@@ -308,7 +308,7 @@ class MeController {
             library.likedTracks.push({
                 track: req.body.track,
                 album: req.body.album,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
             track.saved = track.saved + 1;
         }

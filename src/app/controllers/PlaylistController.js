@@ -33,7 +33,7 @@ class PlaylistController {
 
         await Library.updateOne(
             { owner: req.user._id },
-            { $push: { playlists: { playlist: playlist._id, dateAdded: Date.now() } } },
+            { $push: { playlists: { playlist: playlist._id, addedAt: Date.now() } } },
         );
 
         res.status(200).send({ data: playlist, message: 'Playlist created successfully' });
@@ -113,7 +113,7 @@ class PlaylistController {
             playlist.tracks.push({
                 track: req.body.track,
                 album: req.body.album,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
         }
         await playlist.save();
@@ -152,7 +152,7 @@ class PlaylistController {
             playlist.tracks.push({
                 track: req.body.track,
                 album: req.body.album,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
         }
         await playlist.save();

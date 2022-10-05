@@ -47,7 +47,7 @@ class AlbumController {
 
         await Library.updateOne(
             { owner: req.user._id },
-            { $push: { albums: { album: album._id, dateAdded: Date.now() } } },
+            { $push: { albums: { album: album._id, addedAt: Date.now() } } },
         );
 
         res.status(200).send({
@@ -184,7 +184,7 @@ class AlbumController {
         } else {
             album.tracks.push({
                 track: req.body.track,
-                dateAdded: Date.now(),
+                addedAt: Date.now(),
             });
         }
 

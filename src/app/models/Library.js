@@ -8,35 +8,35 @@ const librarySchema = new mongoose.Schema(
             {
                 track: { type: String, required: true },
                 album: { type: String, required: true },
-                dateAdded: { type: Date, default: Date.now() },
+                addedAt: { type: Date, default: Date.now() },
                 _id: false,
             },
         ],
         albums: [
             {
                 album: { type: String, required: true },
-                dateAdded: { type: Date, default: Date.now() },
+                addedAt: { type: Date, default: Date.now() },
                 _id: false,
             },
         ],
         playlists: [
             {
                 playlist: { type: String, required: true },
-                dateAdded: { type: Date, default: Date.now() },
+                addedAt: { type: Date, default: Date.now() },
                 _id: false,
             },
         ],
         followings: [
             {
                 user: { type: String, required: true },
-                dateAdded: { type: Date, default: Date.now() },
+                addedAt: { type: Date, default: Date.now() },
                 _id: false,
             },
         ],
         followers: [
             {
                 user: { type: String, required: true },
-                dateAdded: { type: Date, default: Date.now() },
+                addedAt: { type: Date, default: Date.now() },
                 _id: false,
             },
         ],
