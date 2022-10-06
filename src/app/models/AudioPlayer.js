@@ -6,7 +6,10 @@ const { Schema } = mongoose;
 const audioPlayerSchema = new mongoose.Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        currentPlayingTrack: { type: String },
+        currentPlayingTrack: {
+            track: { type: String, required: true },
+            album: { type: String, required: true },
+        },
         description: { type: String, default: '' },
         queue: [
             {
