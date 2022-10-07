@@ -4,6 +4,7 @@ const { User, validateUser, validateUpdatedPassword } = require('../models/User'
 const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
 const { Album } = require('../models/Album');
+const { AudioPlayer } = require('../models/AudioPlayer');
 
 class UserController {
     // Get user by id
@@ -59,6 +60,10 @@ class UserController {
         }).save();
 
         let library = await new Library({
+            owner: newUser._id,
+        }).save();
+
+        let audioPlayer = await new AudioPlayer({
             owner: newUser._id,
         }).save();
 

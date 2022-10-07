@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const meController = require('../app/controllers/MeController');
+const audioPlayerController = require('../app/controllers/AudioPlayerController');
 const userAuth = require('../app/middlewares/userAuth');
 const adminAuth = require('../app/middlewares/adminAuth');
 const validateObjectId = require('../app/middlewares/validateObjectId');
@@ -43,5 +44,23 @@ router.put('/tracks', userAuth, meController.saveTrack);
 
 // [DELETE] /api/me/tracks => remove liked track from library
 router.delete('/tracks', userAuth, meController.removeLikedTrack);
+
+// [PUT] /api/me/audio-player/pause => pause track
+router.put('/audio-player/pause', userAuth, audioPlayerController.pause);
+
+// [PUT] /api/me/audio-player/play => play(start/resume) track
+router.put('/audio-player/play', userAuth, audioPlayerController.play);
+
+// [PUT] /api/me/audio-player/repeat => set repeat mode
+router.put('/audio-player/repeat', userAuth, audioPlayerController.setRepeat);
+
+// [PUT] /api/me/audio-player/shuffle => set shuffle mode
+router.put('/audio-player/shuffle', userAuth, audioPlayerController.setShuffle);
+
+// [POST] /api/me/audio-player/next =>  skip to next
+router.post('/audio-player/next', userAuth, audioPlayerController.skipNext);
+
+// [POST] /api/me/audio-player/prev =>  skip to previous
+router.post('/audio-player/previous', userAuth, audioPlayerController.skipPrevious);
 
 module.exports = router;

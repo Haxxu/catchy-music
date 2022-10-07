@@ -1,4 +1,3 @@
-const { string } = require('joi');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
@@ -7,10 +6,11 @@ const audioPlayerSchema = new mongoose.Schema(
     {
         owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         currentPlayingTrack: {
-            track: { type: String, required: true },
-            album: { type: String, required: true },
+            track: { type: String, default: '' },
+            album: { type: String, default: '' },
+            position: { type: Number, default: 0 },
         },
-        description: { type: String, default: '' },
+        state: { type: String, default: 'pause' },
         queue: [
             {
                 track: { type: String, required: true },
@@ -27,26 +27,31 @@ const audioPlayerSchema = new mongoose.Schema(
                 _id: false,
             },
         ],
+        shuffleTracks: [
+            {
+                track: { type: String, required: true },
+                album: { type: String, required: true },
+                addedAt: { type: Date, default: Date.now() },
+                _id: false,
+            },
+        ],
         context: {
-            type: { type: String },
-            currentPlaylist: { type: String },
-            currentAlbum: { type: String },
-            currentLiked: { type: String },
-            currentArtist: { type: String },
+            type: { type: String, defaut: '' },
+            currentPlaylist: { type: String, default: '' },
+            currentAlbum: { type: String, default: '' },
+            currentLiked: { type: String, default: '' },
+            currentArtist: { type: String, default: '' },
         },
-        isRepeat: {
-            type: Boolean,
-            required: true,
-            default: false,
+        repeat: {
+            type: String,
+            default: 'none',
         },
-        isShuffle: {
-            type: Boolean,
-            required: true,
-            default: false,
+        shuffle: {
+            type: String,
+            default: 'none',
         },
         volume: {
             type: Number,
-            required: true,
             default: 50,
             min: 0,
             max: 100,
