@@ -247,6 +247,25 @@ class AudioPlayerController {
         await player.save();
         res.status(200).send({ meesage: 'Skip previous' });
     }
+
+    async setVolume(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player does not exist' });
+        }
+
+        if (req.query.volume_percent) {
+            player.volume = req.query.volume_percent;
+            if (player.volume < 0) {
+                player.volume = 0;
+            } else if (player.volume > 100) {
+                player.volume = 100;
+            }
+            await player.save();
+        }
+
+        return res.status(200).send({ message: 'Set volume to ' + player.volume });
+    }
 }
 
 module.exports = new AudioPlayerController();

@@ -60,7 +60,10 @@ router.put('/audio-player/shuffle', userAuth, audioPlayerController.setShuffle);
 // [POST] /api/me/audio-player/next =>  skip to next
 router.post('/audio-player/next', userAuth, audioPlayerController.skipNext);
 
-// [POST] /api/me/audio-player/prev =>  skip to previous
+// [POST] /api/me/audio-player/previous =>  skip to previous
 router.post('/audio-player/previous', userAuth, audioPlayerController.skipPrevious);
+
+// [PUT] /api/me/audio-player/volume =>  set volume
+router.put('/audio-player/volume', userAuth, audioPlayerController.setVolume);
 
 module.exports = router;
