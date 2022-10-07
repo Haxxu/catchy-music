@@ -11,14 +11,25 @@ const audioPlayerSchema = new mongoose.Schema(
             position: { type: Number, default: 0 },
         },
         state: { type: String, default: 'pause' },
-        queue: [
-            {
-                track: { type: String, required: true },
-                album: { type: String, required: true },
-                addedAt: { type: Date, default: Date.now() },
-                _id: false,
+        queue: {
+            tracks: [
+                {
+                    track: { type: String, required: true },
+                    album: { type: String, required: true },
+                    addedAt: { type: Date, default: Date.now() },
+                    order: { type: Number },
+                    _id: false,
+                },
+            ],
+            currentTrackWhenQueueActive: {
+                track: { type: String, default: '' },
+                album: { type: String, default: '' },
+                position: { type: Number, default: 0 },
+                type: Object,
+                default: null,
             },
-        ],
+        },
+
         tracks: [
             {
                 track: { type: String, required: true },

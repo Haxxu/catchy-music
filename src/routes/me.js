@@ -66,4 +66,7 @@ router.post('/audio-player/previous', userAuth, audioPlayerController.skipPrevio
 // [PUT] /api/me/audio-player/volume =>  set volume
 router.put('/audio-player/volume', userAuth, audioPlayerController.setVolume);
 
+// [POST] /api/me/audio-player/queue =>  add items to queue
+router.post('/audio-player/queue', userAuth, audioPlayerController.addItemsToQueue);
+
 module.exports = router;

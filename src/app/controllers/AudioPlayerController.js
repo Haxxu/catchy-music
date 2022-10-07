@@ -192,6 +192,28 @@ class AudioPlayerController {
     }
 
     async skipNext(req, res, next) {
+        const queueManipulate = (player) => {
+            if (player.queue.tracks.length > 0 && player.queue.currentTrackWhenQueueActive === null) {
+                player.queue.currentTrackWhenQueueActive = { ...player.currentPlayingTrack };
+                const track = player.queue.tracks.shift();
+                player.currentPlayingTrack = {
+                    track: track.track,
+                    album: track.album,
+                    position: 0,
+                };
+            } else if (player.queue.tracks.length > 0 && player.queue.currentTrackWhenQueueActive !== null) {
+                const track = player.queue.tracks.shift();
+                player.currentPlayingTrack = {
+                    track: track.track,
+                    album: track.album,
+                    position: 0,
+                };
+            } else if (player.queue.tracks.length === 0 && player.queue.currentTrackWhenQueueActive !== null) {
+                player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
+                player.queue.currentTrackWhenQueueActive = null;
+            }
+        };
+
         const player = await AudioPlayer.findOne({ owner: req.user._id });
         if (!player) {
             return res.status(404).send({ message: 'Audio Player does not exist' });
@@ -201,21 +223,26 @@ class AudioPlayerController {
             return res.status(403).send({ message: 'You should choose track to play' });
         }
 
-        if (player.shuffle !== 'shuffle') {
-            player.currentPlayingTrack.position--;
-            if (player.currentPlayingTrack.position < 0) {
-                player.currentPlayingTrack.position = player.tracks.length - 1;
+        queueManipulate(player);
+
+        if (player.queue.currentTrackWhenQueueActive === null) {
+            if (player.shuffle !== 'shuffle') {
+                player.currentPlayingTrack.position--;
+                if (player.currentPlayingTrack.position < 0) {
+                    player.currentPlayingTrack.position = player.tracks.length - 1;
+                }
+                player.currentPlayingTrack.album = player.tracks[player.currentPlayingTrack.position].album;
+                player.currentPlayingTrack.track = player.tracks[player.currentPlayingTrack.position].track;
+            } else {
+                player.currentPlayingTrack.position--;
+                if (player.currentPlayingTrack.position < 0) {
+                    player.currentPlayingTrack.position = player.shuffleTracks.length - 1;
+                }
+                player.currentPlayingTrack.album = player.shuffleTracks[player.currentPlayingTrack.position].album;
+                player.currentPlayingTrack.track = player.shuffleTracks[player.currentPlayingTrack.position].track;
             }
-            player.currentPlayingTrack.album = player.tracks[player.currentPlayingTrack.position].album;
-            player.currentPlayingTrack.track = player.tracks[player.currentPlayingTrack.position].track;
-        } else {
-            player.currentPlayingTrack.position--;
-            if (player.currentPlayingTrack.position < 0) {
-                player.currentPlayingTrack.position = player.shuffleTracks.length - 1;
-            }
-            player.currentPlayingTrack.album = player.shuffleTracks[player.currentPlayingTrack.position].album;
-            player.currentPlayingTrack.track = player.shuffleTracks[player.currentPlayingTrack.position].track;
         }
+
         await player.save();
         res.status(200).send({ meesage: 'Skip next' });
     }
@@ -265,6 +292,47 @@ class AudioPlayerController {
         }
 
         return res.status(200).send({ message: 'Set volume to ' + player.volume });
+    }
+
+    async addItemsToQueue(req, res, next) {
+        const items = req.body.items;
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player does not exist' });
+        }
+
+        items.forEach(async (item) => {
+            const track = await Track.findOne({ _id: item.track });
+            if (!track) {
+                return;
+            }
+            const album = await Album.findOne({ _id: item.album });
+            if (!album) {
+                return;
+            }
+            if (album.tracks.map((obj) => obj.track).indexOf(item.track) === -1) {
+                return;
+            }
+            if (player.queue.tracks.length === 0) {
+                player.queue.tracks.push({
+                    track: item.track,
+                    album: item.album,
+                    addedAt: Date.now(),
+                    order: 0,
+                });
+            } else {
+                player.queue.tracks.push({
+                    track: item.track,
+                    album: item.album,
+                    addedAt: Date.now(),
+                    order: player.queue.tracks[player.queue.tracks.length - 1].order + 1,
+                });
+            }
+
+            await player.save();
+        });
+
+        res.status(200).send({ message: 'Add items to queue successfully' });
     }
 }
 
