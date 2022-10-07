@@ -192,7 +192,7 @@ class AudioPlayerController {
     }
 
     async skipNext(req, res, next) {
-        const queueManipulate = (player) => {
+        const queueManipulateSkipNext = (player) => {
             if (player.queue.tracks.length > 0 && player.queue.currentTrackWhenQueueActive === null) {
                 player.queue.currentTrackWhenQueueActive = { ...player.currentPlayingTrack };
                 const track = player.queue.tracks.shift();
@@ -223,9 +223,9 @@ class AudioPlayerController {
             return res.status(403).send({ message: 'You should choose track to play' });
         }
 
-        queueManipulate(player);
+        queueManipulateSkipNext(player);
 
-        if (player.queue.currentTrackWhenQueueActive === null) {
+        if (player.queue.tracks.length === 0) {
             if (player.shuffle !== 'shuffle') {
                 player.currentPlayingTrack.position--;
                 if (player.currentPlayingTrack.position < 0) {
@@ -256,7 +256,10 @@ class AudioPlayerController {
             return res.status(403).send({ message: 'You should choose track to play' });
         }
 
-        if (player.shuffle !== 'shuffle') {
+        if (player.queue.tracks.length >= 0 && player.queue.currentTrackWhenQueueActive !== null) {
+            player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
+            player.queue.currentTrackWhenQueueActive = null;
+        } else if (player.shuffle !== 'shuffle') {
             player.currentPlayingTrack.position++;
             if (player.currentPlayingTrack.position >= player.tracks.length) {
                 player.currentPlayingTrack.position--;
@@ -271,6 +274,7 @@ class AudioPlayerController {
             player.currentPlayingTrack.album = player.shuffleTracks[player.currentPlayingTrack.position].album;
             player.currentPlayingTrack.track = player.shuffleTracks[player.currentPlayingTrack.position].track;
         }
+
         await player.save();
         res.status(200).send({ meesage: 'Skip previous' });
     }
