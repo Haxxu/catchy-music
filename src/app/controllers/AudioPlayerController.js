@@ -199,16 +199,20 @@ class AudioPlayerController {
                 player.currentPlayingTrack = {
                     track: track.track,
                     album: track.album,
-                    position: 0,
+                    position: track.order,
                 };
-            } else if (player.queue.tracks.length > 0 && player.queue.currentTrackWhenQueueActive !== null) {
+            }
+            //
+            else if (player.queue.tracks.length > 0 && player.queue.currentTrackWhenQueueActive !== null) {
                 const track = player.queue.tracks.shift();
                 player.currentPlayingTrack = {
                     track: track.track,
                     album: track.album,
-                    position: 0,
+                    position: track.order,
                 };
-            } else if (player.queue.tracks.length === 0 && player.queue.currentTrackWhenQueueActive !== null) {
+            }
+            // khong con track trong queue va trackWhenActive khac null => reset lai currentTrack ban dau
+            else if (player.queue.tracks.length === 0 && player.queue.currentTrackWhenQueueActive !== null) {
                 player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
                 player.queue.currentTrackWhenQueueActive = null;
             }
@@ -218,13 +222,14 @@ class AudioPlayerController {
         if (!player) {
             return res.status(404).send({ message: 'Audio Player does not exist' });
         }
-
         if (player.currentPlayingTrack.track === '') {
             return res.status(403).send({ message: 'You should choose track to play' });
         }
 
+        // thao tac cac track trong queue
         queueManipulateSkipNext(player);
 
+        // Chi thuc hien khi ko con track trong queue
         if (player.queue.tracks.length === 0) {
             if (player.shuffle !== 'shuffle') {
                 player.currentPlayingTrack.position--;
@@ -256,10 +261,13 @@ class AudioPlayerController {
             return res.status(403).send({ message: 'You should choose track to play' });
         }
 
-        if (player.queue.tracks.length >= 0 && player.queue.currentTrackWhenQueueActive !== null) {
+        // When current track in the queue => skip previous will return the currentTrackWhenQueueActive
+        if (player.queue.currentTrackWhenQueueActive !== null) {
             player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
             player.queue.currentTrackWhenQueueActive = null;
-        } else if (player.shuffle !== 'shuffle') {
+        }
+        // Default skip previous
+        else if (player.shuffle !== 'shuffle') {
             player.currentPlayingTrack.position++;
             if (player.currentPlayingTrack.position >= player.tracks.length) {
                 player.currentPlayingTrack.position--;
