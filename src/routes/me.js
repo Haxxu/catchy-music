@@ -45,28 +45,28 @@ router.put('/tracks', userAuth, meController.saveTrack);
 // [DELETE] /api/me/tracks => remove liked track from library
 router.delete('/tracks', userAuth, meController.removeLikedTrack);
 
-// [PUT] /api/me/audio-player/pause => pause track
-router.put('/audio-player/pause', userAuth, audioPlayerController.pause);
+// // [PUT] /api/me/audio-player/repeat => set repeat mode
+// router.put('/audio-player/repeat', userAuth, audioPlayerController.setRepeat);
+
+// // [PUT] /api/me/audio-player/shuffle => set shuffle mode
+// router.put('/audio-player/shuffle', userAuth, audioPlayerController.setShuffle);
+
+// // [PUT] /api/me/audio-player/volume =>  set volume
+// router.put('/audio-player/volume', userAuth, audioPlayerController.setVolume);
+
+// // [PUT] /api/me/audio-player/pause => pause track
+// router.put('/audio-player/pause', userAuth, audioPlayerController.pause);
 
 // [PUT] /api/me/audio-player/play => play(start/resume) track
 router.put('/audio-player/play', userAuth, audioPlayerController.play);
 
-// [PUT] /api/me/audio-player/repeat => set repeat mode
-router.put('/audio-player/repeat', userAuth, audioPlayerController.setRepeat);
-
-// [PUT] /api/me/audio-player/shuffle => set shuffle mode
-router.put('/audio-player/shuffle', userAuth, audioPlayerController.setShuffle);
-
 // [POST] /api/me/audio-player/next =>  skip to next
-router.post('/audio-player/next', userAuth, audioPlayerController.skipNext);
+router.post('/audio-player/next', userAuth, audioPlayerController.skipToNext);
 
 // [POST] /api/me/audio-player/previous =>  skip to previous
-router.post('/audio-player/previous', userAuth, audioPlayerController.skipPrevious);
+router.post('/audio-player/previous', userAuth, audioPlayerController.skipToPrevious);
 
-// [PUT] /api/me/audio-player/volume =>  set volume
-router.put('/audio-player/volume', userAuth, audioPlayerController.setVolume);
-
-// [POST] /api/me/audio-player/queue =>  add items to queue
-router.post('/audio-player/queue', userAuth, audioPlayerController.addItemsToQueue);
+// // [POST] /api/me/audio-player/queue =>  add items to queue
+// router.post('/audio-player/queue', userAuth, audioPlayerController.addItemsToQueue);
 
 module.exports = router;

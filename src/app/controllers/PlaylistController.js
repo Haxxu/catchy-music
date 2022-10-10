@@ -4,6 +4,7 @@ const { Playlist, validatePlaylist } = require('../models/Playlist');
 const { Track } = require('../models/Track');
 const { Album } = require('../models/Album');
 const { Library } = require('../models/Library');
+const { AudioPlayer } = require('../models/AudioPlayer');
 
 class PlaylistController {
     // get playlist public or playlist (user own)

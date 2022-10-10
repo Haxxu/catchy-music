@@ -305,7 +305,7 @@ class MeController {
             .map((item) => item.track + item.album)
             .indexOf(req.body.track + req.body.album);
         if (index === -1) {
-            library.likedTracks.push({
+            library.likedTracks.unshift({
                 track: req.body.track,
                 album: req.body.album,
                 addedAt: Date.now(),
