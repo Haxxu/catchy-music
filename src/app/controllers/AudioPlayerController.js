@@ -134,76 +134,49 @@ class AudioPlayerController {
         } else {
             const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
 
+            const skipNextWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
+                let index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
+                if (index !== -1) {
+                    let nextIndex = index + 1 < tracks.length ? index + 1 : 0;
+                    player.currentPlayingTrack.track = tracks[nextIndex].track;
+                    player.currentPlayingTrack.album = tracks[nextIndex].album;
+                    player.currentPlayingTrack.context_uri =
+                        contextType + ':' + contextId + ':' + tracks[nextIndex].track + ':' + tracks[nextIndex].album;
+                    player.position = nextIndex;
+                } else {
+                    player.currentPlayingTrack.track = '';
+                    player.currentPlayingTrack.album = '';
+                    player.currentPlayingTrack.context_uri = '';
+                    player.position = -1;
+                }
+            };
+
             if (player.shuffle === 'none') {
                 if (contextType === 'album') {
                     const album = await Album.findOne({ _id: contextId });
                     if (!album) {
                         return res.status(404).send({ message: 'Album not found' });
                     }
-                    let index = album.tracks.map((obj) => obj.track).indexOf(trackId);
-                    if (index !== -1) {
-                        let nextIndex = index + 1 < album.tracks.length ? index + 1 : 0;
-                        player.currentPlayingTrack.track = album.tracks[nextIndex].track;
-                        player.currentPlayingTrack.album = albumId;
-                        player.currentPlayingTrack.context_uri =
-                            contextType + ':' + contextId + ':' + album.tracks[nextIndex].track + ':' + album._id;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipNextWithShuffleOff(
+                        player,
+                        album.tracks.map((obj) => ({ track: obj.track, album: albumId })),
+                        contextType,
+                        contextId,
+                        trackId,
+                        albumId,
+                    );
                 } else if (contextType === 'playlist') {
                     const playlist = await Playlist.findOne({ _id: contextId });
                     if (!playlist) {
                         return res.status(404).send({ message: 'Playlist not found' });
                     }
-                    let index = playlist.tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
-                    if (index !== -1) {
-                        let nextIndex = index + 1 < playlist.tracks.length ? index + 1 : 0;
-                        player.currentPlayingTrack.track = playlist.tracks[nextIndex].track;
-                        player.currentPlayingTrack.album = playlist.tracks[nextIndex].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            playlist.tracks[nextIndex].track +
-                            ':' +
-                            playlist.tracks[nextIndex].album;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipNextWithShuffleOff(player, playlist.tracks, contextType, contextId, trackId, albumId);
                 } else if (contextType === 'liked') {
                     const library = await Library.findOne({ _id: contextId });
                     if (!library) {
                         return res.status(404).send({ message: 'Library not found' });
                     }
-                    let index = library.likedTracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
-                    if (index !== -1) {
-                        let nextIndex = index + 1 < library.likedTracks.length ? index + 1 : 0;
-                        player.currentPlayingTrack.track = library.likedTracks[nextIndex].track;
-                        player.currentPlayingTrack.album = library.likedTracks[nextIndex].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            library.likedTracks[nextIndex].track +
-                            ':' +
-                            library.likedTracks[nextIndex].album;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipNextWithShuffleOff(player, library.likedTracks, contextType, contextId, trackId, albumId);
                 }
             } else {
                 // Che do shuffle
@@ -237,6 +210,7 @@ class AudioPlayerController {
                         player.currentPlayingTrack.album = albumId;
                         player.currentPlayingTrack.context_uri =
                             contextType +
+                            ':' +
                             contextId +
                             ':' +
                             player.currentPlayingTrack.track +
@@ -285,6 +259,7 @@ class AudioPlayerController {
                         player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
                         player.currentPlayingTrack.context_uri =
                             contextType +
+                            ':' +
                             contextId +
                             ':' +
                             player.currentPlayingTrack.track +
@@ -333,6 +308,7 @@ class AudioPlayerController {
                         player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
                         player.currentPlayingTrack.context_uri =
                             contextType +
+                            ':' +
                             contextId +
                             ':' +
                             player.currentPlayingTrack.track +
