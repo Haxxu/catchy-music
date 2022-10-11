@@ -19,7 +19,7 @@ class AudioPlayerController {
 
         const playWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId, position) {
             let index;
-            if (position && tracks[position].track + tracks[position].album === trackId + albumId) {
+            if (position && tracks[position]?.track + tracks[position]?.album === trackId + albumId) {
                 index = position;
             } else {
                 index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
@@ -153,7 +153,7 @@ class AudioPlayerController {
 
             const skipNextWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
                 let index = player.currentPlayingTrack.position;
-                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                if (!tracks[index] || tracks[index]?.track + tracks[index]?.album !== trackId + albumId) {
                     index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
                 }
                 if (index !== -1) {
@@ -176,13 +176,13 @@ class AudioPlayerController {
                 index = player.currentPlayingTrack.position;
                 indexInShuffle = player.shufflePosition;
 
-                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                if (!tracks[index] || tracks[index]?.track + tracks[index]?.album !== trackId + albumId) {
                     index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
                 }
                 if (
-                    player.shuffleTracks[indexInShuffle].track + player.shuffleTracks[indexInShuffle].album !==
-                        trackId + albumId ||
-                    !player.shuffleTracks[indexInShuffle]
+                    !player.shuffleTracks[indexInShuffle] ||
+                    player.shuffleTracks[indexInShuffle]?.track + player.shuffleTracks[indexInShuffle]?.album !==
+                        trackId + albumId
                 ) {
                     indexInShuffle = player.shuffleTracks
                         .map((obj) => obj.track + obj.album)
@@ -190,14 +190,16 @@ class AudioPlayerController {
                 }
 
                 if (index !== -1 && indexInShuffle !== -1) {
-                    nextIndexInShuffle = indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
+                    let shuffleTracksLength = player.shuffleTracks.length;
+                    nextIndexInShuffle = indexInShuffle + 1 < shuffleTracksLength ? indexInShuffle + 1 : 0;
                     nextIndex = tracks
                         .map((obj) => obj.track + obj.album)
                         .indexOf(
                             player.shuffleTracks[nextIndexInShuffle].track +
                                 player.shuffleTracks[nextIndexInShuffle].album,
                         );
-                    if (nextIndex === -1) {
+                    let updatedTracksLength = tracks.length;
+                    if (nextIndex === -1 || updatedTracksLength !== shuffleTracksLength) {
                         tracks = tracks.map((obj, index) => ({ ...obj, position: index }));
                         const shuffleTracks = shuffleArray(tracks);
                         player.shuffleTracks = shuffleTracks.map((obj) => ({
@@ -209,7 +211,7 @@ class AudioPlayerController {
                         indexInShuffle = player.shuffleTracks
                             .map((obj) => obj.track + obj.album)
                             .indexOf(trackId + albumId);
-                        nextIndexInShuffle = indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
+                        nextIndexInShuffle = indexInShuffle + 1 < updatedTracksLength ? indexInShuffle + 1 : 0;
                     }
                     player.currentPlayingTrack.track = player.shuffleTracks[nextIndexInShuffle].track;
                     player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
@@ -221,7 +223,7 @@ class AudioPlayerController {
                         player.currentPlayingTrack.track +
                         ':' +
                         player.currentPlayingTrack.album;
-                    player.currentPlayingTrack.position = nextIndex;
+                    player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
                     player.shufflePosition = nextIndexInShuffle;
                 } else {
                     player.currentPlayingTrack.track = '';
@@ -308,7 +310,7 @@ class AudioPlayerController {
             const skipPreviousWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
                 // nextIndex here (skip previous) mean previous of tracks order (will play)
                 let index = player.currentPlayingTrack.position;
-                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                if (!tracks[index] || tracks[index]?.track + tracks[index]?.album !== trackId + albumId) {
                     index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
                 }
                 if (index !== -1) {
@@ -333,13 +335,13 @@ class AudioPlayerController {
                 index = player.currentPlayingTrack.position;
                 indexInShuffle = player.shufflePosition;
 
-                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                if (!tracks[index] || tracks[index]?.track + tracks[index]?.album !== trackId + albumId) {
                     index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
                 }
                 if (
-                    player.shuffleTracks[indexInShuffle].track + player.shuffleTracks[indexInShuffle].album !==
-                        trackId + albumId ||
-                    !player.shuffleTracks[indexInShuffle]
+                    !player.shuffleTracks[indexInShuffle] ||
+                    player.shuffleTracks[indexInShuffle]?.track + player.shuffleTracks[indexInShuffle]?.album !==
+                        trackId + albumId
                 ) {
                     indexInShuffle = player.shuffleTracks
                         .map((obj) => obj.track + obj.album)
@@ -354,7 +356,7 @@ class AudioPlayerController {
                             player.shuffleTracks[nextIndexInShuffle].track +
                                 player.shuffleTracks[nextIndexInShuffle].album,
                         );
-                    if (nextIndex === -1) {
+                    if (nextIndex === -1 || tracks.length !== player.shuffleTracks.length) {
                         tracks = tracks.map((obj, index) => ({ ...obj, position: index }));
                         const shuffleTracks = shuffleArray(tracks);
                         player.shuffleTracks = shuffleTracks.map((obj) => ({
@@ -378,7 +380,7 @@ class AudioPlayerController {
                         player.currentPlayingTrack.track +
                         ':' +
                         player.currentPlayingTrack.album;
-                    player.currentPlayingTrack.position = nextIndex;
+                    player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
                     player.shufflePosition = nextIndexInShuffle;
                 } else {
                     player.currentPlayingTrack.track = '';
