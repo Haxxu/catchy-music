@@ -9,7 +9,7 @@ class AudioPlayerController {
             return res.status(404).send({ message: 'AudioPlayer does not exist' });
         }
 
-        if (!req.body.context_uri) {
+        if (!req.body.context_uri && player.currentPlayingTrack.track !== '') {
             player.isPlaying = true;
             await player.save();
             return res.status(200).send({ message: 'Resume track succesffuly' });
@@ -140,6 +140,17 @@ class AudioPlayerController {
         await player.save();
         res.status(200).send({ message: 'Start track successfuly' });
     }
+    async pause(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player does not exist' });
+        }
+
+        player.isPlaying = false;
+        await player.save();
+
+        return res.status(200).send({ message: 'Pause track successfully' });
+    }
 
     async skipToNext(req, res, next) {
         const player = await AudioPlayer.findOne({ owner: req.user._id });
@@ -205,7 +216,7 @@ class AudioPlayerController {
                         player.shuffleTracks = shuffleTracks.map((obj) => ({
                             track: obj.track,
                             album: obj.album,
-                            context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + obj.album,
+                            context_uri: contextType + ':' + contextId + ':' + obj.track + ':' + obj.album,
                             position: obj.position,
                         }));
                         indexInShuffle = player.shuffleTracks
@@ -362,7 +373,7 @@ class AudioPlayerController {
                         player.shuffleTracks = shuffleTracks.map((obj) => ({
                             track: obj.track,
                             album: obj.album,
-                            context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + obj.album,
+                            context_uri: contextType + ':' + contextId + ':' + obj.track + ':' + obj.album,
                             position: obj.position,
                         }));
                         indexInShuffle = player.shuffleTracks
@@ -452,6 +463,106 @@ class AudioPlayerController {
 
         await player.save();
         res.status(200).send({ message: 'skip to previous' });
+    }
+
+    async setShuffle(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player not found' });
+        }
+
+        if (!req.query.type || req.query.type === 'none') {
+            player.shuffle = 'none';
+            player.shuffleTracks = [];
+            player.shufflePosition = -1;
+        } else if (req.query.type === 'shuffle') {
+            if (player.currentPlayingTrack.track !== '' && player.currentPlayingTrack.album !== '') {
+                const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
+                let tracks;
+
+                if (contextType === 'album') {
+                    const album = await Album.findOne({ _id: contextId });
+                    if (!album) {
+                        return res.status(404).send({ message: 'Album not found' });
+                    }
+                    tracks = album.tracks.map((obj, index) => ({
+                        track: obj.track,
+                        album: albumId,
+                        position: index,
+                        context_uri: contextType + ':' + contextId + ':' + obj.track + albumId,
+                    }));
+                } else if (contextType === 'playlist') {
+                    const playlist = await Playlist.findOne({ _id: contextId });
+                    if (!playlist) {
+                        return res.status(404).send({ message: 'Playlist not found' });
+                    }
+                    tracks = playlist.tracks.map((obj, index) => ({
+                        track: obj.track,
+                        album: obj.album,
+                        position: index,
+                        context_uri: contextType + ':' + contextId + ':' + obj.track + obj.album,
+                    }));
+                } else if (contextType === 'liked') {
+                    const library = await Library.findOne({ _id: contextId });
+                    if (!library) {
+                        return res.status(404).send({ message: 'Library not found' });
+                    }
+                    tracks = library.likedTracks.map((obj, index) => ({
+                        track: obj.track,
+                        album: obj.album,
+                        position: index,
+                        context_uri: contextType + ':' + contextId + ':' + obj.track + obj.album,
+                    }));
+                }
+                player.shuffle = 'shuffle';
+                player.shuffleTracks = shuffleArray(tracks);
+                player.shufflePosition = player.shuffleTracks
+                    .map((obj) => obj.track + obj.album)
+                    .indexOf(trackId + albumId);
+            }
+        }
+
+        await player.save();
+
+        return res.status(200).send({ message: 'Set shuffle mode successfully' });
+    }
+
+    async setRepeat(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player does not exist' });
+        }
+        if (!req.query.type || req.query.type === 'none') {
+            player.repeat = 'none';
+        } else if (req.query.type === 'repeat') {
+            player.repeat = 'repeat';
+        } else if (req.query.type === 'repeat-one') {
+            player.repeat = 'repeat-one';
+        } else {
+            player.repeat = 'none';
+        }
+        await player.save();
+
+        res.status(200).send({ message: 'Set repeat mode successfully' });
+    }
+
+    async setVolume(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'Audio Player does not exist' });
+        }
+
+        if (req.query.volume_percent) {
+            player.volume = req.query.volume_percent;
+            if (player.volume < 0) {
+                player.volume = 0;
+            } else if (player.volume > 100) {
+                player.volume = 100;
+            }
+            await player.save();
+        }
+
+        return res.status(200).send({ message: 'Set volume to ' + player.volume });
     }
 }
 
