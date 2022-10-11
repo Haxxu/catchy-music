@@ -17,6 +17,16 @@ class AudioPlayerController {
 
         const [contextType, contextId, trackId, albumId] = req.body.context_uri.split(':');
 
+        const playWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
+            let index = tracks.map((obj) => obj.track).indexOf(trackId);
+            if (index !== -1) {
+                player.currentPlayingTrack.track = tracks[index].track;
+                player.currentPlayingTrack.album = tracks[index].album;
+                player.currentPlayingTrack.position = index;
+                player.currentPlayingTrack.context_uri = req.body.context_uri;
+            }
+        };
+
         if (player.shuffle === 'none') {
             if (contextType === 'album') {
                 const album = await Album.findOne({ _id: contextId });
@@ -135,19 +145,84 @@ class AudioPlayerController {
             const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
 
             const skipNextWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
-                let index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
+                let index = player.currentPlayingTrack.position;
+                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                    index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
+                }
                 if (index !== -1) {
                     let nextIndex = index + 1 < tracks.length ? index + 1 : 0;
                     player.currentPlayingTrack.track = tracks[nextIndex].track;
                     player.currentPlayingTrack.album = tracks[nextIndex].album;
                     player.currentPlayingTrack.context_uri =
                         contextType + ':' + contextId + ':' + tracks[nextIndex].track + ':' + tracks[nextIndex].album;
-                    player.position = nextIndex;
+                    player.currentPlayingTrack.position = nextIndex;
                 } else {
                     player.currentPlayingTrack.track = '';
                     player.currentPlayingTrack.album = '';
                     player.currentPlayingTrack.context_uri = '';
-                    player.position = -1;
+                    player.currentPlayingTrack.position = -1;
+                }
+            };
+
+            const skipNextWithShuffleOn = function (player, tracks, contextType, contextId, trackId, albumId) {
+                let index, indexInShuffle, nextIndex, nextIndexInShuffle;
+                index = player.currentPlayingTrack.position;
+                indexInShuffle = player.shufflePosition;
+
+                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                    index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
+                }
+                if (
+                    player.shuffleTracks[indexInShuffle].track + player.shuffleTracks[indexInShuffle].album !==
+                        trackId + albumId ||
+                    !player.shuffleTracks[indexInShuffle]
+                ) {
+                    indexInShuffle = player.shuffleTracks
+                        .map((obj) => obj.track + obj.album)
+                        .indexOf(trackId + albumId);
+                }
+
+                if (index !== -1 && indexInShuffle !== -1) {
+                    nextIndexInShuffle = indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
+                    nextIndex = tracks
+                        .map((obj) => obj.track + obj.album)
+                        .indexOf(
+                            player.shuffleTracks[nextIndexInShuffle].track +
+                                player.shuffleTracks[nextIndexInShuffle].album,
+                        );
+                    if (nextIndex === -1) {
+                        tracks = tracks.map((obj, index) => ({ ...obj, position: index }));
+                        const shuffleTracks = shuffleArray(tracks);
+                        player.shuffleTracks = shuffleTracks.map((obj, index) => ({
+                            track: obj.track,
+                            album: obj.album,
+                            context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + obj.album,
+                            position: obj.position,
+                        }));
+                        indexInShuffle = player.shuffleTracks
+                            .map((obj) => obj.track + obj.album)
+                            .indexOf(trackId + albumId);
+                        nextIndexInShuffle = indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
+                    }
+                    player.currentPlayingTrack.track = player.shuffleTracks[nextIndexInShuffle].track;
+                    player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
+                    player.currentPlayingTrack.context_uri =
+                        contextType +
+                        ':' +
+                        contextId +
+                        ':' +
+                        player.currentPlayingTrack.track +
+                        ':' +
+                        player.currentPlayingTrack.album;
+                    player.currentPlayingTrack.position = nextIndex;
+                    player.shufflePosition = nextIndexInShuffle;
+                } else {
+                    player.currentPlayingTrack.track = '';
+                    player.currentPlayingTrack.album = '';
+                    player.currentPlayingTrack.context_uri = '';
+                    player.currentPlayingTrack.position = -1;
+                    player.shuffleTracks = [];
+                    player.shufflePosition = -1;
                 }
             };
 
@@ -185,143 +260,26 @@ class AudioPlayerController {
                     if (!album) {
                         return res.status(404).send({ message: 'Album not found' });
                     }
-                    let index = album.tracks.map((obj) => obj.track).indexOf(trackId);
-                    let indexInShuffle = player.shuffleTracks.map((obj) => obj.track).indexOf(trackId);
-
-                    if (index !== -1 && indexInShuffle !== -1) {
-                        let nextIndexInShuffle =
-                            indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        let nextIndex = album.tracks
-                            .map((obj) => obj.track)
-                            .indexOf(player.shuffleTracks[nextIndexInShuffle].track);
-                        if (nextIndex === -1) {
-                            const shuffleTracks = shuffleArray(album.tracks);
-                            player.shuffleTracks = shuffleTracks.map((obj, index) => ({
-                                track: obj.track,
-                                album: albumId,
-                                context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + albumId,
-                                position: index,
-                            }));
-                            indexInShuffle = player.shuffleTracks.map((obj) => obj.track).indexOf(trackId);
-                            nextIndexInShuffle =
-                                indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        }
-                        player.currentPlayingTrack.track = player.shuffleTracks[nextIndexInShuffle].track;
-                        player.currentPlayingTrack.album = albumId;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            player.currentPlayingTrack.track +
-                            ':' +
-                            player.currentPlayingTrack.album;
-                        player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                        player.shuffleTracks = [];
-                    }
+                    skipNextWithShuffleOn(
+                        player,
+                        album.tracks.map((obj) => ({ track: obj.track, album: albumId })),
+                        contextType,
+                        contextId,
+                        trackId,
+                        albumId,
+                    );
                 } else if (contextType === 'playlist') {
                     const playlist = await Playlist.findOne({ _id: contextId });
                     if (!playlist) {
                         return res.status(404).send({ message: 'Playlist not found' });
                     }
-                    let index = playlist.tracks.map((obj) => obj.track + obj.album).indexOf(trackId);
-                    let indexInShuffle = player.shuffleTracks.map((obj) => obj.track + obj.album).indexOf(trackId);
-
-                    if (index !== -1 && indexInShuffle !== -1) {
-                        let nextIndexInShuffle =
-                            indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        let nextIndex = playlist.tracks
-                            .map((obj) => obj.track + obj.album)
-                            .indexOf(
-                                player.shuffleTracks[nextIndexInShuffle].track +
-                                    player.shuffleTracks[nextIndexInShuffle].album,
-                            );
-                        if (nextIndex === -1) {
-                            const shuffleTracks = shuffleArray(playlist.tracks);
-                            player.shuffleTracks = shuffleTracks.map((obj, index) => ({
-                                track: obj.track,
-                                album: obj.album,
-                                context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + obj.album,
-                                position: index,
-                            }));
-                            indexInShuffle = player.shuffleTracks
-                                .map((obj) => obj.track + obj.album)
-                                .indexOf(trackId + albumId);
-                            nextIndexInShuffle =
-                                indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        }
-                        player.currentPlayingTrack.track = player.shuffleTracks[nextIndexInShuffle].track;
-                        player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            player.currentPlayingTrack.track +
-                            ':' +
-                            player.currentPlayingTrack.album;
-                        player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                        player.shuffleTracks = [];
-                    }
+                    skipNextWithShuffleOn(player, playlist.tracks, contextType, contextId, trackId, albumId);
                 } else if (contextType === 'liked') {
                     const library = await Library.findOne({ _id: contextId });
                     if (!library) {
                         return res.status(404).send({ message: 'Library not found' });
                     }
-                    let index = library.likedTracks.map((obj) => obj.track + obj.album).indexOf(trackId);
-                    let indexInShuffle = player.shuffleTracks.map((obj) => obj.track + obj.album).indexOf(trackId);
-
-                    if (index !== -1 && indexInShuffle !== -1) {
-                        let nextIndexInShuffle =
-                            indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        let nextIndex = library.likedTracks
-                            .map((obj) => obj.track + obj.album)
-                            .indexOf(
-                                player.shuffleTracks[nextIndexInShuffle].track +
-                                    player.shuffleTracks[nextIndexInShuffle].album,
-                            );
-                        if (nextIndex === -1) {
-                            const shuffleTracks = shuffleArray(library.likedTracks);
-                            player.shuffleTracks = shuffleTracks.map((obj, index) => ({
-                                track: obj.track,
-                                album: obj.album,
-                                context_uri: contextType + ':' + contextType + ':' + obj.track + ':' + obj.album,
-                                position: index,
-                            }));
-                            indexInShuffle = player.shuffleTracks
-                                .map((obj) => obj.track + obj.album)
-                                .indexOf(trackId + albumId);
-                            nextIndexInShuffle =
-                                indexInShuffle + 1 < player.shuffleTracks.length ? indexInShuffle + 1 : 0;
-                        }
-                        player.currentPlayingTrack.track = player.shuffleTracks[nextIndexInShuffle].track;
-                        player.currentPlayingTrack.album = player.shuffleTracks[nextIndexInShuffle].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            player.currentPlayingTrack.track +
-                            ':' +
-                            player.currentPlayingTrack.album;
-                        player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                        player.shuffleTracks = [];
-                    }
+                    skipNextWithShuffleOn(player, library.likedTracks, contextType, contextId, trackId, albumId);
                 }
             }
         }
@@ -340,76 +298,52 @@ class AudioPlayerController {
         } else {
             const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
 
+            const skipPreviousWithShuffleOff = function (player, tracks, contextType, contextId, trackId, albumId) {
+                let index = player.currentPlayingTrack.position;
+                if (tracks[index].track + tracks[index].album !== trackId + albumId || !tracks[index]) {
+                    index = tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
+                }
+                if (index !== -1) {
+                    let nextIndex = index - 1 >= 0 ? index - 1 : 0;
+                    player.currentPlayingTrack.track = tracks[nextIndex].track;
+                    player.currentPlayingTrack.album = tracks[nextIndex].album;
+                    player.currentPlayingTrack.context_uri =
+                        contextType + ':' + contextId + ':' + tracks[nextIndex].track + ':' + tracks[nextIndex].album;
+                    player.currentPlayingTrack.position = nextIndex;
+                } else {
+                    player.currentPlayingTrack.track = '';
+                    player.currentPlayingTrack.album = '';
+                    player.currentPlayingTrack.context_uri = '';
+                    player.currentPlayingTrack.position = -1;
+                }
+            };
+
             if (player.shuffle === 'none') {
                 if (contextType === 'album') {
                     const album = await Album.findOne({ _id: contextId });
                     if (!album) {
                         return res.status(404).send({ message: 'Album not found' });
                     }
-                    let index = album.tracks.map((obj) => obj.track).indexOf(trackId);
-                    if (index !== -1) {
-                        let nextIndex = index - 1 >= 0 ? index - 1 : 0;
-                        player.currentPlayingTrack.track = album.tracks[nextIndex].track;
-                        player.currentPlayingTrack.album = album._id;
-                        player.currentPlayingTrack.context_uri =
-                            contextType + ':' + contextId + ':' + album.tracks[nextIndex].track + ':' + album._id;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipPreviousWithShuffleOff(
+                        player,
+                        album.tracks.map((obj) => ({ track: obj.track, album: albumId })),
+                        contextType,
+                        contextId,
+                        trackId,
+                        albumId,
+                    );
                 } else if (contextType === 'playlist') {
                     const playlist = await Playlist.findOne({ _id: contextId });
                     if (!playlist) {
                         return res.status(404).send({ message: 'Playlist not found' });
                     }
-                    let index = playlist.tracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
-                    if (index !== -1) {
-                        let nextIndex = index - 1 >= 0 ? index - 1 : 0;
-                        player.currentPlayingTrack.track = playlist.tracks[nextIndex].track;
-                        player.currentPlayingTrack.album = playlist.tracks[nextIndex].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            playlist.tracks[nextIndex].track +
-                            ':' +
-                            playlist.tracks[nextIndex].album;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipPreviousWithShuffleOff(player, playlist.tracks, contextType, contextId, trackId, albumId);
                 } else if (contextType === 'liked') {
                     const library = await Library.findOne({ _id: contextId });
                     if (!library) {
                         return res.status(404).send({ message: 'Library not found' });
                     }
-                    let index = library.likedTracks.map((obj) => obj.track + obj.album).indexOf(trackId + albumId);
-                    if (index !== -1) {
-                        let nextIndex = index - 1 >= 0 ? index - 1 : 0;
-                        player.currentPlayingTrack.track = library.likedTracks[nextIndex].track;
-                        player.currentPlayingTrack.album = library.likedTracks[nextIndex].album;
-                        player.currentPlayingTrack.context_uri =
-                            contextType +
-                            ':' +
-                            contextId +
-                            ':' +
-                            library.likedTracks[nextIndex].track +
-                            ':' +
-                            library.likedTracks[nextIndex].album;
-                        player.position = nextIndex;
-                    } else {
-                        player.currentPlayingTrack.track = '';
-                        player.currentPlayingTrack.album = '';
-                        player.currentPlayingTrack.context_uri = '';
-                        player.position = -1;
-                    }
+                    skipPreviousWithShuffleOff(player, library.likedTracks, contextType, contextId, trackId, albumId);
                 }
             } else {
                 // Che do shuffle

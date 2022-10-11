@@ -106,6 +106,7 @@ const audioPlayerSchema = new mongoose.Schema(
             type: String,
             default: 'none',
         },
+        shufflePosition: { type: Number, default: -1 },
         volume: {
             type: Number,
             default: 50,
