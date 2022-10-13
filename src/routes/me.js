@@ -66,7 +66,10 @@ router.post('/audio-player/next', userAuth, audioPlayerController.skipToNext);
 // [POST] /api/me/audio-player/previous =>  skip to previous
 router.post('/audio-player/previous', userAuth, audioPlayerController.skipToPrevious);
 
-// // [POST] /api/me/audio-player/queue =>  add items to queue
-// router.post('/audio-player/queue', userAuth, audioPlayerController.addItemsToQueue);
+// [POST] /api/me/audio-player/queue =>  add items to queue
+router.post('/audio-player/queue', userAuth, audioPlayerController.addItemsToQueue);
+
+// [DELETE] /api/me/audio-player/queue =>  remove items to queue
+router.delete('/audio-player/queue', userAuth, audioPlayerController.removeItemsFromQueue);
 
 module.exports = router;

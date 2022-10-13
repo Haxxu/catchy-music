@@ -2,6 +2,7 @@ const { Album } = require('../models/Album');
 const { AudioPlayer } = require('../models/AudioPlayer');
 const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
+const { Track } = require('../models/Track');
 class AudioPlayerController {
     async play(req, res, next) {
         const player = await AudioPlayer.findOne({ owner: req.user._id });
@@ -157,6 +158,28 @@ class AudioPlayerController {
         if (!player) {
             return res.status(404).send({ message: 'Audio player not found' });
         }
+
+        // Co track trong queue
+        if (player.queue.tracks[0]) {
+            if (player.queue.currentTrackWhenQueueActive === null) {
+                player.queue.currentTrackWhenQueueActive = { ...player.currentPlayingTrack };
+            }
+
+            const track = player.queue.tracks.shift();
+            player.currentPlayingTrack = {
+                track: track.track,
+                album: track.album,
+                context_uri: track.context_uri,
+                position: track.position,
+            };
+
+            await player.save();
+            return res.status(200).send({ message: 'skip to next' });
+        } else if (!player.queue.tracks[0] && player.queue.currentTrackWhenQueueActive !== null) {
+            player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
+            player.queue.currentTrackWhenQueueActive = null;
+        }
+
         if (player.currentPlayingTrack.position === -1 || player.currentPlayingTrack.track === '') {
             // doi sang track ngau nhien
         } else {
@@ -313,7 +336,16 @@ class AudioPlayerController {
         if (!player) {
             return res.status(404).send({ message: 'Audio player not found' });
         }
-        if (player.currentPlayingTrack.position === -1) {
+
+        if (player.queue.currentTrackWhenQueueActive !== null) {
+            player.currentPlayingTrack = { ...player.queue.currentTrackWhenQueueActive };
+            player.queue.currentTrackWhenQueueActive = null;
+
+            await player.save();
+            return res.status(200).send({ message: 'skip to previous' });
+        }
+
+        if (player.currentPlayingTrack.position === -1 || player.currentPlayingTrack.track === '') {
             // doi sang track ngau nhien
         } else {
             const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
@@ -563,6 +595,58 @@ class AudioPlayerController {
         }
 
         return res.status(200).send({ message: 'Set volume to ' + player.volume });
+    }
+
+    async addItemsToQueue(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'AudioPlayer not found' });
+        }
+        let items = req.body.items;
+        items.forEach(async (item) => {
+            const [contextType, contextId, trackId, albumId] = item.context_uri.split(':');
+            if (!player.queue.tracks[0]) {
+                player.queue.tracks.push({
+                    track: trackId,
+                    album: albumId,
+                    context_uri: item.context_uri,
+                    position: item.position,
+                    addedAt: Date.now(),
+                    order: 0,
+                });
+            } else {
+                player.queue.tracks.push({
+                    track: trackId,
+                    album: albumId,
+                    context_uri: item.context_uri,
+                    position: item.position,
+                    addedAt: Date.now(),
+                    order: player.queue.tracks[player.queue.tracks.length - 1].order + 1,
+                });
+            }
+        });
+
+        await player.save();
+        res.status(200).send({ message: 'Add track to queue' });
+    }
+
+    async removeItemsFromQueue(req, res, next) {
+        const player = await AudioPlayer.findOne({ owner: req.user._id });
+        if (!player) {
+            return res.status(404).send({ message: 'AudioPlayer not found' });
+        }
+        let items = req.body.items;
+        // Hang doi co track
+        if (player.queue.tracks[0]) {
+            items.forEach((item) => {
+                let index = player.queue.tracks
+                    .map((obj) => obj.context_uri + obj.order)
+                    .indexOf(item.context_uri + item.order);
+                player.queue.tracks.splice(index, 1);
+            });
+        }
+        await player.save();
+        res.status(200).send({ message: 'Remove track from queue' });
     }
 }
 
