@@ -19,21 +19,19 @@ class MeController {
             return res.status(404).send({ message: 'Library not found' });
         }
 
-        const tracks = await Track.find({ $in: library.likedTracks.map((obj) => obj.track) }).lean();
-        const albums = await Track.find({ $in: library.likedTracks.map((obj) => obj.album) }).lean();
-
-        const likedTracks = library.likedTracks.map((obj, index) => {
-            const trackIndex = tracks.map((obj) => obj._id.toString()).indexOf(obj.track);
-            const albumIndex = albums.map((obj) => obj._id.toString()).indexOf(obj.track);
-
+        async function getLikedTrack(item, index) {
+            const track = await Track.findOne({ _id: item.track });
+            const album = await Album.findOne({ _id: item.album });
             return {
-                track: tracks[trackIndex],
-                album: albums[albumIndex],
-                addedAt: obj.addedAt,
-                context_uri: 'liked' + ':' + library._id.toString() + ':' + obj.track + ':' + obj.album,
+                track: track,
+                album: album,
+                addedAt: item.addedAt,
+                context_uri: 'liked' + ':' + library._id.toString() + ':' + item.track + ':' + item.album,
                 position: index,
             };
-        });
+        }
+
+        const likedTracks = await Promise.all(library.likedTracks.map(getLikedTrack));
 
         res.status(200).send({ data: likedTracks, message: 'Get liked tracks successfully' });
     }
@@ -275,35 +273,6 @@ class MeController {
 
         res.status(200).send({ message: 'Removed from library' });
     }
-
-    // async getLikedTracks(req, res, next) {
-    //     const library = await Library.findOne({ owner: req.user._id });
-
-    //     const likedTracks = [...library.likedTracks];
-    //     // Sort newest addedAt first
-    //     likedTracks.sort((a, b) => {
-    //         return new Date(b.addedAt) - new Date(a.addedAt);
-    //     });
-    //     // Get liked Track ( array of likedTrack obj)
-    //     const t = await Track.find({ _id: { $in: likedTracks.map((item) => item.track) } });
-    //     // array of rtack id
-    //     const tClean = t.map((item) => item._id.toString());
-    //     // get album
-    //     const a = await Album.find({ _id: { $in: likedTracks.map((item) => item.album) } });
-    //     // array of album id
-    //     const aClean = a.map((item) => item._id.toString());
-
-    //     // Add album detail to savedAlbums
-    //     const detailLikedTracks = likedTracks.map((obj) => {
-    //         return {
-    //             track: t[tClean.indexOf(obj.track)],
-    //             album: a[aClean.indexOf(obj.album)],
-    //             addedAt: obj.addedAt,
-    //         };
-    //     });
-
-    //     await res.status(200).send({ data: detailLikedTracks, message: 'Get saved playlist successfully' });
-    // }
 
     // Save track to user library
     async saveTrack(req, res, next) {
