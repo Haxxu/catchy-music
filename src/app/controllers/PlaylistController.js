@@ -9,16 +9,33 @@ const { AudioPlayer } = require('../models/AudioPlayer');
 class PlaylistController {
     // get playlist public or playlist (user own)
     async getPlaylistById(req, res, next) {
-        const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
+        const playlist = await Playlist.findOne({ _id: req.params.id })
+            .populate({ path: 'owner', select: '_id name' })
+            .select('-__v');
         if (!playlist) {
             return res.status(404).send({ message: 'Playlist does not exist' });
         }
 
-        if (playlist.isPublic || req.user._id === playlist.owner.toString()) {
-            res.status(200).send({ data: playlist, message: 'Get playlist successfully' });
-        }
+        if (playlist.isPublic || req.user._id === playlist.owner._id.toString()) {
+            const detailTracks = [];
 
-        res.status(403).send({ message: 'Playlist does not public' });
+            for (let track of playlist.tracks) {
+                const t = await Track.findOne({ _id: track.track });
+                const a = await Album.findOne({ _id: track.album });
+                detailTracks.push({
+                    ...track.toObject(),
+                    track: t,
+                    album: a,
+                });
+            }
+
+            res.status(200).send({
+                data: { ...playlist.toObject(), tracks: detailTracks },
+                message: 'Get playlist successfully',
+            });
+        } else {
+            res.status(403).send({ message: 'Playlist does not public' });
+        }
     }
 
     async createPlaylist(req, res, next) {
@@ -199,6 +216,41 @@ class PlaylistController {
         await playlist.save();
 
         res.status(200).send({ data: playlist, message: 'Removed from playlist' });
+    }
+
+    // Get user playlists by user id
+    async getUserPlaylists(req, res, next) {
+        let playlists;
+        if (req.user._id === req.params.id) {
+            playlists = await Playlist.find({ owner: req.params.id }).populate({ path: 'owner', select: '_id name' });
+        } else {
+            playlists = await Playlist.find({ owner: req.params.id, isPublic: true }).populate({
+                path: 'owner',
+                select: '_id name',
+            });
+        }
+
+        const detailPlaylists = [];
+        for (let playlist of playlists) {
+            const tracks = playlist.tracks;
+
+            const detailTracks = [];
+            for (let track of tracks) {
+                const t = await Track.findOne({ _id: track.track });
+                const a = await Album.findOne({ _id: track.album });
+                detailTracks.push({
+                    ...track.toObject(),
+                    track: t,
+                    album: a,
+                });
+            }
+            detailPlaylists.push({
+                ...playlist.toObject(),
+                tracks: detailTracks,
+            });
+        }
+
+        res.status(200).send({ data: detailPlaylists, message: 'Get user playlists' });
     }
 }
 

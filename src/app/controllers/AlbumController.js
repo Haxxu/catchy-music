@@ -8,15 +8,29 @@ const { Track } = require('../models/Track');
 class AlbumController {
     // get album by id (get released album or album artist own)
     async getAlbumById(req, res, next) {
-        const album = await Album.findById(req.params.id);
+        const album = await Album.findById(req.params.id).populate({ path: 'owner', select: '_id name' }).lean();
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
 
-        if (album.isReleased || album.owner.toString() === req.user._id)
-            res.status(200).send({ data: album, message: 'Get album successfully' });
+        if (album.isReleased || album.owner.toString() === req.user._id) {
+            const detailTracks = [];
 
-        res.status(403).send({ message: 'Album does not release' });
+            for (let track of album.tracks) {
+                const t = await Track.findOne({ _id: track.track });
+                detailTracks.push({
+                    ...track,
+                    track: t,
+                });
+            }
+
+            res.status(200).send({
+                data: { ...album, tracks: detailTracks },
+                message: 'Get album successfully',
+            });
+        } else {
+            res.status(403).send({ message: 'Album does not release' });
+        }
     }
 
     // create new album
@@ -29,7 +43,8 @@ class AlbumController {
 
         const tracks = [...req.body.tracks];
         var mes = '';
-        tracks.forEach(async (obj) => {
+
+        for (let obj of tracks) {
             const isExist = await Track.findOne({ _id: obj.track, owner: req.user._id });
             if (!isExist) {
                 const index = req.body.tracks.map((i) => i.track).indexOf(obj.track);
@@ -38,7 +53,7 @@ class AlbumController {
                 }
                 mes = mes + obj.track + ', ';
             }
-        });
+        }
 
         const album = await new Album({
             ...req.body,
@@ -74,7 +89,8 @@ class AlbumController {
 
         var tracks = [...req.body.tracks];
         var mes = '';
-        tracks.forEach(async (obj) => {
+
+        for (let obj of tracks) {
             const isExist = await Track.findOne({ _id: obj.track, owner: req.user._id });
             if (!isExist) {
                 const index = req.body.tracks.map((i) => i.track).indexOf(obj.track);
@@ -83,7 +99,7 @@ class AlbumController {
                 }
                 mes = mes + obj.track + ', ';
             }
-        });
+        }
 
         if (req.body.isReleased && !album.isReleased) {
             req.body.releaseDate = Date.now();
@@ -222,6 +238,38 @@ class AlbumController {
         await album.save();
 
         res.status(200).send({ data: album, message: 'Removed from album' });
+    }
+
+    async getUserAlbums(req, res, next) {
+        let albums;
+        if (req.user._id === req.params.id) {
+            albums = await Album.find({ owner: req.params.id }).populate({ path: 'owner', select: '_id name' });
+        } else {
+            albums = await Album.find({ owner: req.params.id, isReleased: true }).populate({
+                path: 'owner',
+                select: '_id name',
+            });
+        }
+
+        const detailAlbums = [];
+        for (let album of albums) {
+            const tracks = album.tracks;
+
+            const detailTracks = [];
+            for (let track of tracks) {
+                const t = await Track.findOne({ _id: track.track });
+                detailTracks.push({
+                    ...track.toObject(),
+                    track: t,
+                });
+            }
+            detailAlbums.push({
+                ...album.toObject(),
+                tracks: detailTracks,
+            });
+        }
+
+        res.status(200).send({ data: detailAlbums, message: 'Get user albums' });
     }
 }
 

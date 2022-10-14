@@ -179,29 +179,6 @@ class UserController {
 
         res.status(200).send({ message: 'Unverify artist successfullly' });
     }
-
-    // Get user playlists
-    async getUserPlaylists(req, res, next) {
-        let playlists;
-        if (req.user._id === req.params.id) {
-            playlists = await Playlist.find({ owner: req.params.id });
-        } else {
-            playlists = await Playlist.find({ owner: req.params.id, isPublic: true });
-        }
-
-        res.status(200).send({ data: playlists, message: 'Get user playlists' });
-    }
-
-    async getUserAlbums(req, res, next) {
-        let albums;
-        if (req.user._id === req.params.id) {
-            albums = await Album.find({ owner: req.params.id });
-        } else {
-            albums = await Album.find({ owner: req.params.id, isReleased: true });
-        }
-
-        res.status(200).send({ data: albums, message: 'Get user albums' });
-    }
 }
 
 module.exports = new UserController();

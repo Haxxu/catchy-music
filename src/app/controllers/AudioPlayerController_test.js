@@ -417,17 +417,17 @@ class AudioPlayerController {
             return res.status(404).send({ message: 'Audio Player does not exist' });
         }
 
-        items.forEach(async (item) => {
+        for (let item of items) {
             const track = await Track.findOne({ _id: item.track });
             if (!track) {
-                return;
+                continue;
             }
             const album = await Album.findOne({ _id: item.album });
             if (!album) {
-                return;
+                continue;
             }
             if (album.tracks.map((obj) => obj.track).indexOf(item.track) === -1) {
-                return;
+                continue;
             }
             if (player.queue.tracks.length === 0) {
                 player.queue.tracks.push({
@@ -444,9 +444,9 @@ class AudioPlayerController {
                     order: player.queue.tracks[player.queue.tracks.length - 1].order + 1,
                 });
             }
+        }
 
-            await player.save();
-        });
+        await player.save();
 
         res.status(200).send({ message: 'Add items to queue successfully' });
     }

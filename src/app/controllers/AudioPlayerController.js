@@ -603,7 +603,8 @@ class AudioPlayerController {
             return res.status(404).send({ message: 'AudioPlayer not found' });
         }
         let items = req.body.items;
-        items.forEach(async (item) => {
+
+        for (let item of items) {
             const [contextType, contextId, trackId, albumId] = item.context_uri.split(':');
             if (!player.queue.tracks[0]) {
                 player.queue.tracks.push({
@@ -624,7 +625,7 @@ class AudioPlayerController {
                     order: player.queue.tracks[player.queue.tracks.length - 1].order + 1,
                 });
             }
-        });
+        }
 
         await player.save();
         res.status(200).send({ message: 'Add track to queue' });

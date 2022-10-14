@@ -1,6 +1,8 @@
 const router = require('express').Router();
 
 const userController = require('../app/controllers/UserController');
+const playlistController = require('../app/controllers/PlaylistController');
+const albumController = require('../app/controllers/AlbumController');
 const userAuth = require('../app/middlewares/userAuth');
 const adminAuth = require('../app/middlewares/adminAuth');
 const validateObjectId = require('../app/middlewares/validateObjectId');
@@ -30,10 +32,10 @@ router.get('/q', adminAuth, userController.getUsersByContext);
 router.get('/:id', [userAuth, validateObjectId], userController.getUser);
 
 // [GET] /api/users/:id/playlists => get user playlist by user_id
-router.get('/:id/playlists', [userAuth, validateObjectId], userController.getUserPlaylists);
+router.get('/:id/playlists', [userAuth, validateObjectId], playlistController.getUserPlaylists);
 
 // [GET] /api/users/:id/albums => get user albums by user_id
-router.get('/:id/albums', [userAuth, validateObjectId], userController.getUserAlbums);
+router.get('/:id/albums', [userAuth, validateObjectId], albumController.getUserAlbums);
 
 // [PUT] /api/users/:id => update user by id
 router.put('/:id', [userAuth, validateObjectId], userController.updateUser);
