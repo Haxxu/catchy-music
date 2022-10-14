@@ -18,6 +18,7 @@ class PlaylistController {
 
         if (playlist.isPublic || req.user._id === playlist.owner._id.toString()) {
             const detailTracks = [];
+            let position = 0;
 
             for (let track of playlist.tracks) {
                 const t = await Track.findOne({ _id: track.track });
@@ -26,7 +27,10 @@ class PlaylistController {
                     ...track.toObject(),
                     track: t,
                     album: a,
+                    context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
+                    position: position,
                 });
+                position++;
             }
 
             res.status(200).send({
@@ -235,6 +239,7 @@ class PlaylistController {
             const tracks = playlist.tracks;
 
             const detailTracks = [];
+            let position = 0;
             for (let track of tracks) {
                 const t = await Track.findOne({ _id: track.track });
                 const a = await Album.findOne({ _id: track.album });
@@ -242,7 +247,10 @@ class PlaylistController {
                     ...track.toObject(),
                     track: t,
                     album: a,
+                    context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
+                    position: position,
                 });
+                position++;
             }
             detailPlaylists.push({
                 ...playlist.toObject(),

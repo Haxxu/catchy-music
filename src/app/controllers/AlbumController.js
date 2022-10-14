@@ -15,13 +15,16 @@ class AlbumController {
 
         if (album.isReleased || album.owner.toString() === req.user._id) {
             const detailTracks = [];
-
+            let position = 0;
             for (let track of album.tracks) {
                 const t = await Track.findOne({ _id: track.track });
                 detailTracks.push({
                     ...track,
                     track: t,
+                    context_uri: 'album' + ':' + album._id + ':' + t._id + ':' + album._id,
+                    position: position,
                 });
+                position++;
             }
 
             res.status(200).send({
@@ -256,12 +259,16 @@ class AlbumController {
             const tracks = album.tracks;
 
             const detailTracks = [];
+            let position = 0;
             for (let track of tracks) {
                 const t = await Track.findOne({ _id: track.track });
                 detailTracks.push({
                     ...track.toObject(),
                     track: t,
+                    context_uri: 'album' + ':' + album._id + ':' + t._id + ':' + album._id,
+                    position: position,
                 });
+                position++;
             }
             detailAlbums.push({
                 ...album.toObject(),

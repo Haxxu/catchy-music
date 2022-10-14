@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
         nation: { type: String, default: '' },
         image: { type: String, default: '' },
         type: { type: String, required: true, default: 'user' },
+        genres: [{ type: String }],
     },
     { timestamps: true },
 );
