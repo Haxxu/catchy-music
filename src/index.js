@@ -26,6 +26,9 @@ async function test() {
     // console.log(follow);
     // const albums = await Album.find().populate('tracks');
     // console.log(albums);
+    for (let i = 0; i < 10; ++i) {
+        console.log(i);
+    }
 
     console.log('\n\n\n-------------------------------------------');
 }
