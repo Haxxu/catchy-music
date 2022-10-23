@@ -79,6 +79,8 @@ class UserController {
             return res.status(403).send({ message: "User don't have permisson to perform this action" });
         }
 
+        delete req.body.email;
+
         const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).select(
             '-password -__v',
         );

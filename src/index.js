@@ -17,18 +17,7 @@ app.use(express.json());
 routes(app);
 
 async function test() {
-    // const { Library } = require('./app/models/Library');
-    // const { User } = require('./app/models/User');
-
-    // const follow = await Follow.findOne({ _id: '63296e80e483993094f1551c' }).populate('followings').exec();
-
     console.log('\n\n\n-------------------------------------------');
-    // console.log(follow);
-    // const albums = await Album.find().populate('tracks');
-    // console.log(albums);
-    for (let i = 0; i < 10; ++i) {
-        console.log(i);
-    }
 
     console.log('\n\n\n-------------------------------------------');
 }
