@@ -22,7 +22,7 @@ function Login() {
         login(data, dispatch).then((isSuccess) => {
             if (isSuccess) {
                 toast.success('Login successfully');
-                navigate('/home');
+                navigate('/');
             }
         });
     };

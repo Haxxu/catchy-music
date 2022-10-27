@@ -1,8 +1,6 @@
 import { routes } from '~/config';
-
 // Layouts
 import MainLayout from '~/layouts/MainLayout';
-
 // Component
 import Login from '~/components/Login';
 import SignUp from '~/components/SignUp';
@@ -26,7 +24,7 @@ const publicRoutes = [
         layout: null,
     },
     {
-        path: routes.unauthorized,
+        path: routes.unAuthorized,
         component: UnAuthorized,
         layout: null,
     },

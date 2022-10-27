@@ -9,9 +9,6 @@ import SignUp from '~/components/SignUp';
 import RequireAuth from './components/RequireAuth';
 
 function App() {
-    const { name } = useAuth();
-    console.log(name);
-
     return (
         <Fragment>
             <Routes>
@@ -65,7 +62,7 @@ function App() {
                 })}
 
                 {/* Catch All */}
-                <Route path='*' element={<Navigate to='/not-found' replace={true} />} />
+                <Route path='/*' element={<Navigate to='/not-found' replace={true} />} />
             </Routes>
         </Fragment>
     );

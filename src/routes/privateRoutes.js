@@ -1,8 +1,6 @@
 import { routes } from '~/config';
-
 // Layouts
 import MainLayout from '~/layouts/MainLayout';
-
 // Pages
 import Home from '~/pages/Home';
 import Search from '~/pages/Search';
@@ -20,7 +18,7 @@ const privateRoutes = [
         path: routes.home,
         component: Home,
         layout: MainLayout,
-        roles: [roles.user, roles.admin, roles.artist],
+        ss: [roles.user, roles.admin, roles.artist],
     },
     // Search
     {
@@ -34,7 +32,7 @@ const privateRoutes = [
         path: routes.artist,
         component: Artist,
         layout: MainLayout,
-        roles: [roles.admin, roles.artist],
+        roles: [roles.user, roles.admin, roles.artist],
     },
 ];
 
