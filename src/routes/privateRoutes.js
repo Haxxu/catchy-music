@@ -18,7 +18,7 @@ const privateRoutes = [
         path: routes.home,
         component: Home,
         layout: MainLayout,
-        ss: [roles.user, roles.admin, roles.artist],
+        roles: [roles.user, roles.admin, roles.artist],
     },
     // Search
     {
