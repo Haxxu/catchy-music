@@ -10,8 +10,8 @@ import styles from './styles.scoped.scss';
 const cx = classNames.bind(styles);
 
 const data = {
-    email: 'user1@gmail.com',
-    password: 'User1@12345!',
+    email: 'admin@gmail.com',
+    password: 'Admin@12345!',
 };
 
 function Login() {

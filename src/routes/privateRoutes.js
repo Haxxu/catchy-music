@@ -1,16 +1,10 @@
-import { routes } from '~/config';
+import { routes, roles } from '~/config';
 // Layouts
 import MainLayout from '~/layouts/MainLayout';
 // Pages
 import Home from '~/pages/Home';
 import Search from '~/pages/Search';
 import Artist from '~/pages/Artist';
-
-const roles = {
-    user: 'user',
-    admin: 'admin',
-    artist: 'artist',
-};
 
 const privateRoutes = [
     // Home
