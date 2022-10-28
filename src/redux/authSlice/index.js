@@ -31,5 +31,6 @@ export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.acti
 export const authReducer = authSlice.reducer;
 
 export const selectCurrentToken = (state) => state.auth.token;
+export const selectAuthFetchingStatus = (state) => state.auth.isFetching;
 
 export default authSlice;

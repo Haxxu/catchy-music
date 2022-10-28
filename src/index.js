@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -6,34 +6,43 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import App from '~/App';
-import reportWebVitals from '~/reportWebVitals';
-import GlobalStyles from '~/components/GlobalStyles';
 import store, { persistor } from '~/redux/store';
+import reportWebVitals from '~/reportWebVitals';
+import App from '~/App';
+import GlobalStyles from '~/components/GlobalStyles';
+import DarkModeContainer from '~/components/DarkMode/DarkModeContainer';
+import LoadingMarkup from '~/components/LoadingMarkup';
+
+// Change languages
+import './i18n';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <Provider store={store}>
-            <PersistGate persistor={persistor}>
-                <GlobalStyles>
-                    <BrowserRouter>
-                        <Routes>
-                            <Route path='/*' element={<App />} />
-                        </Routes>
-                    </BrowserRouter>
-                </GlobalStyles>
-            </PersistGate>
-        </Provider>
-        <ToastContainer
-            position='bottom-center'
-            autoClose={2000}
-            hideProgressBar={false}
-            closeButton={true}
-            theme='colored'
-            icon={false}
-            limit={1}
-        />
+        <Suspense fallback={<LoadingMarkup />}>
+            <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                    <GlobalStyles>
+                        <DarkModeContainer>
+                            <BrowserRouter>
+                                <Routes>
+                                    <Route path='/*' element={<App />} />
+                                </Routes>
+                            </BrowserRouter>
+                        </DarkModeContainer>
+                    </GlobalStyles>
+                </PersistGate>
+            </Provider>
+            <ToastContainer
+                position='bottom-center'
+                autoClose={2000}
+                hideProgressBar={false}
+                closeButton={true}
+                theme='colored'
+                icon={false}
+                limit={1}
+            />
+        </Suspense>
     </React.StrictMode>,
 );
 

@@ -1,32 +1,32 @@
 import { routes } from '~/config';
 // Layouts
-import MainLayout from '~/layouts/MainLayout';
-// Component
-import Login from '~/components/Login';
-import SignUp from '~/components/SignUp';
-import UnAuthorized from '~/components/UnAuthorized';
-import NotFound from '~/components/NotFound';
+import DefaultLayout from '~/layouts/DefaultLayout';
+// Pages
+import Login from '~/pages/Login';
+import SignUp from '~/pages/SignUp';
+import NotFound from '~/pages/NotFound';
+import UnAuthorized from '~/pages/UnAuthorized';
 
 const publicRoutes = [
     {
         path: routes.notFound,
         component: NotFound,
-        layout: null,
+        layout: DefaultLayout,
     },
     {
         path: routes.login,
         component: Login,
-        layout: null,
+        layout: DefaultLayout,
     },
     {
         path: routes.signup,
         component: SignUp,
-        layout: null,
+        layout: DefaultLayout,
     },
     {
         path: routes.unAuthorized,
         component: UnAuthorized,
-        layout: null,
+        layout: DefaultLayout,
     },
 ];
 
