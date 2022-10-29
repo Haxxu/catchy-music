@@ -40,7 +40,8 @@ root.render(
                 closeButton={true}
                 theme='colored'
                 icon={false}
-                limit={1}
+                limit={3}
+                pauseOnHover={false}
             />
         </Suspense>
     </React.StrictMode>,

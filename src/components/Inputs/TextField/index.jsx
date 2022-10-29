@@ -27,7 +27,13 @@ const TextField = ({ label, error, handleInputState, handleErrorState, schema, .
 
     return (
         <div className={cx('container')}>
-            <p className={cx('label')}>{label}</p>
+            <p
+                className={cx('label', {
+                    error,
+                })}
+            >
+                {label}
+            </p>
             <input
                 {...rest}
                 onChange={handleChange}

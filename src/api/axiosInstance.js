@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-let token = null;
+let _token = null;
 const root = JSON.parse(window.localStorage.getItem('persist:root'));
 
 if (root) {
     const { auth } = root;
-    const { user } = JSON.parse(auth);
+    const { token } = JSON.parse(auth);
 
-    if (user) {
-        token = user.token;
+    if (token) {
+        _token = token;
     }
 }
 
@@ -16,7 +16,7 @@ const axiosInstance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     headers: {
         'Content-Type': 'application/json',
-        'x-auth-token': token ? token : '',
+        'x-auth-token': _token ? _token : '',
     },
 });
 
