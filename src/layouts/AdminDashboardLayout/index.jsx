@@ -14,9 +14,7 @@ const AdminDashboardLayout = ({ children }) => {
                 <Sidebar />
             </div>
             <div className={cx('main')}>
-                <div className='navbar'>
-                    <Navbar />
-                </div>
+                <Navbar />
                 <div className={cx('main-content')}>{children}</div>
             </div>
         </div>

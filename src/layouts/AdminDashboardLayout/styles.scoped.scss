@@ -12,14 +12,14 @@
 
     .main {
         position: relative;
-
-        .navbar {
-            height: 8rem;
-            width: 100%;
-            z-index: 100;
-        }
+        width: 100%;
 
         .main-content {
+            color: var(--text-primary);
+            overflow: scroll;
+            height: calc(100vh - 8rem);
+            width: 100%;
+            overflow-x: hidden;
         }
     }
 }
