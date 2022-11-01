@@ -11,8 +11,12 @@ const routes = {
     artist: '/artist/:artistId',
 
     // admin routes
-    admin_dashboard: '/admin-dashboard',
-    admin_manageUser: '/admin-dashboard/manage-user',
+    admin_dashboard: '/admin-dashboard/home',
+    admin_manageUser: '/admin-dashboard/users',
+    admin_manageArtist: '/admin-dashboard/artists',
+    admin_manageTrack: '/admin-dashboard/tracks',
+    admin_manageAlbum: '/admin-dashboard/albums',
+    admin_managePlaylist: '/admin-dashboard/playlists',
 
     // artist routes
     artist_dashboard: '/artist-dashboard',
