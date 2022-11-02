@@ -1,29 +1,66 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
-import { Avatar, ClickAwayListener } from '@mui/material';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Avatar } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import DarkModeToggle from '~/components/DarkMode/DarkModeToggle';
+import { menuOptions } from './config';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
 const Navbar = () => {
+    const [profileMenu, setProfileMenu] = useState(false);
+    const navigate = useNavigate();
+
+    const toggleProfileMenu = () => {
+        setProfileMenu((prev) => !prev);
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('navigation')}>
-                <div className={cx('before')}>
-                    <NavigateBeforeIcon />
+                <div className={cx('icon', 'before')} onClick={() => navigate(-1)}>
+                    <ArrowBackIosNewIcon />
                 </div>
-                <div className={cx('next')}>
-                    <NavigateNextIcon />
+                <div className={cx('icon', 'next')} onClick={() => navigate(2)}>
+                    <ArrowForwardIosIcon />
                 </div>
             </div>
-            <div className='search' />
             <div className={cx('settings')}>
                 <DarkModeToggle />
-                <Avatar sizes='large' />
+                <div className={cx('profile')}>
+                    <div className={cx('avatar')} onClick={toggleProfileMenu}>
+                        <Avatar sizes='large' />
+                    </div>
+                    {profileMenu && (
+                        <div className={cx('profile-menu')}>
+                            <div className={cx('info')}>
+                                <p className={cx('name')}>NguyenNgocMinh</p>
+                                <p className={cx('email')}>ngocminh@gmail.com</p>
+                            </div>
+                            <div className={cx('options')}>
+                                {menuOptions.map((option, index) => (
+                                    <div className={cx('option')}>
+                                        <span className={cx('icon')}>{option.icon}</span>{' '}
+                                        <Link to={option.path}>{option.title}</Link>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={cx('logout')}>
+                                <div className={cx('option')}>
+                                    <span className={cx('icon')}>
+                                        <LogoutIcon fontSize='large' />
+                                    </span>{' '}
+                                    Logout
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

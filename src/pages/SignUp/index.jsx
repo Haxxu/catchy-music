@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import { useTranslation } from 'react-i18next';
 import Joi from 'joi';
@@ -33,7 +33,6 @@ function SignUp() {
 
     const { isFetching } = useSelector(selectAuthFetchingStatus);
     const { t } = useTranslation();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const months = [

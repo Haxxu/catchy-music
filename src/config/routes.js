@@ -12,6 +12,9 @@ const routes = {
 
     // admin routes
     admin_dashboard: '/admin-dashboard/home',
+    admin_dashboard_profile: '/admin-dashboard/profile',
+    admin_dashboard_settings: '/admin-dashboard/settings',
+
     admin_manageUser: '/admin-dashboard/users',
     admin_manageArtist: '/admin-dashboard/artists',
     admin_manageTrack: '/admin-dashboard/tracks',
