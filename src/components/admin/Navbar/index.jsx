@@ -7,12 +7,14 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 import DarkModeToggle from '~/components/DarkMode/DarkModeToggle';
+import useAuth from '~/hooks/useAuth';
 import { menuOptions } from './config';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
 const Navbar = () => {
+    const { name, email } = useAuth();
     const [profileMenu, setProfileMenu] = useState(false);
     const navigate = useNavigate();
 
@@ -39,8 +41,8 @@ const Navbar = () => {
                     {profileMenu && (
                         <div className={cx('profile-menu')}>
                             <div className={cx('info')}>
-                                <p className={cx('name')}>NguyenNgocMinh</p>
-                                <p className={cx('email')}>ngocminh@gmail.com</p>
+                                <p className={cx('name')}>{name}</p>
+                                <p className={cx('email')}>{email}</p>
                             </div>
                             <div className={cx('options')}>
                                 {menuOptions.map((option, index) => (
