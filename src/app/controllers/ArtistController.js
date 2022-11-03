@@ -32,6 +32,18 @@ class ArtistController {
 
         res.status(200).send({ data: artistDetail, message: 'Get artist successfully' });
     }
+
+    // Get artist info (for admin)
+    async getArtistsInfo(req, res, next) {
+        try {
+            const totalArtists = await User.find({ type: 'artist' }).count('_id');
+            console.log('alo');
+
+            return res.status(200).send({ data: { totalArtists }, message: 'Get artist info successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
 }
 
 module.exports = new ArtistController();

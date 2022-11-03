@@ -1,9 +1,12 @@
+const moment = require('moment');
+
 const { Track, validateTrack } = require('../models/Track');
 const { Album } = require('../models/Album');
 const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
 const { Lyric } = require('../models/Lyric');
 const { Comment } = require('../models/Comment');
+const { User } = require('../models/User');
 class TrackController {
     // Get track by id
     async getTrack(req, res, next) {
@@ -13,6 +16,42 @@ class TrackController {
         }
 
         res.status(200).send({ data: track, message: 'Get track successfully' });
+    }
+
+    async getTracksInfo(req, res, next) {
+        try {
+            const totalTracks = await Track.find().count('_id');
+
+            const today = moment().startOf('day');
+
+            const newTracksToday = await Track.find({
+                createdAt: {
+                    $gte: today.toDate(),
+                    $lte: moment(today).endOf('day').toDate(),
+                },
+            }).count('_id');
+
+            const newTracksThisMonth = await Track.find({
+                createdAt: {
+                    $gte: moment(today).startOf('month').toDate(),
+                    $lte: moment(today).endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            const newTracksLastMonth = await Track.find({
+                createdAt: {
+                    $gte: moment(today).subtract(1, 'months').startOf('month').toDate(),
+                    $lte: moment(today).subtract(1, 'months').endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            return res.status(200).send({
+                data: { totalTracks, newTracksToday, newTracksThisMonth, newTracksLastMonth },
+                message: 'Get tracks info successfuly',
+            });
+        } catch (error) {
+            return res.status(404).send({ message: error });
+        }
     }
 
     // Create new track
@@ -77,6 +116,54 @@ class TrackController {
         await Track.findOneAndRemove({ _id: req.params.id });
 
         res.status(200).send({ message: 'Delete track successfully' });
+    }
+
+    async getTracksByContext(req, res, next) {
+        try {
+            let message = '';
+            let searchCondition = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                let search = req.query.search.trim();
+                searchCondition = {
+                    $or: [
+                        {
+                            name: {
+                                $regex: search,
+                                $options: 'i',
+                            },
+                        },
+                        {
+                            artists: {
+                                $elemMatch: {
+                                    name: {
+                                        $regex: search,
+                                        $options: 'i',
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                };
+            }
+
+            const tracks = await Track.find({ ...searchCondition });
+            return res.status(200).send({ data: tracks, message: 'get tracks successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async playTrack(req, res, next) {
+        try {
+            const track = await Track.findOne({ _id: req.params.id });
+            track.plays = track.plays + 1;
+
+            await track.save();
+            return res.status(200).send({ message: 'Play track successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 }
 

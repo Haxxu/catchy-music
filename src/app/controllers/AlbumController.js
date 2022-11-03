@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const { Album, validateAlbum } = require('../models/Album');
 const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
 const { Track } = require('../models/Track');
+const { User } = require('../models/User');
 
 class AlbumController {
     // get album by id (get released album or album artist own)
@@ -33,6 +35,76 @@ class AlbumController {
             });
         } else {
             res.status(403).send({ message: 'Album does not release' });
+        }
+    }
+
+    // get albums info for admin
+    async getAlbumsInfo(req, res, next) {
+        try {
+            const totalAlbums = await Album.count('_id');
+
+            const today = moment().startOf('day');
+
+            const newAlbumsToday = await Album.find({
+                createdAt: {
+                    $gte: today.toDate(),
+                    $lte: moment(today).endOf('day').toDate(),
+                },
+            }).count('_id');
+
+            const newAlbumsThisMonth = await Album.find({
+                createdAt: {
+                    $gte: moment(today).startOf('month').toDate(),
+                    $lte: moment(today).endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            const newAlbumsLastMonth = await Album.find({
+                createdAt: {
+                    $gte: moment(today).subtract(1, 'months').startOf('month').toDate(),
+                    $lte: moment(today).subtract(1, 'months').endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            return res.status(200).send({
+                data: { totalAlbums, newAlbumsToday, newAlbumsThisMonth, newAlbumsLastMonth },
+                message: 'Get album info successfuly',
+            });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getAlbumsByContext(req, res, next) {
+        try {
+            let message = '';
+            let searchCondition = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                let search = req.query.search.trim();
+
+                const artists = await User.find({
+                    type: 'artist',
+                    $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
+                }).select('_id');
+
+                const artistsId = artists.map((artist) => artist._id.toString());
+
+                searchCondition = {
+                    $or: [
+                        {
+                            name: { $regex: search, $options: 'i' },
+                        },
+                        {
+                            owner: { $in: artistsId },
+                        },
+                    ],
+                };
+            }
+
+            const albums = await Album.find({ ...searchCondition }).populate('owner', '_id name');
+            return res.status(200).send({ data: albums, message: 'Get albums successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 

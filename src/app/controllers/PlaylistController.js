@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const { Playlist, validatePlaylist } = require('../models/Playlist');
 const { Track } = require('../models/Track');
 const { Album } = require('../models/Album');
 const { Library } = require('../models/Library');
-const { AudioPlayer } = require('../models/AudioPlayer');
+const { User } = require('../models/User');
 
 class PlaylistController {
     // get playlist public or playlist (user own)
@@ -39,6 +40,75 @@ class PlaylistController {
             });
         } else {
             res.status(403).send({ message: 'Playlist does not public' });
+        }
+    }
+
+    async getPlaylistsInfo(req, res, next) {
+        try {
+            const totalPlaylists = await Playlist.count('_id');
+
+            const today = moment().startOf('day');
+
+            const newPlaylistsToday = await Playlist.find({
+                createdAt: {
+                    $gte: today.toDate(),
+                    $lte: moment(today).endOf('day').toDate(),
+                },
+            }).count('_id');
+
+            const newPlaylistsThisMonth = await Playlist.find({
+                createdAt: {
+                    $gte: moment(today).startOf('month').toDate(),
+                    $lte: moment(today).endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            const newPlaylistsLastMonth = await Playlist.find({
+                createdAt: {
+                    $gte: moment(today).subtract(1, 'months').startOf('month').toDate(),
+                    $lte: moment(today).subtract(1, 'months').endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            return res.status(200).send({
+                data: { totalPlaylists, newPlaylistsToday, newPlaylistsThisMonth, newPlaylistsLastMonth },
+                message: 'Get playlist info successfuly',
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getPlaylistsByContext(req, res, next) {
+        try {
+            let message = '';
+            let searchCondition = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                let search = req.query.search.trim();
+
+                const artists = await User.find({
+                    $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
+                }).select('_id');
+
+                const artistsId = artists.map((artist) => artist._id.toString());
+
+                searchCondition = {
+                    $or: [
+                        {
+                            name: { $regex: search, $options: 'i' },
+                        },
+                        {
+                            owner: { $in: artistsId },
+                        },
+                    ],
+                };
+            }
+
+            const playlists = await Playlist.find({ ...searchCondition }).populate('owner', '_id name');
+            return res.status(200).send({ data: playlists, message: 'Get playlists successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 

@@ -9,6 +9,12 @@ const artistAuth = require('../app/middlewares/artistAuth');
 // [POST] /api/playlists => create new playlist
 router.post('/', userAuth, playlistController.createPlaylist);
 
+// [GET] /api/playlists/info => get playlists info
+router.get('/info', adminAuth, playlistController.getPlaylistsInfo);
+
+// [GET] /api/playlists/?search => get playlists by context
+router.get('/', adminAuth, playlistController.getPlaylistsByContext);
+
 // [GET] /api/playlists/:id => get playlist by id
 router.get('/:id', [userAuth, validateObjectId], playlistController.getPlaylistById);
 

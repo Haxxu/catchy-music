@@ -6,7 +6,10 @@ const adminAuth = require('../app/middlewares/adminAuth');
 const validateObjectId = require('../app/middlewares/validateObjectId');
 const artistAuth = require('../app/middlewares/artistAuth');
 
-// [GET] /api/artists => get artist by id
+// [GET] /api/artists/info => get artist info
+router.get('/info', adminAuth, artistController.getArtistsInfo);
+
+// [GET] /api/artists/:id => get artist by id
 router.get('/:id', [userAuth, validateObjectId], artistController.getArtistById);
 
 module.exports = router;

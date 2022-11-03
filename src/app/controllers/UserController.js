@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 
 const { User, validateUser, validateUpdatedPassword } = require('../models/User');
 const { Library } = require('../models/Library');
@@ -16,25 +17,89 @@ class UserController {
 
         user.password = undefined;
         user.__v = undefined;
-        user.updatedAt = undefined;
         if (user.type === 'admin') user.type = 'user';
 
         res.status(200).send({ data: user, message: 'Get user successfully' });
     }
 
+    // Get user info
+    async getUsersInfo(req, res, next) {
+        try {
+            const totalUsers = await User.count('_id');
+
+            const today = moment().startOf('day');
+
+            const newUsersToday = await User.find({
+                createdAt: {
+                    $gte: today.toDate(),
+                    $lte: moment(today).endOf('day').toDate(),
+                },
+            }).count('_id');
+
+            const newUsersThisMonth = await User.find({
+                createdAt: {
+                    $gte: moment(today).startOf('month').toDate(),
+                    $lte: moment(today).endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            const newUsersLastMonth = await User.find({
+                createdAt: {
+                    $gte: moment(today).subtract(1, 'months').startOf('month').toDate(),
+                    $lte: moment(today).subtract(1, 'months').endOf('month').toDate(),
+                },
+            }).count('_id');
+
+            return res.status(200).send({
+                data: { totalUsers, newUsersToday, newUsersThisMonth, newUsersLastMonth },
+                message: 'Get user info successfuly',
+            });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     // get users by context
     async getUsersByContext(req, res, next) {
-        if (req.query.type) {
-            if (req.query.type === 'artist') {
-                const users = await User.find({ type: 'artist' }).select(['-password', '-__v']);
-                return res.status(200).send({ data: users, message: 'Get artist successfully' });
-            } else if (req.query.type === 'user') {
-                const users = await User.find({ type: 'user' }).select(['-password', '-__v']);
-                return res.status(200).send({ data: users, message: 'Get user successfully' });
+        try {
+            let message = '';
+            let searchCondition = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                let search = req.query.search.trim();
+                searchCondition = {
+                    $or: [
+                        {
+                            name: {
+                                $regex: search,
+                                $options: 'i',
+                            },
+                        },
+                        {
+                            email: {
+                                $regex: search,
+                                $options: 'i',
+                            },
+                        },
+                    ],
+                };
             }
-        } else {
-            const users = await User.find({ type: { $ne: 'admin' } }).select(['-password', '-__v']);
-            res.status(400).send({ data: users, message: 'Get user ' });
+            if (req.query.type) {
+                if (req.query.type === 'artist') {
+                    searchCondition.type = 'artist';
+                    message = 'Get artists successfully';
+                } else if (req.query.type === 'user') {
+                    searchCondition.type = 'user';
+                    message = 'Get users successfully';
+                }
+            } else {
+                searchCondition.type = { $ne: 'admin' };
+                message = 'Get users successfully';
+            }
+
+            const users = await User.find({ ...searchCondition }).select(['-password', '-__v']);
+            return res.status(200).send({ data: users, message });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 

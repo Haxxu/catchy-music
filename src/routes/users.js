@@ -10,6 +10,9 @@ const validateObjectId = require('../app/middlewares/validateObjectId');
 // [POST] /api/users => create user
 router.post('/', userController.createUser);
 
+// [GET] /api/users/info => get user info
+router.get('/info', adminAuth, userController.getUsersInfo);
+
 // [POST] /api/users/verify-artist/:id (user_id) => verify artist
 router.post('/verify-artist/:id', [adminAuth, validateObjectId], userController.verifyArtist);
 
@@ -25,11 +28,11 @@ router.patch('/freeze/:id', [adminAuth, validateObjectId], userController.freeze
 // [PATCH] /api/users/unfreeze/:id => unfreeze user by id
 router.patch('/unfreeze/:id', [adminAuth, validateObjectId], userController.unfreezeUser);
 
-// [GET] /api/users/q => get users by context
-router.get('/q', adminAuth, userController.getUsersByContext);
-
 // [GET] /api/users/:id => get user by id
 router.get('/:id', [userAuth, validateObjectId], userController.getUser);
+
+// [GET] /api/users/q => get users by context
+router.get('/', adminAuth, userController.getUsersByContext);
 
 // [GET] /api/users/:id/playlists => get user playlist by user_id
 router.get('/:id/playlists', [userAuth, validateObjectId], playlistController.getUserPlaylists);

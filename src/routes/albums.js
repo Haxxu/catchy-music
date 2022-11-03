@@ -9,6 +9,12 @@ const artistAuth = require('../app/middlewares/artistAuth');
 // [POST] /api/albums => create new album
 router.post('/', artistAuth, albumController.createAlbum);
 
+// [GET] /api/albums/info => get ablums info
+router.get('/info', adminAuth, albumController.getAlbumsInfo);
+
+// [GET] /api/albums/?search => get ablums by context
+router.get('/', adminAuth, albumController.getAlbumsByContext);
+
 // [GET] /api/albums/:id => get ablum by id
 router.get('/:id', [userAuth, validateObjectId], albumController.getAlbumById);
 
