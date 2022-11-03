@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 
+import Navbar from '~/components/Navbar';
 import Sidebar from '~/components/admin/Sidebar';
-import Navbar from '~/components/admin/Navbar';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
@@ -14,7 +14,9 @@ const AdminDashboardLayout = ({ children }) => {
                 <Sidebar />
             </div>
             <div className={cx('main')}>
-                <Navbar />
+                <div className={cx('navbar')}>
+                    <Navbar />
+                </div>
                 <div className={cx('main-content')}>{children}</div>
             </div>
         </div>

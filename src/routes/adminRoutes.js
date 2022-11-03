@@ -9,13 +9,13 @@ import Settings from '~/pages/Settings';
 
 const adminRoutes = [
     {
-        path: routes.admin_dashboard_profile,
+        path: routes.admin_profile,
         component: Profile,
         layout: AdminDashboardLayout,
         roles: [roles.admin],
     },
     {
-        path: routes.admin_dashboard_settings,
+        path: routes.admin_settings,
         component: Settings,
         layout: AdminDashboardLayout,
         roles: [roles.admin],

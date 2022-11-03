@@ -11,12 +11,12 @@ export const menuOptions = [
     },
     {
         title: 'Profile',
-        path: routes.admin_dashboard_profile,
+        path: routes.admin_profile,
         icon: <AccountBoxIcon fontSize='large' />,
     },
     {
         title: 'Settings',
-        path: routes.admin_dashboard_settings,
+        path: routes.admin_settings,
         icon: <SettingsIcon fontSize='large' />,
     },
 ];
