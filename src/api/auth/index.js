@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import { loginStart, loginSuccess, loginFailure } from '~/redux/authSlice';
-import { loginUrl } from '~/api/urls';
+import { loginUrl } from '~/api/urls/authUrls';
 
 export const login = async (payload, dispatch) => {
     dispatch(loginStart());

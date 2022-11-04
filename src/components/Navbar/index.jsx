@@ -57,7 +57,7 @@ const Navbar = () => {
                             </div>
                             <div className={cx('options')}>
                                 {menuOptions.map((option, index) => (
-                                    <div className={cx('option')}>
+                                    <div className={cx('option')} key={index}>
                                         <span className={cx('icon')}>{option.icon}</span>{' '}
                                         <Link to={option.path}>{option.title}</Link>
                                     </div>

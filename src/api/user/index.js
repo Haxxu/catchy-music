@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-import { createUserUrl } from '~/api/urls';
+import { createUserUrl } from '~/api/urls/usersUrl';
 
 export const createUser = async (payload) => {
     try {
-        const { data } = await axios.post(createUserUrl, payload);
+        await axios.post(createUserUrl, payload);
         return true;
     } catch (error) {
         if (error.response && error.response.status >= 400 && error.response.status < 500) {

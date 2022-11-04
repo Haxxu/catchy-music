@@ -44,6 +44,7 @@ root.render(
                 pauseOnHover={false}
             />
         </Suspense>
+        ,
     </React.StrictMode>,
 );
 

@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Switch, FormControlLabel } from '@mui/material';
+import { Switch, FormControlLabel } from '@mui/material';
 import { useColorScheme, styled } from '@mui/material/styles';
-import Moon from '@mui/icons-material/DarkMode';
-import Sun from '@mui/icons-material/LightMode';
 
 import { selectCurrentTheme, toggleTheme } from '~/redux/userInterfaceSlice';
 
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+const MaterialUISwitch = styled(Switch)(() => ({
     width: 62,
     height: 34,
     padding: 7,
@@ -57,7 +55,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 const DarkModeToggle = ({ children, ...rest }) => {
     const theme = useSelector(selectCurrentTheme);
-    const { mode, setMode } = useColorScheme();
+    const { setMode } = useColorScheme();
 
     const dispatch = useDispatch();
 
@@ -67,11 +65,12 @@ const DarkModeToggle = ({ children, ...rest }) => {
 
     useEffect(() => {
         setMode(theme);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [theme]);
 
     return (
         <FormControlLabel
-            control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked={theme === 'dark'} onChange={handleToggletheme} />}
+            control={<MaterialUISwitch sx={{ m: 1 }} checked={theme === 'dark'} onChange={handleToggletheme} />}
         />
     );
 };

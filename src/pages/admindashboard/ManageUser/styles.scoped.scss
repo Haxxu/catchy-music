@@ -1,0 +1,44 @@
+.container {
+    padding: 2rem;
+
+    .header {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-container {
+        background: var(--background2-color);
+        margin: 0 auto 2rem;
+        padding: 1rem;
+        border-radius: 3rem;
+        max-width: 60rem;
+        align-self: center;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 2;
+
+        svg {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        input {
+            color: var(--text-primary);
+            padding: 1.4rem;
+            border: none;
+            outline: none;
+            background: transparent;
+            flex-grow: 1;
+            font-size: 1.6rem;
+        }
+    }
+
+    .data-container {
+        padding: 2rem;
+        width: 100%;
+        // min-height: 600px;
+        border-radius: 30px;
+        background-color: var(--background2-color);
+    }
+}

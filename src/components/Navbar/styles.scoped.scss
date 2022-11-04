@@ -37,6 +37,10 @@
 
         .avatar {
             cursor: pointer;
+
+            &:hover {
+                opacity: 0.8;
+            }
         }
 
         .profile-menu {
@@ -49,6 +53,7 @@
             color: var(--text-primary);
             background-color: var(--background2-color);
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            z-index: 100;
 
             .info {
                 margin: 12px 0;
