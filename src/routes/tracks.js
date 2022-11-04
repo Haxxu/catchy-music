@@ -5,6 +5,7 @@ const userAuth = require('../app/middlewares/userAuth');
 const adminAuth = require('../app/middlewares/adminAuth');
 const validateObjectId = require('../app/middlewares/validateObjectId');
 const artistAuth = require('../app/middlewares/artistAuth');
+const playTrackLimiter = require('../app/middlewares/playTrackLimiter');
 
 // [POST] /api/tracks => create new track
 router.post('/', artistAuth, trackController.createTrack);

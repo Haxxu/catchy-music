@@ -96,7 +96,8 @@ class UserController {
                 message = 'Get users successfully';
             }
 
-            const users = await User.find({ ...searchCondition }).select(['-password', '-__v']);
+            const users = await User.find({ ...searchCondition }).select('-password -__v');
+
             return res.status(200).send({ data: users, message });
         } catch (error) {
             return res.status(500).send({ message: 'Something went wrong' });
@@ -176,9 +177,9 @@ class UserController {
         if (password[0] !== '!') {
             password = '!' + password;
         }
-        await User.findByIdAndUpdate(req.params.id, { password: password });
+        await User.findByIdAndUpdate(req.params.id, { password: password, status: 'freezed' });
 
-        res.status(400).send({ message: 'Freeze user successfully' });
+        res.status(200).send({ message: 'Freeze user successfully' });
     }
 
     // unbreeze user by id
@@ -193,9 +194,9 @@ class UserController {
         if (password[0] === '!') {
             password = password.slice(1);
         }
-        await User.findByIdAndUpdate(req.params.id, { password: password });
+        await User.findByIdAndUpdate(req.params.id, { password: password, status: 'actived' });
 
-        res.status(400).send({ message: 'Unfreeze user successfully' });
+        res.status(200).send({ message: 'Unfreeze user successfully' });
     }
 
     // Update password

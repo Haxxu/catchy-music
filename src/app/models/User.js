@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
         image: { type: String, default: '' },
         type: { type: String, required: true, default: 'user' },
         genres: [{ type: String }],
+        status: { type: String, default: 'actived' },
     },
     { timestamps: true },
 );

@@ -37,7 +37,6 @@ class ArtistController {
     async getArtistsInfo(req, res, next) {
         try {
             const totalArtists = await User.find({ type: 'artist' }).count('_id');
-            console.log('alo');
 
             return res.status(200).send({ data: { totalArtists }, message: 'Get artist info successfully' });
         } catch (error) {

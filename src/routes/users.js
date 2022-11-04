@@ -31,7 +31,7 @@ router.patch('/unfreeze/:id', [adminAuth, validateObjectId], userController.unfr
 // [GET] /api/users/:id => get user by id
 router.get('/:id', [userAuth, validateObjectId], userController.getUser);
 
-// [GET] /api/users/q => get users by context
+// [GET] /api/users/ => get users by context
 router.get('/', adminAuth, userController.getUsersByContext);
 
 // [GET] /api/users/:id/playlists => get user playlist by user_id
