@@ -149,8 +149,8 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
             <Modal
                 open={openDetailModal}
                 onClose={() => setOpenDetailModal(false)}
-                aria-labelledby='modal-modal-title'
-                aria-describedby='modal-modal-description'
+                aria-labelledby='modal-user-menu-title'
+                aria-describedby='modal-user-menu-description'
             >
                 <Box
                     sx={{
@@ -167,19 +167,25 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     }}
                 >
                     <Typography
-                        id='modal-modal-title'
+                        id='modal-user-menu-title'
                         variant='h6'
                         component='h2'
-                        sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
+                        sx={{ mt: 2, mb: 4, fontSize: '2rem', textTransform: 'capitalize' }}
                     >
-                        User detail
+                        {row.type} detail
                     </Typography>
                     <div
-                        id='modal-modal-description'
-                        sx={{ mt: 2, fontSize: '1.6rem', display: 'flex', justifyContent: 'center' }}
+                        id='modal-user-menu-description'
+                        style={{
+                            mt: 2,
+                            fontSize: '1.6rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                        }}
                     >
                         {Object.entries(row).map(([key, value]) => (
-                            <p style={{ fontSize: '1.6rem', marginBottom: '5px' }}>
+                            <p style={{ fontSize: '1.6rem', marginBottom: '5px' }} key={key}>
                                 {key}: {value}
                             </p>
                         ))}

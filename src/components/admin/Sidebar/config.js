@@ -5,6 +5,7 @@ import SpatialAudioOffIcon from '@mui/icons-material/SpatialAudioOff';
 import ArtTrackIcon from '@mui/icons-material/ArtTrack';
 import AlbumIcon from '@mui/icons-material/Album';
 import ListIcon from '@mui/icons-material/List';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 
 const sidebarConfig = [
     {
@@ -36,6 +37,11 @@ const sidebarConfig = [
         title: 'Playlist',
         path: routes.admin_managePlaylist,
         icon: <ListIcon fontSize='large' />,
+    },
+    {
+        title: 'Genre',
+        path: routes.admin_manageGenre,
+        icon: <CategoryOutlinedIcon fontSize='large' />,
     },
 ];
 

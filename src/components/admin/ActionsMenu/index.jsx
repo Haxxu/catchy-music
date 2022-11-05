@@ -3,8 +3,9 @@ import classNames from 'classnames/bind';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
-import styles from './styles.scoped.scss';
 import UserActionsMenu from './UserMenu';
+import TrackActionsMenu from './TrackMenu';
+import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,7 @@ const ActionMenu = ({ type, handleUpdateData, row }) => {
                 )}
             </div>
             {menu && type === 'user' && <UserActionsMenu handleUpdateData={handleUpdateData} row={row} />}
+            {menu && type === 'track' && <TrackActionsMenu handleUpdateData={handleUpdateData} row={row} />}
         </div>
     );
 };

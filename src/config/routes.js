@@ -20,6 +20,7 @@ const routes = {
     admin_manageTrack: '/admin-dashboard/tracks',
     admin_manageAlbum: '/admin-dashboard/albums',
     admin_managePlaylist: '/admin-dashboard/playlists',
+    admin_manageGenre: '/admin-dashboard/genres',
 
     // artist routes
     artist_dashboard: '/artist-dashboard',

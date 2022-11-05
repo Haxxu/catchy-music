@@ -7,7 +7,7 @@ export const createUserUrl = baseApiUrl + '/users';
 export const getUsersInfoUrl = baseApiUrl + '/users/info';
 
 // [GET] (admin)
-export const getUsersByContextUrl = baseApiUrl + '/users/';
+export const getUsersByContextUrl = baseApiUrl + '/users/context';
 
 // [PATCH] (admin) + /:id
 export const freezeUserUrl = baseApiUrl + '/users/freeze/';
