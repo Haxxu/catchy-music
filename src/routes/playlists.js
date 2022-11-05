@@ -13,7 +13,7 @@ router.post('/', userAuth, playlistController.createPlaylist);
 router.get('/info', adminAuth, playlistController.getPlaylistsInfo);
 
 // [GET] /api/playlists/?search => get playlists by context
-router.get('/', adminAuth, playlistController.getPlaylistsByContext);
+router.get('/context', adminAuth, playlistController.getPlaylistsByContext);
 
 // [GET] /api/playlists/:id => get playlist by id
 router.get('/:id', [userAuth, validateObjectId], playlistController.getPlaylistById);

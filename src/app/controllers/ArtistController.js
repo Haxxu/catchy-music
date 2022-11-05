@@ -1,6 +1,8 @@
 const { Library } = require('../models/Library');
 const { User } = require('../models/User');
 const { Genre } = require('../models/Genre');
+const { Track } = require('../models/Track');
+const { Album } = require('../models/Album');
 
 class ArtistController {
     async getArtistById(req, res, next) {
@@ -39,6 +41,60 @@ class ArtistController {
             const totalArtists = await User.find({ type: 'artist' }).count('_id');
 
             return res.status(200).send({ data: { totalArtists }, message: 'Get artist info successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    // Get artist by context (admin)
+    async getArtistsByContext(req, res, next) {
+        try {
+            let message = '';
+            let searchCondition = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                let search = req.query.search.trim();
+
+                const tracks = await Track.find({ name: { $regex: search, $options: 'i' } }).select('owner');
+                const albums = await Album.find({ name: { $regex: search, $options: 'i' } }).select('owner');
+
+                let artistIdsList = tracks.map((track) => track.owner.toString());
+                artistIdsList = artistIdsList.concat(albums.map((album) => album.owner.toString()));
+
+                searchCondition = {
+                    $or: [
+                        {
+                            name: {
+                                $regex: search,
+                                $options: 'i',
+                            },
+                        },
+                        {
+                            email: {
+                                $regex: search,
+                                $options: 'i',
+                            },
+                        },
+                        {
+                            _id: { $in: artistIdsList },
+                        },
+                    ],
+                };
+            }
+
+            const users = await User.find({ ...searchCondition, type: 'artist' })
+                .select('-password -__v')
+                .lean();
+
+            let length = users.length;
+            for (let i = 0; i < length; ++i) {
+                let id = users[i]._id;
+                const library = await Library.findOne({ owner: id });
+                users[i].totalFollowers = library.followers.length;
+                users[i].totalTracks = await Track.find({ owner: id }).count();
+                users[i].totalAlbums = await Album.find({ owner: id }).count();
+            }
+
+            return res.status(200).send({ data: users, message });
         } catch (error) {
             return res.status(500).send({ message: 'Something went wrong' });
         }

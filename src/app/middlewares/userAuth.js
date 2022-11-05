@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
             }
 
             req.user = validToken;
+            req.user.type = user.type;
             next();
         }
     });

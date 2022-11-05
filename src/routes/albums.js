@@ -13,7 +13,7 @@ router.post('/', artistAuth, albumController.createAlbum);
 router.get('/info', adminAuth, albumController.getAlbumsInfo);
 
 // [GET] /api/albums/?search => get ablums by context
-router.get('/', adminAuth, albumController.getAlbumsByContext);
+router.get('/context', adminAuth, albumController.getAlbumsByContext);
 
 // [GET] /api/albums/:id => get ablum by id
 router.get('/:id', [userAuth, validateObjectId], albumController.getAlbumById);

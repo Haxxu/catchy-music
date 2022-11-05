@@ -11,7 +11,7 @@ const playTrackLimiter = require('../app/middlewares/playTrackLimiter');
 router.post('/', artistAuth, trackController.createTrack);
 
 // [GET] /api/tracks/?search= => Get tracks by context
-router.get('/', adminAuth, trackController.getTracksByContext);
+router.get('/context', adminAuth, trackController.getTracksByContext);
 
 // [GET] /api/tracks/info => get tracks info
 router.get('/info', adminAuth, trackController.getTracksInfo);

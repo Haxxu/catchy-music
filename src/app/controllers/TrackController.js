@@ -98,7 +98,7 @@ class TrackController {
             return res.status(400).send({ message: 'Track does not exist' });
         }
 
-        if (req.user._id !== track.owner.toString()) {
+        if (req.user._id !== track.owner.toString() && req.user.type !== 'admin') {
             return res.status(403).send({ message: "You don't have permission to perform this action" });
         }
 

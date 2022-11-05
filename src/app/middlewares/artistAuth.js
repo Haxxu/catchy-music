@@ -19,6 +19,7 @@ module.exports = (req, res, next) => {
                 return res.status(403).send({ message: "You don't have permission to access this content" });
             }
             req.user = validToken;
+            req.user.type = user.type;
             next();
         }
     });
