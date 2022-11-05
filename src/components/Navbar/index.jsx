@@ -19,7 +19,7 @@ const cx = classNames.bind(styles);
 const Navbar = () => {
     const [profileMenu, setProfileMenu] = useState(false);
 
-    const { name, email } = useAuth();
+    const { name, email, type } = useAuth();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -56,12 +56,16 @@ const Navbar = () => {
                                 <p className={cx('email')}>{email}</p>
                             </div>
                             <div className={cx('options')}>
-                                {menuOptions.map((option, index) => (
-                                    <div className={cx('option')} key={index}>
-                                        <span className={cx('icon')}>{option.icon}</span>{' '}
-                                        <Link to={option.path}>{option.title}</Link>
-                                    </div>
-                                ))}
+                                {menuOptions.map((option, index) => {
+                                    if (option.roles.includes(type)) {
+                                        return (
+                                            <Link to={option.path} className={cx('option')} key={index}>
+                                                <span className={cx('icon')}>{option.icon}</span>{' '}
+                                                <span>{option.title}</span>
+                                            </Link>
+                                        );
+                                    }
+                                })}
                             </div>
                             <div className={cx('logout')}>
                                 <div className={cx('option')} onClick={handleLogout}>

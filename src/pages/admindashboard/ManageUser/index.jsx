@@ -75,7 +75,7 @@ const ManageUser = () => {
                         />
                     );
                 else {
-                    return <p>{params.row.type}</p>;
+                    return <p style={{ textTransform: 'capitalize' }}>{params.row.type}</p>;
                 }
             },
             flex: 1,

@@ -59,6 +59,7 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     onClick={() =>
                         confirmAlert({
                             title: 'Confirm to verify this user to artist',
+
                             message: 'Are you sure to do this.',
                             buttons: [
                                 {
