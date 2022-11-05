@@ -5,45 +5,29 @@ import Moment from 'moment';
 import { IconButton, Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import { useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
-import { getTracksByContextUrl } from '~/api/urls/tracksUrls';
+import { getAlbumsByContextUrl } from '~/api/urls/albumsUrl';
 import ActionMenu from '~/components/admin/ActionsMenu';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
-function fancyTimeFormat(duration) {
-    // Hours, minutes and seconds
-    var hrs = ~~(duration / 3600);
-    var mins = ~~((duration % 3600) / 60);
-    var secs = ~~duration % 60;
-
-    // Output like "1:01" or "4:03:59" or "123:03:59"
-    var ret = '';
-
-    if (hrs > 0) {
-        ret += '' + hrs + ':' + (mins < 10 ? '0' : '');
-    }
-
-    ret += '' + mins + ':' + (secs < 10 ? '0' : '');
-    ret += '' + secs;
-    return ret;
-}
-
-const ManageTrack = () => {
-    const [searchTrack, setSearchTrack] = useState('');
+const ManageAlbum = () => {
+    const [searchAlbum, setSearchAlbum] = useState('');
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
-    const debouncedValue = useDebounce(searchTrack, 500);
+    const debouncedValue = useDebounce(searchAlbum, 500);
 
-    const searchTrackInputRef = useRef();
+    const searchAlbumInputRef = useRef();
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance(getTracksByContextUrl + `?search=${searchTrack}`);
+            const { data } = await axiosInstance(getAlbumsByContextUrl + `?search=${searchAlbum}`);
             setRows(data.data);
         };
 
@@ -70,33 +54,25 @@ const ManageTrack = () => {
             flex: 1,
         },
         {
-            field: 'artists',
-            headerName: 'Artist',
+            field: 'owner',
+            headerName: 'Owner',
             flex: 1,
-            renderCell: (params) => {
-                return (
-                    <div>
-                        {params.row.artists.map((artist, index) => (
-                            <p key={index}>{artist.name}</p>
-                        ))}
-                    </div>
-                );
-            },
+            valueGetter: (params) => params.row.owner.name,
         },
         {
-            field: 'duration',
-            headerName: 'Duration',
+            field: 'tracks',
+            headerName: 'Tracks',
             flex: 1,
-            valueGetter: (params) => fancyTimeFormat(params.row.duration),
-        },
-        {
-            field: 'plays',
-            headerName: 'Plays',
-            flex: 1,
+            valueGetter: (params) => params.row.tracks.length,
         },
         {
             field: 'saved',
             headerName: 'Saved',
+        },
+        {
+            field: 'type',
+            headerName: 'Type',
+            flex: 1,
         },
         {
             field: 'createdAt',
@@ -105,11 +81,23 @@ const ManageTrack = () => {
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
+            field: 'isReleased',
+            headerName: 'Is Released',
+            flex: 1,
+            renderCell: (params) => {
+                if (params.row.isReleased) {
+                    return <CheckCircleIcon color='success' fontSize='large' />;
+                } else {
+                    return <HighlightOffIcon color='error' fontSize='large' />;
+                }
+            },
+        },
+        {
             field: 'actions',
             headerName: 'Actions',
             flex: 1,
             sortable: false,
-            renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='track' row={params.row} />,
+            renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='playlist' row={params.row} />,
         },
     ];
 
@@ -122,12 +110,12 @@ const ManageTrack = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for track, artist'
-                    value={searchTrack}
-                    ref={searchTrackInputRef}
-                    onChange={() => setSearchTrack(searchTrackInputRef.current.value)}
+                    placeholder='Search for album, artist'
+                    value={searchAlbum}
+                    ref={searchAlbumInputRef}
+                    onChange={() => setSearchAlbum(searchAlbumInputRef.current.value)}
                 />
-                <IconButton onClick={() => setSearchTrack('')}>
+                <IconButton onClick={() => setSearchAlbum('')}>
                     <ClearIcon />
                 </IconButton>
             </div>
@@ -148,4 +136,4 @@ const ManageTrack = () => {
     );
 };
 
-export default ManageTrack;
+export default ManageAlbum;

@@ -5,6 +5,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import UserActionsMenu from './UserMenu';
 import TrackActionsMenu from './TrackMenu';
+import AlbumActionsMenu from './AlbumMenu';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
@@ -23,6 +24,7 @@ const ActionMenu = ({ type, handleUpdateData, row }) => {
             </div>
             {menu && type === 'user' && <UserActionsMenu handleUpdateData={handleUpdateData} row={row} />}
             {menu && type === 'track' && <TrackActionsMenu handleUpdateData={handleUpdateData} row={row} />}
+            {menu && type === 'playlist' && <AlbumActionsMenu handleUpdateData={handleUpdateData} row={row} />}
         </div>
     );
 };

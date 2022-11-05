@@ -8,3 +8,6 @@ export const getTracksByContextUrl = baseApiUrl + '/tracks/context';
 
 // [DELETE]
 export const deleteTrackUrl = (id) => baseApiUrl + `/tracks/${id}`;
+
+// [GET] get track by id
+export const getTrackByIdUrl = (id) => baseApiUrl + `/tracks/${id}`;

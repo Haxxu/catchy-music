@@ -46,5 +46,6 @@ html {
     font-family: 'Roboto', 'Open Sans', sans-serif;
 }
 
-body {
+.overlay-custom-class-name {
+    z-index: 9999;
 }

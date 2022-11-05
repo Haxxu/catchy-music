@@ -6,6 +6,7 @@ import Dashboard from '~/pages/admindashboard/Dashboard';
 import ManageUser from '~/pages/admindashboard/ManageUser';
 import ManageArtist from '~/pages/admindashboard/ManageArtist';
 import ManageTrack from '~/pages/admindashboard/ManageTrack';
+import ManageAlbum from '~/pages/admindashboard/ManageAlbum';
 import Profile from '~/pages/Profile';
 import Settings from '~/pages/Settings';
 
@@ -44,6 +45,12 @@ const adminRoutes = [
     {
         path: routes.admin_manageTrack,
         component: ManageTrack,
+        layout: AdminDashboardLayout,
+        roles: [roles.admin],
+    },
+    {
+        path: routes.admin_manageAlbum,
+        component: ManageAlbum,
         layout: AdminDashboardLayout,
         roles: [roles.admin],
     },
