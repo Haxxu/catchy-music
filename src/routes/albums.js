@@ -15,15 +15,6 @@ router.get('/info', adminAuth, albumController.getAlbumsInfo);
 // [GET] /api/albums/?search => get ablums by context
 router.get('/context', adminAuth, albumController.getAlbumsByContext);
 
-// [GET] /api/albums/:id => get ablum by id
-router.get('/:id', [userAuth, validateObjectId], albumController.getAlbumById);
-
-// [PUT] /api/albums/:id => update ablum by id
-router.put('/:id', [artistAuth, validateObjectId], albumController.updateAlbum);
-
-// [DELETE] /api/albums/:id => delete album by id
-router.delete('/:id', [artistAuth, validateObjectId], albumController.deleteAlbum);
-
 // [POST] /api/albums/:id/tracks => add track to album {track} (:id => album_id)
 router.post('/:id/tracks', [artistAuth, validateObjectId], albumController.addTrackToAlbum);
 
@@ -32,5 +23,14 @@ router.delete('/:id/tracks', [artistAuth, validateObjectId], albumController.rem
 
 // [PUT] /api/albums/:id/release[?is_released=false] => toggle release date of album
 router.put('/:id/release', [artistAuth, validateObjectId], albumController.toggleReleaseAlbum);
+
+// [GET] /api/albums/:id => get ablum by id
+router.get('/:id', [userAuth, validateObjectId], albumController.getAlbumById);
+
+// [PUT] /api/albums/:id => update ablum by id
+router.put('/:id', [artistAuth, validateObjectId], albumController.updateAlbum);
+
+// [DELETE] /api/albums/:id => delete album by id
+router.delete('/:id', [artistAuth, validateObjectId], albumController.deleteAlbum);
 
 module.exports = router;

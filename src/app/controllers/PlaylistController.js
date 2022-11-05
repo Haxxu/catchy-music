@@ -156,7 +156,7 @@ class PlaylistController {
         if (!playlist) {
             return res.status(404).send({ message: 'Playlist does not exist' });
         }
-        if (playlist.owner.toString() !== req.user._id) {
+        if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
             return res.status(403).send({ message: "User doesn't have access to delete" });
         }
 

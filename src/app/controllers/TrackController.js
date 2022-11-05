@@ -92,62 +92,80 @@ class TrackController {
 
     // Remove track
     async deleteTrack(req, res, next) {
-        const track = await Track.findOne({ _id: req.params.id });
+        try {
+            const track = await Track.findOne({ _id: req.params.id });
 
-        if (!track) {
-            return res.status(400).send({ message: 'Track does not exist' });
+            if (!track) {
+                return res.status(400).send({ message: 'Track does not exist' });
+            }
+
+            if (req.user._id !== track.owner.toString() && req.user.type !== 'admin') {
+                return res.status(403).send({ message: "You don't have permission to perform this action" });
+            }
+
+            // Delete track in album
+            await Album.updateMany({ owner: track.owner.toString() }, { $pull: { tracks: { track: req.params.id } } });
+            // Delete track in playlist
+            await Playlist.updateMany({}, { $pull: { tracks: { track: req.params.id } } });
+            // Delete track in likedTrack (Library)
+            await Library.updateMany({}, { $pull: { likedTracks: { track: req.params.id } } });
+            // Delete lyric of track
+            await Lyric.deleteMany({ track: req.params.id });
+            // Delete comment of track
+            await Comment.deleteMany({ track: req.params.id });
+            //Delete track
+            await Track.findOneAndRemove({ _id: req.params.id });
+
+            res.status(200).send({ message: 'Delete track successfully' });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ message: 'Something went wrong' });
         }
-
-        if (req.user._id !== track.owner.toString() && req.user.type !== 'admin') {
-            return res.status(403).send({ message: "You don't have permission to perform this action" });
-        }
-
-        // Delete track in album
-        await Album.updateMany({ owner: req.user._id }, { $pull: { tracks: { track: req.param.id } } });
-        // Delete track in playlist
-        await Playlist.updateMany({}, { $pull: { tracks: { track: req.params.id } } });
-        // Delete track in likedTrack (Library)
-        await Library.updateMany({}, { $pull: { likedTracks: { track: req.params.id } } });
-        // Delete lyric of track
-        await Lyric.deleteMany({ track: req.params.id });
-        // Delete comment of track
-        await Comment.deleteMany({ track: req.params.id });
-        //Delete track
-        await Track.findOneAndRemove({ _id: req.params.id });
-
-        res.status(200).send({ message: 'Delete track successfully' });
     }
 
     async getTracksByContext(req, res, next) {
         try {
-            let message = '';
-            let searchCondition = {};
-            if (req.query.search && req.query.search.trim() !== '') {
-                let search = req.query.search.trim();
-                searchCondition = {
-                    $or: [
-                        {
-                            name: {
-                                $regex: search,
-                                $options: 'i',
+            if (!req.query.type) {
+                let message = '';
+                let searchCondition = {};
+                if (req.query.search && req.query.search.trim() !== '') {
+                    let search = req.query.search.trim();
+                    searchCondition = {
+                        $or: [
+                            {
+                                name: {
+                                    $regex: search,
+                                    $options: 'i',
+                                },
                             },
-                        },
-                        {
-                            artists: {
-                                $elemMatch: {
-                                    name: {
-                                        $regex: search,
-                                        $options: 'i',
+                            {
+                                artists: {
+                                    $elemMatch: {
+                                        name: {
+                                            $regex: search,
+                                            $options: 'i',
+                                        },
                                     },
                                 },
                             },
-                        },
-                    ],
-                };
-            }
+                        ],
+                    };
+                }
 
-            const tracks = await Track.find({ ...searchCondition });
-            return res.status(200).send({ data: tracks, message: 'get tracks successfully' });
+                const tracks = await Track.find({ ...searchCondition });
+                return res.status(200).send({ data: tracks, message: 'Get tracks successfully' });
+            } else if (req.query.type && req.query.type === 'album' && req.query.id) {
+                const album = await Album.findOne({ _id: req.query.id }).lean();
+                if (!album) {
+                    return res.status(404).send({ message: 'Album not found' });
+                }
+
+                const trackIds = album.tracks.map((track) => track.track);
+
+                const tracks = await Track.find({ _id: { $in: trackIds } });
+
+                return res.status(200).send({ data: tracks, message: 'Get tracks successfully' });
+            }
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });

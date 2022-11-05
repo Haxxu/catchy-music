@@ -193,7 +193,7 @@ class AlbumController {
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
-        if (album.owner.toString() !== req.user._id) {
+        if (album.owner.toString() !== req.user._id && req.user.type !== 'admin') {
             return res.status(403).send({ message: "User doesn't have access to delete" });
         }
 
@@ -235,7 +235,7 @@ class AlbumController {
         if (!album) {
             return res.status(404).send({ message: 'Album does not exist' });
         }
-        if (album.owner.toString() !== req.user._id) {
+        if (album.owner.toString() !== req.user._id && req.user.type !== 'admin') {
             return res.status(403).send({ message: "You don't have permision to toggle release this album" });
         }
 
@@ -299,7 +299,10 @@ class AlbumController {
             return res.status(404).send({ message: 'Track does not exist' });
         }
 
-        if (album.owner.toString() !== req.user._id || track.owner.toString() !== req.user._id) {
+        if (
+            (album.owner.toString() !== req.user._id || track.owner.toString() !== req.user._id) &&
+            req.user.type !== 'admin'
+        ) {
             return res.status(403).send({ message: "User don't have access to remove" });
         }
 
