@@ -12,7 +12,13 @@ router.get('/', genreController.getAllGenres);
 // [POST] /api/genres/ => create genre
 router.post('/', adminAuth, genreController.createGenre);
 
+// [GET] /api/genres/:id => get genre by id
+router.get('/:id', [userAuth, validateObjectId], genreController.getGenreById);
+
 // [PUT] /api/genres/:id => update genre
 router.put('/:id', [adminAuth, validateObjectId], genreController.updateGenre);
+
+// [DELETE] /api/genres/:id => delete genre
+router.delete('/:id', [adminAuth, validateObjectId], genreController.deleteGenre);
 
 module.exports = router;

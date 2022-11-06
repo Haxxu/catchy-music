@@ -1,4 +1,6 @@
 const { Genre, validateGenre } = require('../models/Genre');
+const { Track } = require('../models/Track');
+const { User } = require('../models/User');
 
 class GenreController {
     // Get all genres
@@ -6,6 +8,20 @@ class GenreController {
         const genres = await Genre.find();
 
         res.status(200).send({ data: genres, message: 'Get all genres successfully' });
+    }
+
+    // Get genre by id
+    async getGenreById(req, res, next) {
+        try {
+            const genre = await Genre.findOne({ _id: req.params.id });
+            if (!genre) {
+                return res.status(404).send({ message: 'Genre not found' });
+            }
+
+            return res.status(200).send({ data: genre, message: 'Get genre successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // create new genre
@@ -37,6 +53,26 @@ class GenreController {
         const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
 
         res.status(200).send({ data: updatedGenre, message: 'Genre updated successfully' });
+    }
+
+    // delete genre by id
+    async deleteGenre(req, res, next) {
+        try {
+            const genre = await Genre.findOne({ _id: req.params.id });
+            if (!genre) {
+                return res.status(404).send({ messaeg: 'Genre not found' });
+            }
+
+            await User.updateMany({}, { $pull: { genres: req.params.id } });
+
+            await Track.updateMany({}, { $pull: { genres: req.param.id } });
+
+            await Genre.findOneAndRemove({ _id: req.params.id });
+
+            return res.status(200).send({ message: 'Deleted genre successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 }
 
