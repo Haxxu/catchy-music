@@ -7,24 +7,24 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import ManageTrackTable from '~/components/admin/Table/ManageTrackTable';
 import styles from './styles.scoped.scss';
 import axiosInstance from '~/api/axiosInstance';
-import { deleteAlbumUrl, toggleReleaseAlbumUrl } from '~/api/urls/albumsUrl';
+import { togglePublicPlaylistUrl, deletePlaylistUrl } from '~/api/urls/playlistsUrl';
 import { toast } from 'react-toastify';
 
 const cx = classnames.bind(styles);
 
-const AlbumActionsMenu = ({ handleUpdateData, row }) => {
+const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
     const [openDetailModal, setOpenDetailModal] = useState(false);
     const [openTracksModal, setOpenTracksModal] = useState(false);
 
-    const handleToggleRelease = async () => {
-        const { data } = await axiosInstance.put(toggleReleaseAlbumUrl(row._id), {});
+    const handleTogglePublic = async () => {
+        const { data } = await axiosInstance.put(togglePublicPlaylistUrl(row._id), {});
 
         handleUpdateData();
         toast.success(data.message);
     };
 
-    const handleDeleteAlbum = async () => {
-        const { data } = await axiosInstance.delete(deleteAlbumUrl(row._id));
+    const handleDeletePlaylist = async () => {
+        const { data } = await axiosInstance.delete(deletePlaylistUrl(row._id));
 
         handleUpdateData();
         toast.success(data.message);
@@ -53,13 +53,13 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to toggle release',
+                        title: 'Confirm to toggle public',
 
                         message: 'Are you sure to do this.',
                         buttons: [
                             {
                                 label: 'Yes',
-                                onClick: handleToggleRelease,
+                                onClick: handleTogglePublic,
                             },
                             {
                                 label: 'No',
@@ -68,7 +68,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                     })
                 }
             >
-                {row.isReleased ? 'Unrelease' : 'Release'}
+                {row.isPublic ? 'Private' : 'Public'}
             </Button>
             <Button
                 variant='contained'
@@ -76,13 +76,13 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to delete this album',
+                        title: 'Confirm to delete this playlist',
 
                         message: 'Are you sure to do this.',
                         buttons: [
                             {
                                 label: 'Yes',
-                                onClick: handleDeleteAlbum,
+                                onClick: handleDeletePlaylist,
                             },
                             {
                                 label: 'No',
@@ -122,7 +122,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Album detail
+                        Playlist detail
                     </Typography>
                     <div
                         id='modal-album-detail-description'
@@ -174,7 +174,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                             width: '100%',
                         }}
                     >
-                        <ManageTrackTable type='album' id={row._id} handleUpdateData={handleUpdateData} />
+                        <ManageTrackTable type='playlist' id={row._id} handleUpdateData={handleUpdateData} />
                     </div>
                 </Box>
             </Modal>
@@ -182,4 +182,4 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
     );
 };
 
-export default AlbumActionsMenu;
+export default PlaylistActionsMenu;

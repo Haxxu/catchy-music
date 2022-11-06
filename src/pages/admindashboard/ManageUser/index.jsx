@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import Moment from 'moment';
 import classNames from 'classnames/bind';
 import { IconButton, Chip, Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,6 +11,7 @@ import AcUnitIcon from '@mui/icons-material/AcUnit';
 import { useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
 import { getUsersByContextUrl } from '~/api/urls/usersUrl';
+import { dateFormat } from '~/utils/Format';
 import ActionMenu from '~/components/admin/ActionsMenu';
 import styles from './styles.scoped.scss';
 
@@ -59,7 +59,7 @@ const ManageUser = () => {
             field: 'createdAt',
             headerName: 'Created At',
             flex: 1,
-            valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
+            valueGetter: (params) => dateFormat(params.row.createdAt),
         },
         {
             field: 'type',

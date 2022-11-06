@@ -10,24 +10,24 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import { useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
-import { getAlbumsByContextUrl } from '~/api/urls/albumsUrl';
+import { getPlaylistsByContextUrl } from '~/api/urls/playlistsUrl';
 import ActionMenu from '~/components/admin/ActionsMenu';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
-const ManageAlbum = () => {
-    const [searchAlbum, setSearchAlbum] = useState('');
+const ManagePlaylist = () => {
+    const [searchPlaylist, setSearchPlaylist] = useState('');
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
-    const debouncedValue = useDebounce(searchAlbum, 500);
+    const debouncedValue = useDebounce(searchPlaylist, 500);
 
-    const searchAlbumInputRef = useRef();
+    const searchPlaylistInputRef = useRef();
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance(getAlbumsByContextUrl + `?search=${searchAlbum}`);
+            const { data } = await axiosInstance(getPlaylistsByContextUrl + `?search=${searchPlaylist}`);
             setRows(data.data);
         };
 
@@ -70,22 +70,17 @@ const ManageAlbum = () => {
             headerName: 'Saved',
         },
         {
-            field: 'type',
-            headerName: 'Type',
-            flex: 1,
-        },
-        {
             field: 'createdAt',
             headerName: 'Created At',
             flex: 1,
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
-            field: 'isReleased',
-            headerName: 'Is Released',
+            field: 'isPublic',
+            headerName: 'Is Public',
             flex: 1,
             renderCell: (params) => {
-                if (params.row.isReleased) {
+                if (params.row.isPublic) {
                     return <CheckCircleIcon color='success' fontSize='large' />;
                 } else {
                     return <HighlightOffIcon color='error' fontSize='large' />;
@@ -97,7 +92,7 @@ const ManageAlbum = () => {
             headerName: 'Actions',
             flex: 1,
             sortable: false,
-            renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='album' row={params.row} />,
+            renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='playlist' row={params.row} />,
         },
     ];
 
@@ -111,11 +106,11 @@ const ManageAlbum = () => {
                 <input
                     type='text'
                     placeholder='Search for album, artist'
-                    value={searchAlbum}
-                    ref={searchAlbumInputRef}
-                    onChange={() => setSearchAlbum(searchAlbumInputRef.current.value)}
+                    value={searchPlaylist}
+                    ref={searchPlaylistInputRef}
+                    onChange={() => setSearchPlaylist(searchPlaylistInputRef.current.value)}
                 />
-                <IconButton onClick={() => setSearchAlbum('')}>
+                <IconButton onClick={() => setSearchPlaylist('')}>
                     <ClearIcon />
                 </IconButton>
             </div>
@@ -136,4 +131,4 @@ const ManageAlbum = () => {
     );
 };
 
-export default ManageAlbum;
+export default ManagePlaylist;
