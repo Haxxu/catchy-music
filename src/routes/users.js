@@ -28,7 +28,7 @@ router.patch('/freeze/:id', [adminAuth, validateObjectId], userController.freeze
 // [PATCH] /api/users/unfreeze/:id => unfreeze user by id
 router.patch('/unfreeze/:id', [adminAuth, validateObjectId], userController.unfreezeUser);
 
-// [GET] /api/users/ => get users by context
+// [GET] /api/users/context => get users by context
 router.get('/context', adminAuth, userController.getUsersByContext);
 
 // [GET] /api/users/:id => get user by id

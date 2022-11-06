@@ -9,7 +9,7 @@ const artistAuth = require('../app/middlewares/artistAuth');
 // [GET] /api/artists/info => get artist info
 router.get('/info', adminAuth, artistController.getArtistsInfo);
 
-// [GET] /api/artists/?search => get artist by context
+// [GET] /api/artists/context?search => get artist by context
 router.get('/context', adminAuth, artistController.getArtistsByContext);
 
 // [GET] /api/artists/:id => get artist by id

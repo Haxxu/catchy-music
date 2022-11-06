@@ -12,7 +12,7 @@ router.post('/', artistAuth, albumController.createAlbum);
 // [GET] /api/albums/info => get ablums info
 router.get('/info', adminAuth, albumController.getAlbumsInfo);
 
-// [GET] /api/albums/?search => get ablums by context
+// [GET] /api/albums/context?search => get ablums by context
 router.get('/context', adminAuth, albumController.getAlbumsByContext);
 
 // [POST] /api/albums/:id/tracks => add track to album {track} (:id => album_id)

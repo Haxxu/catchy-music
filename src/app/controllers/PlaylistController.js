@@ -87,11 +87,11 @@ class PlaylistController {
             if (req.query.search && req.query.search.trim() !== '') {
                 let search = req.query.search.trim();
 
-                const artists = await User.find({
+                const users = await User.find({
                     $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
                 }).select('_id');
 
-                const artistsId = artists.map((artist) => artist._id.toString());
+                const usersId = users.map((user) => user._id.toString());
 
                 searchCondition = {
                     $or: [
@@ -99,7 +99,7 @@ class PlaylistController {
                             name: { $regex: search, $options: 'i' },
                         },
                         {
-                            owner: { $in: artistsId },
+                            owner: { $in: usersId },
                         },
                     ],
                 };
@@ -172,6 +172,31 @@ class PlaylistController {
         await Playlist.findByIdAndRemove(req.params.id);
 
         res.status(200).send({ message: 'Delete playlist successfully' });
+    }
+
+    async togglePublicPlaylist(req, res, next) {
+        try {
+            const playlist = await Playlist.findOne({ _id: req.params.id });
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+            if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
+                return res.status(403).send({ message: "You don't have permision to toggle public this playlist" });
+            }
+
+            var flag = await playlist.isPublic;
+            var message = '';
+            if (flag) {
+                message = 'Private playlist successfully';
+            } else {
+                message = 'Public playlist successfully';
+            }
+            await playlist.updateOne({ isPublic: !flag });
+
+            res.status(200).send({ message: message });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     async addTrackToPlaylist(req, res, next) {
@@ -261,8 +286,8 @@ class PlaylistController {
         if (!playlist) {
             return res.status(404).send({ message: 'Playlist does not exist' });
         }
-        if (playlist.owner.toString() !== req.user._id) {
-            return res.status(403).send({ message: "User don't have access to add" });
+        if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
+            return res.status(403).send({ message: "User don't have access to remove" });
         }
 
         const track = await Track.findOne({ _id: req.body.track }).select('-__v');
@@ -275,7 +300,7 @@ class PlaylistController {
             return res.status(404).send({ message: 'Album does not exist' });
         }
         if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
-            return res.status(404).send({ message: 'Add track to playlist failure' });
+            return res.status(404).send({ message: 'Remove track from playlist failure' });
         }
 
         var index = -1;

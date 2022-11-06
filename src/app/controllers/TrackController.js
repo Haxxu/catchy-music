@@ -160,14 +160,45 @@ class TrackController {
                     return res.status(404).send({ message: 'Album not found' });
                 }
 
-                const trackIds = album.tracks.map((track) => track.track);
+                const tracks = [];
 
-                const tracks = await Track.find({ _id: { $in: trackIds } });
+                let length = album.tracks.length;
+                for (let i = 0; i < length; ++i) {
+                    const track = await Track.findOne({ _id: album.tracks[i].track }).lean();
+
+                    tracks.push({
+                        ...track,
+                        addedAt: album.tracks[i].addedAt,
+                    });
+                }
+
+                return res.status(200).send({ data: tracks, message: 'Get tracks successfully' });
+            } else if (req.query.type && req.query.type === 'playlist' && req.query.id) {
+                const playlist = await Playlist.findOne({ _id: req.query.id }).lean();
+                if (!playlist) {
+                    return res.status(404).send({ message: 'Playlist not found' });
+                }
+
+                const tracks = [];
+
+                let length = playlist.tracks.length;
+                for (let i = 0; i < length; ++i) {
+                    const track = await Track.findOne({ _id: playlist.tracks[i].track }).lean();
+                    const album = await Album.findOne({ _id: playlist.tracks[i].album }).select('name');
+
+                    tracks.push({
+                        ...track,
+                        album: album.name,
+                        albumId: playlist.tracks[i].album,
+                        addedAt: playlist.tracks[i].addedAt,
+                    });
+                }
 
                 return res.status(200).send({ data: tracks, message: 'Get tracks successfully' });
             }
+
+            return res.status(404).send({ message: 'Tracks not found' });
         } catch (error) {
-            console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
