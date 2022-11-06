@@ -2,10 +2,10 @@ import { routes } from '~/config';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import SpatialAudioOffIcon from '@mui/icons-material/SpatialAudioOff';
-import ArtTrackIcon from '@mui/icons-material/ArtTrack';
 import AlbumIcon from '@mui/icons-material/Album';
 import ListIcon from '@mui/icons-material/List';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
 
 const sidebarConfig = [
     {
@@ -26,7 +26,7 @@ const sidebarConfig = [
     {
         title: 'Track',
         path: routes.admin_manageTrack,
-        icon: <ArtTrackIcon fontSize='large' />,
+        icon: <MusicNoteIcon fontSize='large' />,
     },
     {
         title: 'Album',

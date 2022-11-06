@@ -8,6 +8,8 @@ import ManageArtist from '~/pages/admindashboard/ManageArtist';
 import ManageTrack from '~/pages/admindashboard/ManageTrack';
 import ManageAlbum from '~/pages/admindashboard/ManageAlbum';
 import ManagePlaylist from '~/pages/admindashboard/ManagePlaylist';
+import ManageGenre from '~/pages/admindashboard/ManageGenre';
+import GenreForm from '~/components/Forms/GenreForm';
 import Profile from '~/pages/Profile';
 import Settings from '~/pages/Settings';
 
@@ -58,6 +60,18 @@ const adminRoutes = [
     {
         path: routes.admin_managePlaylist,
         component: ManagePlaylist,
+        layout: AdminDashboardLayout,
+        roles: [roles.admin],
+    },
+    {
+        path: routes.admin_manageGenre,
+        component: ManageGenre,
+        layout: AdminDashboardLayout,
+        roles: [roles.admin],
+    },
+    {
+        path: routes.admin_manageGenre_genreForm,
+        component: GenreForm,
         layout: AdminDashboardLayout,
         roles: [roles.admin],
     },

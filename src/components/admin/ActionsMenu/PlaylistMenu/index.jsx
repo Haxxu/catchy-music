@@ -5,6 +5,7 @@ import classnames from 'classnames/bind';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import ManageTrackTable from '~/components/admin/Table/ManageTrackTable';
+import Detail from '~/components/admin/Detail';
 import styles from './styles.scoped.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { togglePublicPlaylistUrl, deletePlaylistUrl } from '~/api/urls/playlistsUrl';
@@ -134,8 +135,7 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <p style={{ marginBottom: '5px' }}>Name: {row.name}</p>
-                        <p style={{ marginBottom: '5px' }}>Genre: {row.genres}</p>
+                        <Detail data={row} />
                     </div>
                 </Box>
             </Modal>

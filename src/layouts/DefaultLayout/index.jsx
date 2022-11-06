@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import Button from '@mui/material/Button';
 import routes from '~/config/routes';
 
 import Footer from '~/components/Footer';

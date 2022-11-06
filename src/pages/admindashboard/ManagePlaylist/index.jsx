@@ -105,7 +105,7 @@ const ManagePlaylist = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for album, artist'
+                    placeholder='Search for playlist, owner'
                     value={searchPlaylist}
                     ref={searchPlaylistInputRef}
                     onChange={() => setSearchPlaylist(searchPlaylistInputRef.current.value)}

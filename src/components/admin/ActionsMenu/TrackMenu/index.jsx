@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Button, Box, Typography, Modal } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import classnames from 'classnames/bind';
+import { toast } from 'react-toastify';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
-import styles from './styles.scoped.scss';
+import Detail from '~/components/admin/Detail';
 import axiosInstance from '~/api/axiosInstance';
 import { deleteTrackUrl } from '~/api/urls/tracksUrls';
-import { toast } from 'react-toastify';
+import styles from './styles.scoped.scss';
 
 const cx = classnames.bind(styles);
 
@@ -93,8 +94,7 @@ const TrackActionsMenu = ({ handleUpdateData, row }) => {
                             justifyContent: 'center',
                         }}
                     >
-                        <p style={{ marginBottom: '5px' }}>Name: {row.name}</p>
-                        <p style={{ marginBottom: '5px' }}>Genre: {row.genres}</p>
+                        <Detail data={row} />
                     </div>
                 </Box>
             </Modal>

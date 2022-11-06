@@ -21,6 +21,7 @@ const routes = {
     admin_manageAlbum: '/admin-dashboard/albums',
     admin_managePlaylist: '/admin-dashboard/playlists',
     admin_manageGenre: '/admin-dashboard/genres',
+    admin_manageGenre_genreForm: '/admin-dashboard/genres/:id',
 
     // artist routes
     artist_dashboard: '/artist-dashboard',
