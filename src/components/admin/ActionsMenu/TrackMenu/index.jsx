@@ -3,6 +3,7 @@ import { Button, Box, Typography, Modal } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import classnames from 'classnames/bind';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import Detail from '~/components/admin/Detail';
@@ -14,6 +15,8 @@ const cx = classnames.bind(styles);
 
 const TrackActionsMenu = ({ handleUpdateData, row }) => {
     const [openDetailModal, setOpenDetailModal] = useState(false);
+
+    const { t } = useTranslation();
 
     const handleDeleteTrack = async () => {
         const { data } = await axiosInstance.delete(deleteTrackUrl(row._id));
@@ -30,7 +33,7 @@ const TrackActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenDetailModal(true)}
             >
-                Detail
+                {t('Detail')}
             </Button>
             <Button
                 variant='contained'
@@ -38,22 +41,22 @@ const TrackActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to delete this track',
+                        title: t('Confirm to delete this track'),
 
-                        message: 'Are you sure to do this.',
+                        message: t('Are you sure to do this.'),
                         buttons: [
                             {
-                                label: 'Yes',
+                                label: t('Yes'),
                                 onClick: handleDeleteTrack,
                             },
                             {
-                                label: 'No',
+                                label: t('No'),
                             },
                         ],
                     })
                 }
             >
-                Delete
+                {t('Delete')}
             </Button>
 
             <Modal
@@ -82,7 +85,7 @@ const TrackActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Track detail
+                        {t('Track detail')}
                     </Typography>
                     <div
                         id='modal-track-menu-description'

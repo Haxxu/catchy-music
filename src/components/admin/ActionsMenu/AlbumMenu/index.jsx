@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Box, Typography, Modal } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { confirmAlert } from 'react-confirm-alert';
 import classnames from 'classnames/bind';
 import { toast } from 'react-toastify';
@@ -16,6 +17,8 @@ const cx = classnames.bind(styles);
 const AlbumActionsMenu = ({ handleUpdateData, row }) => {
     const [openDetailModal, setOpenDetailModal] = useState(false);
     const [openTracksModal, setOpenTracksModal] = useState(false);
+
+    const { t } = useTranslation();
 
     const handleToggleRelease = async () => {
         const { data } = await axiosInstance.put(toggleReleaseAlbumUrl(row._id), {});
@@ -39,7 +42,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenDetailModal(true)}
             >
-                Detail
+                {t('Detail')}
             </Button>
             <Button
                 variant='contained'
@@ -47,29 +50,29 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenTracksModal(true)}
             >
-                Tracks
+                {t('Tracks')}
             </Button>
             <Button
                 variant='contained'
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to toggle release',
+                        title: t('Confirm to toggle release'),
 
-                        message: 'Are you sure to do this.',
+                        message: t('Are you sure to do this.'),
                         buttons: [
                             {
-                                label: 'Yes',
+                                label: t('Yes'),
                                 onClick: handleToggleRelease,
                             },
                             {
-                                label: 'No',
+                                label: t('No'),
                             },
                         ],
                     })
                 }
             >
-                {row.isReleased ? 'Unrelease' : 'Release'}
+                {row.isReleased ? t('Unrelease') : t('Release')}
             </Button>
             <Button
                 variant='contained'
@@ -77,22 +80,22 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to delete this album',
+                        title: t('Confirm to delete this album'),
 
-                        message: 'Are you sure to do this.',
+                        message: t('Are you sure to do this.'),
                         buttons: [
                             {
-                                label: 'Yes',
+                                label: t('Yes'),
                                 onClick: handleDeleteAlbum,
                             },
                             {
-                                label: 'No',
+                                label: t('No'),
                             },
                         ],
                     })
                 }
             >
-                Delete
+                {t('Delete')}
             </Button>
             <Modal
                 open={openDetailModal}
@@ -123,7 +126,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Album detail
+                        {t('Album detail')}
                     </Typography>
                     <div
                         id='modal-album-detail-description'
@@ -166,7 +169,7 @@ const AlbumActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Tracks
+                        {t('Tracks')}
                     </Typography>
                     <div
                         id='modal-tracks-description'

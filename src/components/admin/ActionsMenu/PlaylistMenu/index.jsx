@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Box, Typography, Modal } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import classnames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import ManageTrackTable from '~/components/admin/Table/ManageTrackTable';
@@ -16,6 +17,8 @@ const cx = classnames.bind(styles);
 const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
     const [openDetailModal, setOpenDetailModal] = useState(false);
     const [openTracksModal, setOpenTracksModal] = useState(false);
+
+    const { t } = useTranslation();
 
     const handleTogglePublic = async () => {
         const { data } = await axiosInstance.put(togglePublicPlaylistUrl(row._id), {});
@@ -39,7 +42,7 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenDetailModal(true)}
             >
-                Detail
+                {t('Detail')}
             </Button>
             <Button
                 variant='contained'
@@ -47,29 +50,29 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenTracksModal(true)}
             >
-                Tracks
+                {t('Tracks')}
             </Button>
             <Button
                 variant='contained'
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to toggle public',
+                        title: t('Confirm to toggle public'),
 
-                        message: 'Are you sure to do this.',
+                        message: t('Are you sure to do this.'),
                         buttons: [
                             {
-                                label: 'Yes',
+                                label: t('Yes'),
                                 onClick: handleTogglePublic,
                             },
                             {
-                                label: 'No',
+                                label: t('No'),
                             },
                         ],
                     })
                 }
             >
-                {row.isPublic ? 'Private' : 'Public'}
+                {row.isPublic ? t('Private') : t('Public')}
             </Button>
             <Button
                 variant='contained'
@@ -77,22 +80,22 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() =>
                     confirmAlert({
-                        title: 'Confirm to delete this playlist',
+                        title: t('Confirm to delete this playlist'),
 
-                        message: 'Are you sure to do this.',
+                        message: t('Are you sure to do this.'),
                         buttons: [
                             {
-                                label: 'Yes',
+                                label: t('Yes'),
                                 onClick: handleDeletePlaylist,
                             },
                             {
-                                label: 'No',
+                                label: t('No'),
                             },
                         ],
                     })
                 }
             >
-                Delete
+                {t('Delete')}
             </Button>
             <Modal
                 open={openDetailModal}
@@ -123,7 +126,7 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Playlist detail
+                        {t('Playlist detail')}
                     </Typography>
                     <div
                         id='modal-album-detail-description'
@@ -166,7 +169,7 @@ const PlaylistActionsMenu = ({ handleUpdateData, row }) => {
                         component='h2'
                         sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                     >
-                        Tracks
+                        {t('Tracks')}
                     </Typography>
                     <div
                         id='modal-tracks-description'

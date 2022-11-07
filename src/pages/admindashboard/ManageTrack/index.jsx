@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import classNames from 'classnames/bind';
 import Moment from 'moment';
@@ -20,8 +21,8 @@ const ManageTrack = () => {
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(searchTrack, 500);
-
     const searchTrackInputRef = useRef();
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const ManageTrack = () => {
     const columns = [
         {
             field: 'image',
-            headerName: 'Image',
+            headerName: t('Image'),
             width: 35,
             renderCell: (params) => (
                 <Avatar alt={params.row.name} src={params.row.image} sx={{ width: 30, height: 30 }} variant='square' />
@@ -49,12 +50,12 @@ const ManageTrack = () => {
         },
         {
             field: 'name',
-            headerName: 'Name',
+            headerName: t('Name'),
             flex: 1,
         },
         {
             field: 'artists',
-            headerName: 'Artist',
+            headerName: t('Artist'),
             flex: 1,
             renderCell: (params) => {
                 return (
@@ -68,28 +69,28 @@ const ManageTrack = () => {
         },
         {
             field: 'duration',
-            headerName: 'Duration',
+            headerName: t('Duration'),
             flex: 1,
             valueGetter: (params) => fancyTimeFormat(params.row.duration),
         },
         {
             field: 'plays',
-            headerName: 'Plays',
+            headerName: t('Plays'),
             flex: 1,
         },
         {
             field: 'saved',
-            headerName: 'Saved',
+            headerName: t('Saved'),
         },
         {
             field: 'createdAt',
-            headerName: 'Created At',
+            headerName: t('Created At'),
             flex: 1,
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('Actions'),
             flex: 1,
             sortable: false,
             renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='track' row={params.row} />,
@@ -98,14 +99,14 @@ const ManageTrack = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('header')}>Tracks</div>
+            <div className={cx('header')}>{t('Tracks')}</div>
             <div className={cx('input-container')}>
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for track, artist'
+                    placeholder={t('Search for track, artist')}
                     value={searchTrack}
                     ref={searchTrackInputRef}
                     onChange={() => setSearchTrack(searchTrackInputRef.current.value)}

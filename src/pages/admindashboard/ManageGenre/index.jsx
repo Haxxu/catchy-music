@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import classNames from 'classnames/bind';
 import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -11,10 +12,12 @@ import styles from './styles.scoped.scss';
 const cx = classNames.bind(styles);
 
 const ManageGenre = () => {
+    const { t } = useTranslation();
+
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>Genres</h1>
+                <h1>{t('Genres')}</h1>
                 <Link to={routes.admin_manageGenre + '/new-genre'}>
                     <Button
                         size='large'
@@ -26,7 +29,7 @@ const ManageGenre = () => {
                             fontWeight: '600',
                         }}
                     >
-                        Add new genre
+                        {t('Add new genre')}
                     </Button>
                 </Link>
             </div>

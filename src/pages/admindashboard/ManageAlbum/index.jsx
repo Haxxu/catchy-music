@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import classNames from 'classnames/bind';
 import Moment from 'moment';
@@ -21,6 +22,7 @@ const ManageAlbum = () => {
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(searchAlbum, 500);
 
     const searchAlbumInputRef = useRef();
@@ -42,7 +44,7 @@ const ManageAlbum = () => {
     const columns = [
         {
             field: 'image',
-            headerName: 'Image',
+            headerName: t('Image'),
             width: 35,
             renderCell: (params) => (
                 <Avatar alt={params.row.name} src={params.row.image} sx={{ width: 30, height: 30 }} variant='square' />
@@ -50,39 +52,39 @@ const ManageAlbum = () => {
         },
         {
             field: 'name',
-            headerName: 'Name',
+            headerName: t('Name'),
             flex: 1,
         },
         {
             field: 'owner',
-            headerName: 'Owner',
+            headerName: t('Owner'),
             flex: 1,
             valueGetter: (params) => params.row.owner.name,
         },
         {
             field: 'tracks',
-            headerName: 'Tracks',
+            headerName: t('Tracks'),
             flex: 1,
             valueGetter: (params) => params.row.tracks.length,
         },
         {
             field: 'saved',
-            headerName: 'Saved',
+            headerName: t('Saved'),
         },
         {
             field: 'type',
-            headerName: 'Type',
+            headerName: t('Type'),
             flex: 1,
         },
         {
             field: 'createdAt',
-            headerName: 'Created At',
+            headerName: t('Created At'),
             flex: 1,
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
             field: 'isReleased',
-            headerName: 'Is Released',
+            headerName: t('Is Released'),
             flex: 1,
             renderCell: (params) => {
                 if (params.row.isReleased) {
@@ -94,7 +96,7 @@ const ManageAlbum = () => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('Actions'),
             flex: 1,
             sortable: false,
             renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='album' row={params.row} />,
@@ -103,14 +105,14 @@ const ManageAlbum = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('header')}>Tracks</div>
+            <div className={cx('header')}>{t('Tracks')}</div>
             <div className={cx('input-container')}>
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for album, artist'
+                    placeholder={t('Search for album, artist')}
                     value={searchAlbum}
                     ref={searchAlbumInputRef}
                     onChange={() => setSearchAlbum(searchAlbumInputRef.current.value)}

@@ -16,6 +16,7 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { confirmAlert } from 'react-confirm-alert';
+import { useTranslation } from 'react-i18next';
 
 import { dateFormat } from '~/utils/Format';
 import { getGenresUrl, deleteGenreUrl } from '~/api/urls/genresUrl';
@@ -29,6 +30,8 @@ const ManageGenreTable = () => {
     const [loading, setLoading] = useState();
     const [genres, setGenres] = useState([]);
     const [update, setUpdate] = useState(false);
+
+    const { t } = useTranslation();
 
     const handleDeleteGenre = async (id) => {
         const { data } = await axiosInstance.delete(deleteGenreUrl(id));
@@ -54,11 +57,11 @@ const ManageGenreTable = () => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell align='center'>Image</TableCell>
-                        <TableCell align='center'>Name</TableCell>
-                        <TableCell align='center'>Description</TableCell>
-                        <TableCell align='center'>Created At</TableCell>
-                        <TableCell align='center'>Actions</TableCell>
+                        <TableCell align='center'>{t('Image')}</TableCell>
+                        <TableCell align='center'>{t('Name')}</TableCell>
+                        <TableCell align='center'>{t('Description')}</TableCell>
+                        <TableCell align='center'>{t('Created At')}</TableCell>
+                        <TableCell align='center'>{t('Actions')}</TableCell>
                     </TableRow>
                 </TableHead>
                 {loading ? (
@@ -95,16 +98,16 @@ const ManageGenreTable = () => {
                                             color='error'
                                             onClick={() =>
                                                 confirmAlert({
-                                                    title: 'Confirm to delete this genre',
+                                                    title: t('Confirm to delete this genre'),
 
-                                                    message: 'Are you sure to do this.',
+                                                    message: t('Are you sure to do this.'),
                                                     buttons: [
                                                         {
-                                                            label: 'Yes',
+                                                            label: t('Yes'),
                                                             onClick: () => handleDeleteGenre(genre._id),
                                                         },
                                                         {
-                                                            label: 'No',
+                                                            label: t('No'),
                                                         },
                                                     ],
                                                 })
@@ -119,7 +122,7 @@ const ManageGenreTable = () => {
                             <TableRow>
                                 <TableCell align='center' />
                                 <TableCell align='center' />
-                                <TableCell align='center'>No data</TableCell>
+                                <TableCell align='center'>{t('No data')}</TableCell>
                                 <TableCell align='center' />
                                 <TableCell align='center' />
                             </TableRow>

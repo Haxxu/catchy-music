@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Box, Typography, Modal } from '@mui/material';
 import { confirmAlert } from 'react-confirm-alert';
 import classnames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import styles from './styles.scoped.scss';
@@ -13,6 +14,8 @@ const cx = classnames.bind(styles);
 
 const UserActionsMenu = ({ handleUpdateData, row }) => {
     const [openDetailModal, setOpenDetailModal] = useState(false);
+
+    const { t } = useTranslation();
 
     const handleFreezeUser = async () => {
         const { data } = await axiosInstance.patch(freezeUserUrl + `${row._id}`, {});
@@ -49,7 +52,7 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                 sx={{ minWidth: '100px' }}
                 onClick={() => setOpenDetailModal(true)}
             >
-                Detail
+                {t('Detail')}
             </Button>
             {row.type === 'user' ? (
                 <Button
@@ -58,22 +61,22 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     sx={{ minWidth: '100px' }}
                     onClick={() =>
                         confirmAlert({
-                            title: 'Confirm to verify this user to artist',
+                            title: t('Confirm to verify this user to artist'),
 
-                            message: 'Are you sure to do this.',
+                            message: t('Are you sure to do this.'),
                             buttons: [
                                 {
-                                    label: 'Yes',
+                                    label: t('Yes'),
                                     onClick: handleVerifyArtist,
                                 },
                                 {
-                                    label: 'No',
+                                    label: t('No'),
                                 },
                             ],
                         })
                     }
                 >
-                    Verify Artist
+                    {t('Verify Artist')}
                 </Button>
             ) : (
                 <Button
@@ -82,21 +85,21 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     sx={{ minWidth: '100px' }}
                     onClick={() =>
                         confirmAlert({
-                            title: 'Confirm to unverify this artist back to user',
-                            message: 'Are you sure to do this.',
+                            title: t('Confirm to unverify this artist back to user'),
+                            message: t('Are you sure to do this.'),
                             buttons: [
                                 {
-                                    label: 'Yes',
+                                    label: t('Yes'),
                                     onClick: handleUnverifyArtist,
                                 },
                                 {
-                                    label: 'No',
+                                    label: t('No'),
                                 },
                             ],
                         })
                     }
                 >
-                    Unverify Artist
+                    {t('Unverify Artist')}
                 </Button>
             )}
             {row.status === 'actived' ? (
@@ -106,21 +109,21 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     sx={{ minWidth: '100px' }}
                     onClick={() =>
                         confirmAlert({
-                            title: 'Confirm to freeze this user',
-                            message: 'Are you sure to do this.',
+                            title: t('Confirm to freeze this user'),
+                            message: t('Are you sure to do this.'),
                             buttons: [
                                 {
-                                    label: 'Yes',
+                                    label: t('Yes'),
                                     onClick: handleFreezeUser,
                                 },
                                 {
-                                    label: 'No',
+                                    label: t('No'),
                                 },
                             ],
                         })
                     }
                 >
-                    Freeze
+                    {t('Freeze')}
                 </Button>
             ) : (
                 <Button
@@ -129,21 +132,21 @@ const UserActionsMenu = ({ handleUpdateData, row }) => {
                     sx={{ minWidth: '100px' }}
                     onClick={() =>
                         confirmAlert({
-                            title: 'Confirm to unfreeze this user',
-                            message: 'Are you sure to do this.',
+                            title: t('Confirm to unfreeze this user'),
+                            message: t('Are you sure to do this.'),
                             buttons: [
                                 {
-                                    label: 'Yes',
+                                    label: t('Yes'),
                                     onClick: handleUnfreezeUser,
                                 },
                                 {
-                                    label: 'No',
+                                    label: t('No'),
                                 },
                             ],
                         })
                     }
                 >
-                    Unfreeze
+                    {t('Unfreeze')}
                 </Button>
             )}
             <Modal

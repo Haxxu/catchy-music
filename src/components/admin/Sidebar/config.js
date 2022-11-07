@@ -6,7 +6,6 @@ import AlbumIcon from '@mui/icons-material/Album';
 import ListIcon from '@mui/icons-material/List';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
-
 const sidebarConfig = [
     {
         title: 'Dashboard',

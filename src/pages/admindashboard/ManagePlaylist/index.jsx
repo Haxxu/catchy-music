@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import classNames from 'classnames/bind';
 import Moment from 'moment';
@@ -21,8 +22,8 @@ const ManagePlaylist = () => {
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(searchPlaylist, 500);
-
     const searchPlaylistInputRef = useRef();
 
     useEffect(() => {
@@ -42,7 +43,7 @@ const ManagePlaylist = () => {
     const columns = [
         {
             field: 'image',
-            headerName: 'Image',
+            headerName: t('Image'),
             width: 35,
             renderCell: (params) => (
                 <Avatar alt={params.row.name} src={params.row.image} sx={{ width: 30, height: 30 }} variant='square' />
@@ -50,34 +51,34 @@ const ManagePlaylist = () => {
         },
         {
             field: 'name',
-            headerName: 'Name',
+            headerName: t('Name'),
             flex: 1,
         },
         {
             field: 'owner',
-            headerName: 'Owner',
+            headerName: t('Owner'),
             flex: 1,
             valueGetter: (params) => params.row.owner.name,
         },
         {
             field: 'tracks',
-            headerName: 'Tracks',
+            headerName: t('Tracks'),
             flex: 1,
             valueGetter: (params) => params.row.tracks.length,
         },
         {
             field: 'saved',
-            headerName: 'Saved',
+            headerName: t('Saved'),
         },
         {
             field: 'createdAt',
-            headerName: 'Created At',
+            headerName: t('Created At'),
             flex: 1,
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
             field: 'isPublic',
-            headerName: 'Is Public',
+            headerName: t('Is Public'),
             flex: 1,
             renderCell: (params) => {
                 if (params.row.isPublic) {
@@ -89,7 +90,7 @@ const ManagePlaylist = () => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('Actions'),
             flex: 1,
             sortable: false,
             renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='playlist' row={params.row} />,
@@ -98,14 +99,14 @@ const ManagePlaylist = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('header')}>Tracks</div>
+            <div className={cx('header')}>{t('Tracks')}</div>
             <div className={cx('input-container')}>
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for playlist, owner'
+                    placeholder={t('Search for playlist, owner')}
                     value={searchPlaylist}
                     ref={searchPlaylistInputRef}
                     onChange={() => setSearchPlaylist(searchPlaylistInputRef.current.value)}

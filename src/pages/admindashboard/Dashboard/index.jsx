@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, CircularProgress } from '@mui/material';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 
 import axiosInstance from '~/api/axiosInstance';
 import { getUsersInfoUrl } from '~/api/urls/usersUrl';
@@ -19,6 +20,8 @@ const Dashboard = () => {
     const [tracksInfo, setTracksInfo] = useState(null);
     const [albumsInfo, setAlbumsInfo] = useState(null);
     const [playlistsInfo, setPlaylistsInfo] = useState(null);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,36 +47,36 @@ const Dashboard = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h2>Welcome back!</h2>
+                <h2>{t('Welcome back!')}</h2>
             </div>
             <Grid container spacing={1}>
                 <Grid item xs={12} md={6} xl={4}>
                     {usersInfo ? (
                         <div className={cx('info')}>
                             <div className={cx('left')}>
-                                <div className={cx('title')}>Users</div>
+                                <div className={cx('title')}>{t('Users')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{nFormatter(usersInfo.newUsersToday)}</span>
                                     <span className={cx('percentage')}>
                                         {parseFloat(usersInfo.newUsersToday / usersInfo.totalUsers).toPrecision(2)}%
                                     </span>
                                 </div>
-                                <div className={cx('bottom-title')}>New Members today</div>
+                                <div className={cx('bottom-title')}>{t('New Members today')}</div>
                             </div>
                             <div className={cx('right')}>
                                 <div className={cx('detail-info')}>
-                                    Total Users:{' '}
+                                    {t('Total Users')}:{' '}
                                     <span className={cx('number')}>{nFormatter(usersInfo.totalUsers)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    This month:{' '}
+                                    {t('This month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(usersInfo.newUsersThisMonth)}</span>
                                     <span className={cx('percentage')}>
                                         {parseFloat(usersInfo.newUsersThisMonth / usersInfo.totalUsers).toPrecision(2)}%
                                     </span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    Last month:{' '}
+                                    {t('Last month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(usersInfo.newUsersLastMonth)}</span>
                                     <span className={cx('percentage')}>
                                         {parseFloat(usersInfo.newUsersLastMonth / usersInfo.totalUsers).toPrecision(2)}%
@@ -89,11 +92,11 @@ const Dashboard = () => {
                     {artistsInfo ? (
                         <div className={cx('info')}>
                             <div className={cx('left')}>
-                                <div className={cx('title')}>Artist</div>
+                                <div className={cx('title')}>{t('Artist')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{nFormatter(artistsInfo.totalArtists)}</span>
                                 </div>
-                                <div className={cx('bottom-title')}>Total Artists</div>
+                                <div className={cx('bottom-title')}>{t('Total Artists')}</div>
                             </div>
                         </div>
                     ) : (
@@ -104,23 +107,23 @@ const Dashboard = () => {
                     {tracksInfo ? (
                         <div className={cx('info')}>
                             <div className={cx('left')}>
-                                <div className={cx('title')}>Tracks</div>
+                                <div className={cx('title')}>{t('Tracks')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{nFormatter(tracksInfo.newTracksToday)}</span>
                                 </div>
-                                <div className={cx('bottom-title')}>New Tracks today</div>
+                                <div className={cx('bottom-title')}>{t('New Tracks today')}</div>
                             </div>
                             <div className={cx('right')}>
                                 <div className={cx('detail-info')}>
-                                    Total Tracks:{' '}
+                                    {t('Total Tracks')}:{' '}
                                     <span className={cx('number')}>{nFormatter(tracksInfo.totalTracks)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    This month:{' '}
+                                    {t('This month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(tracksInfo.newTracksThisMonth)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    Last month:{' '}
+                                    {t('Last month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(tracksInfo.newTracksLastMonth)}</span>
                                 </div>
                             </div>
@@ -133,23 +136,23 @@ const Dashboard = () => {
                     {albumsInfo ? (
                         <div className={cx('info')}>
                             <div className={cx('left')}>
-                                <div className={cx('title')}>Albums</div>
+                                <div className={cx('title')}>{t('Albums')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{nFormatter(albumsInfo.newAlbumsToday)}</span>
                                 </div>
-                                <div className={cx('bottom-title')}>New Albums today</div>
+                                <div className={cx('bottom-title')}>{t('New Albums today')}</div>
                             </div>
                             <div className={cx('right')}>
                                 <div className={cx('detail-info')}>
-                                    Total Albums:{' '}
+                                    {t('Total Albums')}:{' '}
                                     <span className={cx('number')}>{nFormatter(albumsInfo.totalAlbums)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    This month:{' '}
+                                    {t('This month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(albumsInfo.newAlbumsThisMonth)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    Last month:{' '}
+                                    {t('Last month')}:{' '}
                                     <span className={cx('number')}>{nFormatter(albumsInfo.newAlbumsLastMonth)}</span>
                                 </div>
                             </div>
@@ -162,25 +165,25 @@ const Dashboard = () => {
                     {playlistsInfo ? (
                         <div className={cx('info')}>
                             <div className={cx('left')}>
-                                <div className={cx('title')}>Playlists</div>
+                                <div className={cx('title')}>{t('Playlists')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{nFormatter(playlistsInfo.newPlaylistsToday)}</span>
                                 </div>
-                                <div className={cx('bottom-title')}>New Playlists today</div>
+                                <div className={cx('bottom-title')}>{t('New Playlists today')}</div>
                             </div>
                             <div className={cx('right')}>
                                 <div className={cx('detail-info')}>
-                                    Total Playlists:{' '}
+                                    {t('Total Playlists')}:{' '}
                                     <span className={cx('number')}>{nFormatter(playlistsInfo.totalPlaylists)}</span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    This month:{' '}
+                                    {t('This month')}:{' '}
                                     <span className={cx('number')}>
                                         {nFormatter(playlistsInfo.newPlaylistsThisMonth)}
                                     </span>
                                 </div>
                                 <div className={cx('detail-info')}>
-                                    Last month:{' '}
+                                    {t('This month')}:{' '}
                                     <span className={cx('number')}>
                                         {nFormatter(playlistsInfo.newPlaylistsLastMonth)}
                                     </span>

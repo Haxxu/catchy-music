@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 import { getTracksByContextUrl } from '~/api/urls/tracksUrls';
 import { removeTrackFromAlbumUrl } from '~/api/urls/albumsUrl';
@@ -24,6 +25,8 @@ const cx = classNames.bind(styles);
 const ManageTrackTable = ({ type, id, handleUpdateData }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,14 +79,14 @@ const ManageTrackTable = ({ type, id, handleUpdateData }) => {
                 >
                     <TableHead>
                         <TableRow>
-                            <TableCell>Image</TableCell>
-                            <TableCell align='right'>Name</TableCell>
-                            {type === 'playlist' && <TableCell align='right'>Album</TableCell>}
-                            <TableCell align='right'>Duration</TableCell>
-                            <TableCell align='right'>Plays</TableCell>
-                            <TableCell align='right'>Saved</TableCell>
-                            <TableCell align='right'>Added At</TableCell>
-                            <TableCell align='right'>Actions</TableCell>
+                            <TableCell>{t('Image')}</TableCell>
+                            <TableCell align='right'>{t('Name')}</TableCell>
+                            {type === 'playlist' && <TableCell align='right'>{t('Album')}</TableCell>}
+                            <TableCell align='right'>{t('Duration')}</TableCell>
+                            <TableCell align='right'>{t('Plays')}</TableCell>
+                            <TableCell align='right'>{t('Saved')}</TableCell>
+                            <TableCell align='right'>{t('Added At')}</TableCell>
+                            <TableCell align='right'>{t('Actions')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -105,12 +108,12 @@ const ManageTrackTable = ({ type, id, handleUpdateData }) => {
                                         color='error'
                                         onClick={() =>
                                             confirmAlert({
-                                                title: 'Confirm to remove this song from ' + type,
+                                                title: t('Confirm to remove this song from ') + type,
 
-                                                message: 'Are you sure to do this.',
+                                                message: t('Are you sure to do this.'),
                                                 buttons: [
                                                     {
-                                                        label: 'Yes',
+                                                        label: t('Yes'),
                                                         onClick: () => {
                                                             if (type === 'album') {
                                                                 handleRemoveTrackFromAlbum(item._id);
@@ -127,14 +130,14 @@ const ManageTrackTable = ({ type, id, handleUpdateData }) => {
                                             })
                                         }
                                     >
-                                        Remove
+                                        {t('Remove')}
                                     </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                         {data.length === 0 && !loading && (
                             <TableRow>
-                                <TableCell align='center'>No data</TableCell>
+                                <TableCell align='center'>{t('No data')}</TableCell>
                             </TableRow>
                         )}
                     </TableBody>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import classNames from 'classnames/bind';
 import { IconButton, Chip, Avatar } from '@mui/material';
@@ -22,8 +23,8 @@ const ManageUser = () => {
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(searchUser, 500);
-
     const searchUserInputRef = useRef();
 
     useEffect(() => {
@@ -57,13 +58,13 @@ const ManageUser = () => {
         { field: 'email', headerName: 'Email', flex: 1 },
         {
             field: 'createdAt',
-            headerName: 'Created At',
+            headerName: t('Created At'),
             flex: 1,
             valueGetter: (params) => dateFormat(params.row.createdAt),
         },
         {
             field: 'type',
-            headerName: 'Type',
+            headerName: t('Type'),
             renderCell: (params) => {
                 if (params.row.type === 'artist')
                     return (
@@ -82,7 +83,7 @@ const ManageUser = () => {
         },
         {
             field: 'status',
-            headerName: 'Status',
+            headerName: t('Status'),
             flex: 1,
             renderCell: (params) => {
                 if (params.row.status === 'actived')
@@ -112,7 +113,7 @@ const ManageUser = () => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('Actions'),
             flex: 1,
             sortable: false,
             renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='user' row={params.row} />,
@@ -121,14 +122,14 @@ const ManageUser = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('header')}>Users</div>
+            <div className={cx('header')}>{t('Users')}</div>
             <div className={cx('input-container')}>
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for username, email'
+                    placeholder={t('Search for username, email')}
                     value={searchUser}
                     ref={searchUserInputRef}
                     onChange={() => setSearchUser(searchUserInputRef.current.value)}

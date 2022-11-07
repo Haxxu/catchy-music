@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import classNames from 'classnames/bind';
 import { IconButton, Chip, Avatar } from '@mui/material';
@@ -20,6 +21,7 @@ const ManageArtist = () => {
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(searchUser, 500);
 
     const searchUserInputRef = useRef();
@@ -49,27 +51,27 @@ const ManageArtist = () => {
         },
         {
             field: 'name',
-            headerName: 'Name',
+            headerName: t('Name'),
             flex: 1,
         },
         { field: 'email', headerName: 'Email', flex: 1 },
         {
             field: 'totalTracks',
-            headerName: 'Tracks',
+            headerName: t('Tracks'),
             flex: 1,
         },
         {
             field: 'totalAlbums',
-            headerName: 'Albums',
+            headerName: t('Albums'),
             flex: 1,
         },
         {
             field: 'totalFollowers',
-            headerName: 'Followers',
+            headerName: t('Followers'),
         },
         {
             field: 'status',
-            headerName: 'Status',
+            headerName: t('Status'),
             flex: 1,
             renderCell: (params) => {
                 if (params.row.status === 'actived')
@@ -99,7 +101,7 @@ const ManageArtist = () => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('Actions'),
             flex: 1,
             sortable: false,
             renderCell: (params) => <ActionMenu handleUpdateData={handleUpdateData} type='user' row={params.row} />,
@@ -108,14 +110,14 @@ const ManageArtist = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('header')}>Artists</div>
+            <div className={cx('header')}>{t('Artists')}</div>
             <div className={cx('input-container')}>
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for artist, track and album'
+                    placeholder={t('Search for artist, track and album')}
                     value={searchUser}
                     ref={searchUserInputRef}
                     onChange={() => setSearchUser(searchUserInputRef.current.value)}
