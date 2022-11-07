@@ -32,7 +32,7 @@ export const menuOptions = [
     },
     {
         title: 'Settings',
-        path: routes.admin_settings,
+        path: routes.settings,
         icon: <SettingsIcon fontSize='large' />,
         roles: ['admin', 'artist', 'user'],
     },

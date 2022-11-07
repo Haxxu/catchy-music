@@ -10,6 +10,8 @@ const routes = {
     search: '/search',
     artist: '/artist/:artistId',
 
+    settings: '/settings',
+
     // admin routes
     admin_dashboard: '/admin-dashboard/home',
     admin_profile: '/admin-dashboard/profile',

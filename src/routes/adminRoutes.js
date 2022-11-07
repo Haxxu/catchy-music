@@ -11,18 +11,11 @@ import ManagePlaylist from '~/pages/admindashboard/ManagePlaylist';
 import ManageGenre from '~/pages/admindashboard/ManageGenre';
 import GenreForm from '~/components/Forms/GenreForm';
 import Profile from '~/pages/Profile';
-import Settings from '~/pages/Settings';
 
 const adminRoutes = [
     {
         path: routes.admin_profile,
         component: Profile,
-        layout: AdminDashboardLayout,
-        roles: [roles.admin],
-    },
-    {
-        path: routes.admin_settings,
-        component: Settings,
         layout: AdminDashboardLayout,
         roles: [roles.admin],
     },

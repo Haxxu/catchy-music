@@ -5,6 +5,7 @@ import MainLayout from '~/layouts/MainLayout';
 import Home from '~/pages/Home';
 import Search from '~/pages/Search';
 import Artist from '~/pages/Artist';
+import Settings from '~/pages/Settings';
 
 const privateRoutes = [
     // Home
@@ -27,6 +28,12 @@ const privateRoutes = [
         component: Artist,
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
+    },
+    {
+        path: routes.settings,
+        component: Settings,
+        layout: MainLayout,
+        roles: [roles.admin, roles.artist, roles.user],
     },
 ];
 
