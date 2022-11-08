@@ -92,13 +92,18 @@ const FileInput = ({ name, label, value, icon, type, handleInputState, ...rest }
             )}
             {progressShow && progress < 100 && (
                 <div className={cx('progress-container')}>
-                    <CircularProgress variant='determinate' value={progress} />
+                    <CircularProgress
+                        variant='determinate'
+                        value={progress}
+                        color='primary'
+                        sx={{ fontSize: '1.8rem' }}
+                    />
                     <p>{progress}%</p>
                 </div>
             )}
             {progress === 100 && (
                 <div className={cx('progress-container')}>
-                    <CheckCircleIcon className={cx('styles.success')} />
+                    <CheckCircleIcon className={cx('styles.success')} color='success' fontSize='large' />
                 </div>
             )}
         </div>

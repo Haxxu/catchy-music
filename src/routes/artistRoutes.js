@@ -4,6 +4,7 @@ import ArtistDashboardLayout from '~/layouts/ArtistDashboardLayout';
 // Pages
 import Dashboard from '~/pages/artistdashboard/Dashboard';
 import ManageTrack from '~/pages/artistdashboard/ManageTrack';
+import SpecifiedTrack from '~/pages/artistdashboard/SpecifiedTrack';
 
 const artistRoutes = [
     // dashboard
@@ -16,6 +17,12 @@ const artistRoutes = [
     {
         path: routes.artist_manageTrack,
         component: ManageTrack,
+        layout: ArtistDashboardLayout,
+        roles: [roles.artist],
+    },
+    {
+        path: routes.artist_manageTrack_specifiedTrack,
+        component: SpecifiedTrack,
         layout: ArtistDashboardLayout,
         roles: [roles.artist],
     },

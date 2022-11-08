@@ -26,8 +26,15 @@ const routes = {
     admin_manageGenre_genreForm: '/admin-dashboard/genres/:id',
 
     // artist routes
-    artist_dashboard: '/artist-dashboard',
-    artist_manageTrack: '/artist-dashboard/manage-track',
+    artist_dashboard: '/artist-dashboard/home',
+    artist_manageTrack: '/artist-dashboard/tracks',
+    artist_manageTrack_newTrack: '/artist-dashboard/tracks/new-track',
+    artist_manageTrack_specifiedTrack: '/artist-dashboard/tracks/:id/*',
+    artist_manageTrack_specifiedTrack_nested_edit: '',
+    artist_manageTrack_specifiedTrack_nested_albumsOfTrack: 'albums',
+    artist_manageTrack_specifiedTrack_nested_lyricsOfTrack: 'lyrics',
+    artist_manageTrack_specifiedTrack_nested_genresOfTrack: 'genres',
+    artist_manageAlbum: '/artist-dashboard/albums',
 };
 
 export default routes;
