@@ -5,3 +5,12 @@ export const getArtistsInfoUrl = baseApiUrl + '/artists/info';
 
 // [GET]
 export const getArtistsByContextUrl = baseApiUrl + '/artists/context';
+
+// [GET]
+export const getArtistsUrl = baseApiUrl + '/artists/all';
+
+// [GET]
+export const getArtistByIdUrl = (id) => baseApiUrl + `/artists/${id}`;
+
+// [GET]
+export const getArtistTracksUrl = (id) => baseApiUrl + `/artists/${id}/tracks`;

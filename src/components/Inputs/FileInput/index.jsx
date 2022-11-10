@@ -68,9 +68,12 @@ const FileInput = ({ name, label, value, icon, type, handleInputState, ...rest }
                     border: '1px solid var(--text-primary)',
                     background: 'transparent',
                     fontSize: '1.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
                 }}
                 onClick={() => inputRef.current.click()}
             >
+                {icon}
                 {label}
             </Button>
             {type === 'image' && value && (
