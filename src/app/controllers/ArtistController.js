@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const { Library } = require('../models/Library');
 const { User } = require('../models/User');
 const { Genre } = require('../models/Genre');
@@ -6,8 +8,10 @@ const { Album } = require('../models/Album');
 
 class ArtistController {
     async getArtistById(req, res, next) {
-        const artist = await User.findOne({ _id: req.params.id }).select('_id name description type genres').lean();
-        if (!artist || artist.type !== 'artist') {
+        const artist = await User.findOne({ _id: req.params.id, type: 'artist' })
+            .select('-email -password -createdAt -updatedAt -status -__v')
+            .lean();
+        if (!artist) {
             return res.status(404).send({ message: 'Artist not found' });
         }
 
@@ -26,10 +30,64 @@ class ArtistController {
             });
         }
 
+        let moreInfo = {
+            followers: { total: library.followers.length },
+            followings: { total: library.followings.length },
+        };
+        if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
+            const albums = await Album.find({ owner: req.user._id }).lean();
+            const tracks = await Track.find({ owner: req.user._id }).lean();
+
+            const [totalPlays, totalSaved] = tracks.reduce(
+                (prev, track) => [prev[0] + track.plays, prev[1] + track.saved],
+                [0, 0],
+            );
+            moreInfo.tracks = {
+                total: tracks.length,
+                items: tracks,
+                totalPlays,
+                totalSaved,
+            };
+            moreInfo.albums = {
+                total: albums.length,
+                totalReleasedAlbums: albums.filter((album) => album.isReleased).length,
+                items: albums,
+                totalSaved: albums.reduce((prev, album) => prev + album.saved, 0),
+            };
+
+            const today = moment().startOf('day');
+
+            moreInfo.followers.newFollowersToday = library.followers.filter(
+                (follower) =>
+                    follower.addedAt >= today.toDate() && follower.addedAt <= moment(today).endOf('day').toDate(),
+            ).length;
+            moreInfo.followers.newFollowersThisMonth = library.followers.filter(
+                (follower) =>
+                    follower.addedAt >= moment(today).startOf('month').toDate() &&
+                    follower.addedAt <= moment(today).endOf('month').toDate(),
+            ).length;
+            moreInfo.followers.newFollowersLastMonth = library.followers.filter(
+                (follower) =>
+                    follower.addedAt >= moment(today).subtract(1, 'months').startOf('month').toDate() &&
+                    follower.addedAt <= moment(today).subtract(1, 'months').endOf('month').toDate(),
+            ).length;
+        } else {
+            const albums = await Album.find({ owner: req.user._id, isReleased: true }).lean();
+            const tracks = await Track.find({ owner: req.user._id }).lean();
+            moreInfo.tracks = {
+                total: tracks.length,
+                items: tracks,
+            };
+            moreInfo.albums = {
+                total: albums.length,
+                items: albums,
+            };
+        }
+
         const artistDetail = {
             ...artist,
-            followers: { total: library.followers.length },
             genres: detailGenres,
+            ...moreInfo,
         };
 
         res.status(200).send({ data: artistDetail, message: 'Get artist successfully' });
@@ -95,6 +153,66 @@ class ArtistController {
             }
 
             return res.status(200).send({ data: users, message });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getTracksOfArtist(req, res, next) {
+        try {
+            const artist = await User.findOne({ _id: req.params.id, type: 'artist' });
+            if (!artist) {
+                return res.status(404).send({ message: 'Artist not found' });
+            }
+
+            let searchCondition = {};
+            let search = req.query.search.trim();
+            if (req.query.search && search !== '') {
+                searchCondition = {
+                    name: {
+                        $regex: search,
+                        $options: 'i',
+                    },
+                };
+            }
+
+            const tracks = await Track.find({ owner: req.params.id, ...searchCondition }).sort({ createdAt: 'desc' });
+            return res.status(200).send({ data: tracks, message: 'Get tracks successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getArtists(req, res, next) {
+        try {
+            const artists = await User.find({ type: 'artist' }).select('name _id').lean();
+
+            const newArtists = artists.map((artist) => ({ name: artist.name, id: artist._id }));
+            return res.status(200).send({ data: newArtists, message: 'Get artists successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getAlbumsOfArtist(req, res, next) {
+        try {
+            const artist = await User.findOne({ _id: req.params.id, type: 'artist' });
+            if (!artist) {
+                return res.status(404).send({ message: 'Artist not found' });
+            }
+
+            let condition = {};
+            if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
+            } else {
+                condition = {
+                    isReleased: true,
+                };
+            }
+
+            const albums = await Album.find({ owner: artist._id.toString(), ...condition });
+
+            return res.status(200).send({ data: albums, message: 'Get albums successfully' });
         } catch (error) {
             return res.status(500).send({ message: 'Something went wrong' });
         }
