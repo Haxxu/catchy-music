@@ -146,7 +146,7 @@ const ManageTrack = () => {
         <div className={cx('container')}>
             <div className={cx('header')}>
                 <h1>Tracks</h1>
-                <Link to={routes.artist_manageTrack_newTrack}>
+                <Link to={routes.artist_manageTrack + '/new-track'}>
                     <Button
                         size='large'
                         color='secondary'

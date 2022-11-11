@@ -33,7 +33,7 @@ const routes = {
     artist_manageTrack_specifiedTrack_nested_edit: '',
     artist_manageTrack_specifiedTrack_nested_albumsOfTrack: 'albums',
     artist_manageTrack_specifiedTrack_nested_lyricsOfTrack: 'lyrics',
-    artist_manageTrack_specifiedTrack_nested_genresOfTrack: 'genres',
+
     artist_manageAlbum: '/artist-dashboard/albums',
 };
 

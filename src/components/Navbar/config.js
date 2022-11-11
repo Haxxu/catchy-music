@@ -13,6 +13,12 @@ export const menuOptions = [
         roles: ['admin', 'artist', 'user'],
     },
     {
+        title: 'Profile',
+        path: routes.admin_profile,
+        icon: <AccountBoxIcon fontSize='large' />,
+        roles: ['admin', 'artist', 'user'],
+    },
+    {
         title: 'Dashboard',
         path: routes.admin_dashboard,
         icon: <AdminPanelSettingsIcon fontSize='large' />,
@@ -23,12 +29,6 @@ export const menuOptions = [
         path: routes.artist_dashboard,
         icon: <DashboardCustomizeOutlinedIcon fontSize='large' />,
         roles: ['artist'],
-    },
-    {
-        title: 'Profile',
-        path: routes.admin_profile,
-        icon: <AccountBoxIcon fontSize='large' />,
-        roles: ['admin', 'artist', 'user'],
     },
     {
         title: 'Settings',

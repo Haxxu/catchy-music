@@ -65,7 +65,12 @@ const Navbar = () => {
                                 {menuOptions.map((option, index) => {
                                     if (option.roles.includes(type)) {
                                         return (
-                                            <Link to={option.path} className={cx('option')} key={index}>
+                                            <Link
+                                                to={option.path}
+                                                className={cx('option')}
+                                                key={index}
+                                                onClick={() => toggleProfileMenu()}
+                                            >
                                                 <span className={cx('icon')}>{option.icon}</span>{' '}
                                                 <span>{option.title}</span>
                                             </Link>

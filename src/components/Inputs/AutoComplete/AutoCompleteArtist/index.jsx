@@ -30,7 +30,6 @@ const AutoCompleteArtist = ({ artists, handleInputState, defaultArtist, label })
                     handleInputState('artists', [
                         defaultArtist,
                         ...newValue.filter((option) => {
-                            console.log(option);
                             return option.id !== defaultArtist.id;
                         }),
                     ]);

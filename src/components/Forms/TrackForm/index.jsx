@@ -119,6 +119,7 @@ const TrackForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
+                        <div className={cx('input-heading')}>Image</div>
                         <FileInput
                             name='image'
                             label='Choose image'
@@ -129,6 +130,7 @@ const TrackForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
+                        <div className={cx('input-heading')}>Audio</div>
                         <FileInput
                             name='audio'
                             label='Choose audio'
