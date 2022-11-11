@@ -30,6 +30,19 @@ class LyricController {
         res.status(200).send({ data: newLyric, message: 'Added lyric to track successfully' });
     }
 
+    async getLyricById(req, res, next) {
+        try {
+            const lyric = await Lyric.findOne({ _id: req.params.id });
+            if (!lyric) {
+                return res.status(404).send({ message: 'Lyric not found' });
+            }
+
+            res.status(200).send({ data: lyric, message: 'Get lyric successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     async updateLyric(req, res, next) {
         const { error } = validateLyric(req.body);
         if (error) {
@@ -54,9 +67,16 @@ class LyricController {
     }
 
     async getAllLyricsOfTrack(req, res, next) {
-        const lyrics = await Lyric.find({ track: req.params.id });
+        try {
+            const lyrics = await Lyric.find({ track: req.params.id }).populate('track', 'name').lean();
 
-        res.status(200).send({ data: lyrics, message: 'Get lyric successfully' });
+            // const newLyrics = lyrics.map((lyric) => ({ ...lyric, track: lyric.track.name }));
+
+            res.status(200).send({ data: lyrics, message: 'Get lyrics successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // remove lyric by id
