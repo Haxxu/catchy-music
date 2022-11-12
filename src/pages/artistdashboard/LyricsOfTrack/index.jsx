@@ -96,7 +96,7 @@ const LyricsOfTrack = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>Lyrics</h1>
+                <h1>My Lyrics</h1>
                 <Link to='new-lyric'>
                     <Button
                         size='large'

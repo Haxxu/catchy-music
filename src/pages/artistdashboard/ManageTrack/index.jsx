@@ -145,7 +145,7 @@ const ManageTrack = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>Tracks</h1>
+                <h1>My Tracks</h1>
                 <Link to={routes.artist_manageTrack + '/new-track'}>
                     <Button
                         size='large'
@@ -167,7 +167,7 @@ const ManageTrack = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for track'
+                    placeholder='Search for my track'
                     value={searchTrack}
                     ref={searchTrackInputRef}
                     onChange={() => setSearchTrack(searchTrackInputRef.current.value)}

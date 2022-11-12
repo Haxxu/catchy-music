@@ -104,7 +104,7 @@ const TrackForm = () => {
     return (
         <div className={cx('container ')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>{id === 'new-track' ? 'Add new genre' : 'Edit genre'}</h1>
+                <h1 className={cx('heading')}>{id === 'new-track' ? 'Add new track' : 'Edit track'}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField

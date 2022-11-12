@@ -12,5 +12,8 @@ export const deleteAlbumUrl = (id) => baseApiUrl + `/albums/${id}`;
 // [PUT] (admin, artist owner)
 export const toggleReleaseAlbumUrl = (id) => baseApiUrl + `/albums/${id}/release`;
 
-// [DELETE] reomve track from album
+// [DELETE] remove track from album
 export const removeTrackFromAlbumUrl = (id) => baseApiUrl + `/albums/${id}/tracks`;
+
+// [POST] add track from album
+export const addTrackToAlbumUrl = (albumId) => baseApiUrl + `/albums/${albumId}/tracks`;
