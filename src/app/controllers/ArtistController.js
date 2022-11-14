@@ -204,6 +204,15 @@ class ArtistController {
 
             let condition = {};
             if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
+                let search = req.query.search.trim();
+                if (req.query.search && search !== '') {
+                    condition = {
+                        name: {
+                            $regex: search,
+                            $options: 'i',
+                        },
+                    };
+                }
             } else {
                 condition = {
                     isReleased: true,
