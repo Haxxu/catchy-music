@@ -16,27 +16,30 @@ import styles from './styles.scoped.scss';
 import { routes } from '~/config';
 import { useAuth, useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
-import { getArtistTracksUrl } from '~/api/urls/artistsUrl';
+import { getArtistTracksUrl, getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
 import { fancyTimeFormat } from '~/utils/Format';
 import { deleteTrackUrl } from '~/api/urls/tracksUrls';
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
-const ManageTrack = () => {
-    const [searchTrack, setSearchTrack] = useState('');
+const ManageAlbum = () => {
+    const [searchAlbum, setSearchAlbum] = useState('');
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState(false);
 
-    const searchTrackInputRef = useRef();
-    const debouncedValue = useDebounce(searchTrack, 500);
+    const searchAlbumInputRef = useRef();
+    const debouncedValue = useDebounce(searchAlbum, 500);
     const { userId } = useAuth();
     const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance(getArtistTracksUrl(userId), { params: { search: searchTrack } });
+            const { data } = await axiosInstance(getArtistAlbumsUrl(userId), {
+                params: { search: searchAlbum, context: 'detail' },
+            });
             setRows(data.data);
+            console.log(rows);
         };
 
         fetchData().catch(console.error);
@@ -68,28 +71,14 @@ const ManageTrack = () => {
             flex: 1,
         },
         {
-            field: 'artists',
-            headerName: t('Artist'),
+            field: 'tracks',
+            headerName: t('Tracks'),
             flex: 1,
-            renderCell: (params) => {
-                return (
-                    <div>
-                        {params.row.artists.map((artist, index) => (
-                            <p key={index}>{artist.name}</p>
-                        ))}
-                    </div>
-                );
-            },
+            valueGetter: (params) => params.row.tracks.length,
         },
         {
-            field: 'duration',
-            headerName: t('Duration'),
-            flex: 1,
-            valueGetter: (params) => fancyTimeFormat(params.row.duration),
-        },
-        {
-            field: 'plays',
-            headerName: t('Plays'),
+            field: 'type',
+            headerName: t('Type'),
             flex: 1,
         },
         {
@@ -101,6 +90,12 @@ const ManageTrack = () => {
             headerName: t('Created At'),
             flex: 1,
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
+        },
+        {
+            field: 'releaseDate',
+            headerName: t('Release Date'),
+            flex: 1,
+            valueGetter: (params) => Moment(params.row.releaseDate).format('DD-MM-YYYY'),
         },
         {
             field: 'actions',
@@ -119,7 +114,7 @@ const ManageTrack = () => {
                         color='error'
                         onClick={() =>
                             confirmAlert({
-                                title: t('Confirm to delete this track'),
+                                title: t('Confirm to delete this album'),
 
                                 message: t('Are you sure to do this.'),
                                 buttons: [
@@ -145,8 +140,8 @@ const ManageTrack = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>My Tracks</h1>
-                <Link to={routes.artist_manageTrack + '/new-track'}>
+                <h1>My Albums</h1>
+                <Link to={routes.artist_manageAlbum + '/new-album'}>
                     <Button
                         size='large'
                         color='secondary'
@@ -157,7 +152,7 @@ const ManageTrack = () => {
                             fontWeight: '600',
                         }}
                     >
-                        Add new track
+                        Add new album
                     </Button>
                 </Link>
             </div>
@@ -167,12 +162,12 @@ const ManageTrack = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for my track'
-                    value={searchTrack}
-                    ref={searchTrackInputRef}
-                    onChange={() => setSearchTrack(searchTrackInputRef.current.value)}
+                    placeholder='Search for my album'
+                    value={searchAlbum}
+                    ref={searchAlbumInputRef}
+                    onChange={() => setSearchAlbum(searchAlbumInputRef.current.value)}
                 />
-                <IconButton onClick={() => setSearchTrack('')}>
+                <IconButton onClick={() => setSearchAlbum('')}>
                     <ClearIcon />
                 </IconButton>
             </div>
@@ -193,4 +188,4 @@ const ManageTrack = () => {
     );
 };
 
-export default ManageTrack;
+export default ManageAlbum;

@@ -35,6 +35,10 @@ const routes = {
     artist_manageTrack_specifiedTrack_nested_lyricsOfTrack: 'lyrics',
 
     artist_manageAlbum: '/artist-dashboard/albums',
+    artist_manageAlbum_newAlbum: '/artist-dashboard/albums/new-track',
+    artist_manageAlbum_specifiedAlbum: '/artist-dashboard/albums/:id/*',
+    artist_manageAlbum_specifiedAlbum_nested_edit: '',
+    artist_manageAlbum_specifiedAlbum_nested_tracksOfAlbum: 'tracks',
 };
 
 export default routes;
