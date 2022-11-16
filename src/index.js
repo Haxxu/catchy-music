@@ -18,7 +18,6 @@ routes(app);
 
 async function test() {
     console.log('\n\n\n-------------------------------------------');
-    console.log('alo');
     console.log('\n\n\n-------------------------------------------');
 }
 

@@ -204,8 +204,8 @@ class ArtistController {
 
             let condition = {};
             if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
-                let search = req.query.search.trim();
-                if (req.query.search && search !== '') {
+                if (req.query.search && req.query.search.trim() !== '') {
+                    let search = req.query.search.trim();
                     condition = {
                         name: {
                             $regex: search,
@@ -223,6 +223,7 @@ class ArtistController {
 
             return res.status(200).send({ data: albums, message: 'Get albums successfully' });
         } catch (error) {
+            console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }

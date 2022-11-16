@@ -15,7 +15,7 @@ class AlbumController {
             return res.status(404).send({ message: 'Album does not exist' });
         }
 
-        if (album.isReleased || album.owner.toString() === req.user._id) {
+        if (album.isReleased || album.owner._id.toString() === req.user._id) {
             const detailTracks = [];
             let position = 0;
             for (let track of album.tracks) {
