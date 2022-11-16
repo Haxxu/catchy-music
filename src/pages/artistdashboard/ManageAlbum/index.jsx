@@ -129,7 +129,7 @@ const ManageAlbum = () => {
             sortable: false,
             renderCell: (params) => (
                 <div>
-                    <Link to={routes.artist_manageTrack + `/${params.row._id}`}>
+                    <Link to={routes.artist_manageAlbum + `/${params.row._id}`}>
                         <IconButton>
                             <EditIcon fontSize='large' />
                         </IconButton>

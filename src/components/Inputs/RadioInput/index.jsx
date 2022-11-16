@@ -8,19 +8,19 @@ import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
-const RadioInput = ({ label, handleInputState, name, options, required, fontLabelSize = '1.6rem', ...rest }) => {
+const RadioInput = ({ label, handleInputState, name, value, options, required, fontLabelSize = '1.6rem', ...rest }) => {
     const handleChange = ({ currentTarget: input }) => {
         handleInputState(input.name, input.value);
     };
 
     return (
         <div className={cx('container')}>
-            <p>{label}</p>
+            <p style={{ fontWeight: '700' }}>{label}</p>
             <RadioGroup {...rest} row name={name} onChange={handleChange}>
                 {options.map((option, index) => (
                     <FormControlLabel
                         key={index}
-                        value={option}
+                        value={option.value}
                         control={
                             <Radio
                                 disableRipple
@@ -29,9 +29,10 @@ const RadioInput = ({ label, handleInputState, name, options, required, fontLabe
                                     transform: 'scale(1.2)',
                                 }}
                                 required={required}
+                                checked={option.value === value}
                             />
                         }
-                        label={<span style={{ fontSize: fontLabelSize }}>{option}</span>}
+                        label={<span style={{ fontSize: fontLabelSize }}>{option.label}</span>}
                         className={cx('radio-input')}
                     />
                 ))}

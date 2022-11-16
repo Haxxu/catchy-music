@@ -7,13 +7,14 @@
 
     .label {
         margin: 0 0 1rem;
+        font-weight: 700;
         font-size: 1.8rem;
     }
 
     .select {
         height: 5rem;
         font-size: 1.6rem;
-        border-radius: 1rem;
+        border-radius: 0.5rem;
         border: 0.1rem solid var(--text-primary);
         padding: 0 1rem;
         background-color: transparent;

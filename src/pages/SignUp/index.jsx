@@ -50,7 +50,11 @@ function SignUp() {
         { name: t('December'), value: '12' },
     ];
 
-    const genders = ['male', 'female', 'non-binary'];
+    const genders = [
+        { label: 'male', value: 'male' },
+        { label: 'female', value: 'female' },
+        { label: 'non-binary', value: 'non-binary' },
+    ];
 
     const schema = {
         email: Joi.string()

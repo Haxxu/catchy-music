@@ -6,16 +6,18 @@ import { Paper, Button } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 import FileInput from '~/components/Inputs/FileInput';
 import TextField from '~/components/Inputs/TextField';
-import AutoCompleteArtist from '~/components/Inputs/AutoComplete/AutoCompleteArtist';
-import AutoCompleteGenre from '~/components/Inputs/AutoComplete/AutoCompleteGenre';
+import RadioInput from '~/components/Inputs/RadioInput';
+import Select from '~/components/Inputs/Select';
 import { useAuth } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
 import { routes } from '~/config';
-import { createTrackUrl, updateTrackUrl, getTrackByIdUrl } from '~/api/urls/tracksUrls';
+import { getAlbumByIdUrl, createAlbumUrl, updateAlbumUrl } from '~/api/urls/albumsUrl';
 import styles from './styles.scoped.scss';
+import TextArea from '~/components/Inputs/TextArea';
 
 const cx = classNames.bind(styles);
 
@@ -24,36 +26,76 @@ const AlbumForm = () => {
     const [update, setUpdate] = useState(false);
     const [data, setData] = useState({
         name: '',
-        audio: '',
-        duration: 0,
+        description: '',
         image: null,
-        artists: [{ id: userId, name }],
-        genres: [],
+        tracks: [],
+        date: '',
+        month: '',
+        year: '',
+        type: 'album',
+        isReleased: false,
     });
-    const [errors, setErrors] = useState({ name: '', audio: '', duration: '' });
+    const [errors, setErrors] = useState({
+        name: '',
+        description: '',
+        image: null,
+        tracks: [],
+        date: '',
+        month: '',
+        year: '',
+        type: '',
+    });
+    const { t } = useTranslation();
 
     const { id } = useParams();
     const navigate = useNavigate();
 
     const schema = {
         name: Joi.string()
-            .min(1)
             .required()
             .label('Name'),
-        audio: Joi.string()
-            .required()
-            .label('Audio'),
-        image: Joi.string(),
-        duration: Joi.number()
-            .required()
-            .label('Duration'),
-        genres: Joi.array()
-            .items(Joi.string())
-            .label('Genres'),
-        artists: Joi.array()
+        description: Joi.string()
+            .allow('')
+            .label('Description'),
+        image: Joi.string()
+            .allow('')
+            .label('Image'),
+        tracks: Joi.array()
             .items(Joi.object())
-            .label('Artists'),
+            .label('Tracks'),
+        date: Joi.string()
+            .required()
+            .label('Date'),
+        isReleased: Joi.boolean().label('Is Released'),
+        month: Joi.string()
+            .required()
+            .label('Month'),
+        year: Joi.string()
+            .required()
+            .label('Year'),
+        type: Joi.string()
+            .required()
+            .label('Type'),
     };
+
+    const albumTypes = [{ name: t('Album'), value: 'album' }, { name: t('Single'), value: 'single' }];
+
+    const releaseOptions = [{ label: 'True', value: true }, { label: 'False', value: false }];
+
+    const months = [
+        { name: t('January'), value: '01' },
+        { name: t('February'), value: '02' },
+        { name: t('March'), value: '03' },
+        { name: t('April'), value: '04' },
+        { name: t('May'), value: '05' },
+        { name: t('June'), value: '06' },
+        { name: t('July'), value: '07' },
+        { name: t('August'), value: '08' },
+        { name: t('September'), value: '09' },
+        { name: t('October'), value: '10' },
+        { name: t('November'), value: '11' },
+        { name: t('December'), value: '12' },
+    ];
 
     const handleInputState = (name, value) => {
         setData((prev) => ({ ...prev, [name]: value }));
@@ -65,14 +107,15 @@ const AlbumForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(data);
         const { error } = Joi.object(schema).validate(data);
         if (!error) {
-            if (id === 'new-track') {
-                const { data: response } = await axiosInstance.post(createTrackUrl, data);
+            if (id === 'new-album') {
+                const { data: response } = await axiosInstance.post(createAlbumUrl, data);
                 toast.success(response.message);
-                response && navigate(routes.artist_manageTrack);
+                response && navigate(routes.artist_manageAlbum);
             } else {
-                const { data: response } = await axiosInstance.put(updateTrackUrl(id), data);
+                const { data: response } = await axiosInstance.put(updateAlbumUrl(id), data);
                 toast.success(response.message);
                 setUpdate((prev) => !prev);
             }
@@ -83,19 +126,23 @@ const AlbumForm = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (id !== 'new-track') {
-                const { data: res } = await axiosInstance.get(getTrackByIdUrl(id));
+            if (id !== 'new-album') {
+                const { data: res } = await axiosInstance.get(getAlbumByIdUrl(id));
+                console.log(res);
                 setData({
                     name: res.data.name,
-                    audio: res.data.audio,
+                    description: res.data.description,
                     image: res.data.image,
-                    genres: res.data.genres,
-                    artists: res.data.artists,
-                    duration: res.data.duration,
+                    date: res.data.date,
+                    month: res.data.month,
+                    year: res.data.year,
+                    type: res.data.type,
+                    isReleased: res.data.isReleased,
+                    tracks: res.data.tracks,
                 });
             }
 
-            // console.log(data);
+            console.log(data);
         };
 
         fetchData().catch(console.error);
@@ -119,6 +166,19 @@ const AlbumForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
+                        <TextArea
+                            name='description'
+                            label='Description'
+                            handleInputState={handleInputState}
+                            handleErrorState={handleErrorState}
+                            schema={schema.description}
+                            error={errors.description}
+                            value={data.description}
+                            required={true}
+                            rows='100'
+                        />
+                    </div>
+                    <div className={cx('input-container')}>
                         <div className={cx('input-heading')}>Image</div>
                         <FileInput
                             name='image'
@@ -130,21 +190,62 @@ const AlbumForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
-                        {/* <AutoCompleteArtist
-                            artists={data.artists}
+                        <Select
+                            name='type'
                             handleInputState={handleInputState}
-                            defaultArtist={{ name: name, id: userId }}
-                            type='artist'
-                            label='Artists'
-                        /> */}
+                            label={t('Album Type')}
+                            placeholder='Album Type'
+                            options={albumTypes}
+                            value={data.type}
+                            required={true}
+                        />
                     </div>
-                    <div className={cx('input-container')}>
-                        {/* <AutoCompleteGenre
-                            genres={data.genres}
+                    <div className={cx('date-container')}>
+                        <div className={cx('input-heading')}>Released Date</div>
+                        <div className={cx('date')}>
+                            <div className={cx('month')}>
+                                <Select
+                                    name='month'
+                                    handleInputState={handleInputState}
+                                    label={t('Month')}
+                                    placeholder='Months'
+                                    options={months}
+                                    value={data.month}
+                                    required={true}
+                                />
+                            </div>
+                            <div className={cx('date')}>
+                                <TextField
+                                    label={t('Date')}
+                                    placeholder='DD'
+                                    name='date'
+                                    value={data.date}
+                                    handleInputState={handleInputState}
+                                    required
+                                />
+                            </div>
+                            <div className={cx('year')}>
+                                <TextField
+                                    label={t('Year')}
+                                    placeholder='YYYY'
+                                    name='year'
+                                    value={data.year}
+                                    handleInputState={handleInputState}
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <RadioInput
+                            label='Release'
+                            name='isReleased'
                             handleInputState={handleInputState}
-                            label='Genres'
-                            type='genre'
-                        /> */}
+                            options={releaseOptions}
+                            fontLabelSize='1.8rem'
+                            value={data.isReleased}
+                            required
+                        />
                     </div>
                     <Button
                         variant='contained'
