@@ -25,7 +25,9 @@ const AlbumsOfTrack = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance.get(getArtistAlbumsUrl(userId), { params: { context: 'detail' } });
+            const { data } = await axiosInstance.get(getArtistAlbumsUrl(userId), {
+                params: { context: 'detail' },
+            });
             setRows(data.data);
         };
 

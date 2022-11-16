@@ -8,6 +8,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import { useTranslation } from 'react-i18next';
 import Moment from 'moment';
 import { confirmAlert } from 'react-confirm-alert';
@@ -16,9 +19,9 @@ import styles from './styles.scoped.scss';
 import { routes } from '~/config';
 import { useAuth, useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
-import { getArtistTracksUrl, getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
-import { fancyTimeFormat } from '~/utils/Format';
+import { getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
 import { deleteTrackUrl } from '~/api/urls/tracksUrls';
+import { toggleReleaseAlbumUrl } from '~/api/urls/albumsUrl';
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
@@ -49,6 +52,16 @@ const ManageAlbum = () => {
     const handleDeleteTrack = async (id) => {
         try {
             const { data } = await axiosInstance.delete(deleteTrackUrl(id));
+            setUpdate((prev) => !prev);
+            toast.success(data.message);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleToggleReleaseAlbum = async (id) => {
+        try {
+            const { data } = await axiosInstance.put(toggleReleaseAlbumUrl(id), {});
             setUpdate((prev) => !prev);
             toast.success(data.message);
         } catch (error) {
@@ -92,6 +105,18 @@ const ManageAlbum = () => {
             valueGetter: (params) => Moment(params.row.createdAt).format('DD-MM-YYYY'),
         },
         {
+            field: 'isRelease ',
+            headerName: t('Is Released'),
+            flex: 1,
+            renderCell: (params) => {
+                if (params.row.isReleased) {
+                    return <CheckCircleIcon color='success' fontSize='large' />;
+                } else {
+                    return <HighlightOffIcon color='error' fontSize='large' />;
+                }
+            },
+        },
+        {
             field: 'releaseDate',
             headerName: t('Release Date'),
             flex: 1,
@@ -100,7 +125,7 @@ const ManageAlbum = () => {
         {
             field: 'actions',
             headerName: t('Actions'),
-            flex: 1,
+            width: 200,
             sortable: false,
             renderCell: (params) => (
                 <div>
@@ -109,6 +134,52 @@ const ManageAlbum = () => {
                             <EditIcon fontSize='large' />
                         </IconButton>
                     </Link>
+                    {params.row.isReleased ? (
+                        <IconButton
+                            color='error'
+                            onClick={() =>
+                                confirmAlert({
+                                    title: t('Confirm to unrelease this album'),
+
+                                    message: t('Are you sure to do this.'),
+                                    buttons: [
+                                        {
+                                            label: t('Yes'),
+                                            onClick: () => handleToggleReleaseAlbum(params.row._id),
+                                        },
+                                        {
+                                            label: t('No'),
+                                        },
+                                    ],
+                                })
+                            }
+                        >
+                            <NewReleasesIcon fontSize='large' />
+                        </IconButton>
+                    ) : (
+                        <IconButton
+                            color='success'
+                            onClick={() =>
+                                confirmAlert({
+                                    title: t('Confirm to release this album'),
+
+                                    message: t('Are you sure to do this.'),
+                                    buttons: [
+                                        {
+                                            label: t('Yes'),
+                                            onClick: () => handleToggleReleaseAlbum(params.row._id),
+                                        },
+                                        {
+                                            label: t('No'),
+                                        },
+                                    ],
+                                })
+                            }
+                        >
+                            <NewReleasesIcon fontSize='large' />
+                        </IconButton>
+                    )}
+
                     <IconButton
                         className={cx('delete-btn')}
                         color='error'
@@ -133,7 +204,6 @@ const ManageAlbum = () => {
                     </IconButton>
                 </div>
             ),
-            // <ActionMenu handleUpdateData={handleUpdateData} type='track' row={params.row} />
         },
     ];
 
