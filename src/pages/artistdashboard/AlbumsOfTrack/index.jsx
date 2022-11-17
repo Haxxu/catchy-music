@@ -6,12 +6,12 @@ import { Button, Avatar } from '@mui/material';
 import { CheckCircle as CheckCircleIcon, HighlightOff as HighlightOffIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { confirmAlert } from 'react-confirm-alert';
+import { toast } from 'react-toastify';
 
 import styles from './styles.scoped.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
 import { addTrackToAlbumUrl, removeTrackFromAlbumUrl } from '~/api/urls/albumsUrl';
-import { toast } from 'react-toastify';
 import { useAuth } from '~/hooks';
 
 const cx = classNames.bind(styles);
@@ -36,7 +36,6 @@ const AlbumsOfTrack = () => {
     }, [update]);
 
     const handleAddTrackToAlbum = async (albumId, trackId) => {
-        console.log(trackId);
         const { data } = await axiosInstance.post(addTrackToAlbumUrl(albumId), { track: trackId });
         setUpdate((prev) => !prev);
         toast.success(data.message);

@@ -20,7 +20,7 @@ const RadioInput = ({ label, handleInputState, name, value, options, required, f
                 {options.map((option, index) => (
                     <FormControlLabel
                         key={index}
-                        value={option.value}
+                        value={option}
                         control={
                             <Radio
                                 disableRipple
@@ -29,10 +29,9 @@ const RadioInput = ({ label, handleInputState, name, value, options, required, f
                                     transform: 'scale(1.2)',
                                 }}
                                 required={required}
-                                checked={option.value === value}
                             />
                         }
-                        label={<span style={{ fontSize: fontLabelSize }}>{option.label}</span>}
+                        label={<span style={{ fontSize: fontLabelSize }}>{option}</span>}
                         className={cx('radio-input')}
                     />
                 ))}

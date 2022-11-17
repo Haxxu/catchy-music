@@ -42,7 +42,6 @@ const ManageAlbum = () => {
                 params: { search: searchAlbum, context: 'detail' },
             });
             setRows(data.data);
-            console.log(rows);
         };
 
         fetchData().catch(console.error);

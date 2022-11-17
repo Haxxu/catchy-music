@@ -35,7 +35,7 @@ const ManageTrack = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance(getArtistTracksUrl(userId), { params: { search: searchTrack } });
+            const { data } = await axiosInstance.get(getArtistTracksUrl(userId), { params: { search: searchTrack } });
             setRows(data.data);
         };
 

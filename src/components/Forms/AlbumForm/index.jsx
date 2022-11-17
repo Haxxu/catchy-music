@@ -4,15 +4,12 @@ import classNames from 'classnames/bind';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Button } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 
 import FileInput from '~/components/Inputs/FileInput';
 import TextField from '~/components/Inputs/TextField';
-import RadioInput from '~/components/Inputs/RadioInput';
 import Select from '~/components/Inputs/Select';
-import { useAuth } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
 import { routes } from '~/config';
 import { getAlbumByIdUrl, createAlbumUrl, updateAlbumUrl } from '~/api/urls/albumsUrl';
@@ -22,7 +19,6 @@ import TextArea from '~/components/Inputs/TextArea';
 const cx = classNames.bind(styles);
 
 const AlbumForm = () => {
-    const { userId, name } = useAuth();
     const [update, setUpdate] = useState(false);
     const [data, setData] = useState({
         name: '',
@@ -44,6 +40,7 @@ const AlbumForm = () => {
         month: '',
         year: '',
         type: '',
+        isReleased: '',
     });
     const { t } = useTranslation();
 
@@ -80,7 +77,7 @@ const AlbumForm = () => {
 
     const albumTypes = [{ name: t('Album'), value: 'album' }, { name: t('Single'), value: 'single' }];
 
-    const releaseOptions = [{ label: 'True', value: true }, { label: 'False', value: false }];
+    const releaseOptions = [{ name: 'True', value: true }, { name: 'False', value: false }];
 
     const months = [
         { name: t('January'), value: '01' },
@@ -128,7 +125,6 @@ const AlbumForm = () => {
         const fetchData = async () => {
             if (id !== 'new-album') {
                 const { data: res } = await axiosInstance.get(getAlbumByIdUrl(id));
-                console.log(res);
                 setData({
                     name: res.data.name,
                     description: res.data.description,
@@ -141,8 +137,6 @@ const AlbumForm = () => {
                     tracks: res.data.tracks,
                 });
             }
-
-            console.log(data);
         };
 
         fetchData().catch(console.error);
@@ -236,15 +230,15 @@ const AlbumForm = () => {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <RadioInput
-                            label='Release'
+                    <div className={cx('input-container')}>
+                        <Select
                             name='isReleased'
                             handleInputState={handleInputState}
+                            label={t('Is Released')}
+                            placeholder='Months'
                             options={releaseOptions}
-                            fontLabelSize='1.8rem'
                             value={data.isReleased}
-                            required
+                            required={true}
                         />
                     </div>
                     <Button
