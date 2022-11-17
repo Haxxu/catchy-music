@@ -20,8 +20,7 @@ import { routes } from '~/config';
 import { useAuth, useDebounce } from '~/hooks';
 import axiosInstance from '~/api/axiosInstance';
 import { getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
-import { deleteTrackUrl } from '~/api/urls/tracksUrls';
-import { toggleReleaseAlbumUrl } from '~/api/urls/albumsUrl';
+import { toggleReleaseAlbumUrl, deleteAlbumUrl } from '~/api/urls/albumsUrl';
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
@@ -48,9 +47,9 @@ const ManageAlbum = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedValue, userId, update]);
 
-    const handleDeleteTrack = async (id) => {
+    const handleDeleteAlbum = async (id) => {
         try {
-            const { data } = await axiosInstance.delete(deleteTrackUrl(id));
+            const { data } = await axiosInstance.delete(deleteAlbumUrl(id));
             setUpdate((prev) => !prev);
             toast.success(data.message);
         } catch (error) {
@@ -190,7 +189,7 @@ const ManageAlbum = () => {
                                 buttons: [
                                     {
                                         label: t('Yes'),
-                                        onClick: () => handleDeleteTrack(params.row._id),
+                                        onClick: () => handleDeleteAlbum(params.row._id),
                                     },
                                     {
                                         label: t('No'),

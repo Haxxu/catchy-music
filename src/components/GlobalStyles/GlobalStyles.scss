@@ -49,3 +49,11 @@ html {
 .overlay-custom-class-name {
     z-index: 9999;
 }
+
+// .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+//     border: 0.05rem solid var(--text-primary);
+// }
+
+.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: var(--text-primary);
+}

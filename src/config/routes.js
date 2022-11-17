@@ -9,13 +9,11 @@ const routes = {
     home: '/',
     search: '/search',
     artist: '/artist/:artistId',
-
+    profile: '/profile',
     settings: '/settings',
 
     // admin routes
     admin_dashboard: '/admin-dashboard/home',
-    admin_profile: '/admin-dashboard/profile',
-    admin_settings: '/admin-dashboard/settings',
 
     admin_manageUser: '/admin-dashboard/users',
     admin_manageArtist: '/admin-dashboard/artists',
@@ -27,6 +25,7 @@ const routes = {
 
     // artist routes
     artist_dashboard: '/artist-dashboard/home',
+
     artist_manageTrack: '/artist-dashboard/tracks',
     artist_manageTrack_newTrack: '/artist-dashboard/tracks/new-track',
     artist_manageTrack_specifiedTrack: '/artist-dashboard/tracks/:id/*',

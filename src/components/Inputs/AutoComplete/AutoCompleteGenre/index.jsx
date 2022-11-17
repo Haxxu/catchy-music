@@ -36,7 +36,7 @@ const AutoCompleteGenre = ({ genres, handleInputState, label }) => {
                 }}
                 options={value}
                 getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+                isOptionEqualToValue={(option, value) => option._id === value._id}
                 renderTags={(tagValue, getTagProps) =>
                     tagValue.map((option, index) => (
                         <Chip label={option.name} {...getTagProps({ index })} sx={{ fontSize: '1.4rem' }} />

@@ -6,6 +6,7 @@ import Home from '~/pages/Home';
 import Search from '~/pages/Search';
 import Artist from '~/pages/Artist';
 import Settings from '~/pages/Settings';
+import Profile from '~/pages/Profile';
 
 const privateRoutes = [
     // Home
@@ -29,9 +30,17 @@ const privateRoutes = [
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
     },
+    // Settings
     {
         path: routes.settings,
         component: Settings,
+        layout: MainLayout,
+        roles: [roles.admin, roles.artist, roles.user],
+    },
+    // Profile
+    {
+        path: routes.profile,
+        component: Profile,
         layout: MainLayout,
         roles: [roles.admin, roles.artist, roles.user],
     },

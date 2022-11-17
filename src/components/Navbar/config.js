@@ -14,7 +14,7 @@ export const menuOptions = [
     },
     {
         title: 'Profile',
-        path: routes.admin_profile,
+        path: routes.profile,
         icon: <AccountBoxIcon fontSize='large' />,
         roles: ['admin', 'artist', 'user'],
     },

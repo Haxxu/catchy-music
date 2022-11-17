@@ -104,7 +104,6 @@ const AlbumForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(data);
         const { error } = Joi.object(schema).validate(data);
         if (!error) {
             if (id === 'new-album') {
