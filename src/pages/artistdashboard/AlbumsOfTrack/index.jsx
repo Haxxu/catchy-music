@@ -122,7 +122,7 @@ const AlbumsOfTrack = () => {
                                     })
                                 }
                             >
-                                Remove track
+                                {t('Remove track')}
                             </Button>
                         </div>
                     );
@@ -149,20 +149,19 @@ const AlbumsOfTrack = () => {
                                     })
                                 }
                             >
-                                Add track
+                                {t('Add track')}
                             </Button>
                         </div>
                     );
                 }
             },
-            // <ActionMenu handleUpdateData={handleUpdateData} type='track' row={params.row} />
         },
     ];
 
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>My Albums</h1>
+                <h1>{t('My Albums')}</h1>
             </div>
             <div className={cx('data-container')}>
                 <DataGrid

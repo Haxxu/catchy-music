@@ -70,7 +70,7 @@ const LyricsOfTrack = () => {
                         color='error'
                         onClick={() =>
                             confirmAlert({
-                                title: t('Confirm to delete this genre'),
+                                title: t('Confirm to delete this lyric'),
 
                                 message: t('Are you sure to do this.'),
                                 buttons: [
@@ -89,14 +89,13 @@ const LyricsOfTrack = () => {
                     </IconButton>
                 </div>
             ),
-            // <ActionMenu handleUpdateData={handleUpdateData} type='track' row={params.row} />
         },
     ];
 
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>My Lyrics</h1>
+                <h1>{t('My Lyrics')}</h1>
                 <Link to='new-lyric'>
                     <Button
                         size='large'
@@ -108,7 +107,7 @@ const LyricsOfTrack = () => {
                             fontWeight: '600',
                         }}
                     >
-                        Add new lyric
+                        {t('Add new lyric')}
                     </Button>
                 </Link>
             </div>

@@ -61,7 +61,7 @@ const TracksOfAlbums = () => {
         },
         {
             field: 'artists',
-            headerName: t('Artist'),
+            headerName: t('Artists'),
             flex: 1,
             renderCell: (params) => {
                 return (
@@ -128,7 +128,7 @@ const TracksOfAlbums = () => {
                                     })
                                 }
                             >
-                                Remove track
+                                {t('Remove track')}
                             </Button>
                         </div>
                     );
@@ -141,7 +141,6 @@ const TracksOfAlbums = () => {
                                 onClick={() =>
                                     confirmAlert({
                                         title: t('Confirm to add this track to album'),
-
                                         message: t('Are you sure to do this.'),
                                         buttons: [
                                             {
@@ -155,7 +154,7 @@ const TracksOfAlbums = () => {
                                     })
                                 }
                             >
-                                Add track
+                                {t('Add track')}
                             </Button>
                         </div>
                     );
@@ -182,7 +181,7 @@ const TracksOfAlbums = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>My Tracks</h1>
+                <h1>{t('My Tracks')}</h1>
             </div>
             <div className={cx('input-container')}>
                 <IconButton>
@@ -190,7 +189,7 @@ const TracksOfAlbums = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for my track'
+                    placeholder={t('Search for my track')}
                     value={searchTrack}
                     ref={searchTrackInputRef}
                     onChange={() => setSearchTrack(searchTrackInputRef.current.value)}

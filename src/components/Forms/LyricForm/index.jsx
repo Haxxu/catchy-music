@@ -4,6 +4,7 @@ import { Paper, Button } from '@mui/material';
 import classNames from 'classnames/bind';
 import Joi from 'joi';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 import TextField from '~/components/Inputs/TextField';
 import TextArea from '~/components/Inputs/TextArea';
@@ -24,6 +25,7 @@ const LyricForm = () => {
     const [errors, setErrors] = useState({ track: id, content: '', nation: '', providedBy: '' });
     const [update, setUpdate] = useState(false);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const schema = {
         track: Joi.string()
@@ -85,13 +87,13 @@ const LyricForm = () => {
     return (
         <div className={cx('container ')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>{lyricId === 'new-lyric' ? 'Add new lyric' : 'Edit lyric'}</h1>
+                <h1 className={cx('heading')}>{lyricId === 'new-lyric' ? t('Add new lyric') : t('Edit lyric')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <div className={cx('input-container')}>
                             <TextField
                                 name='nation'
-                                label='Nation'
+                                label={t('Nation')}
                                 handleInputState={handleInputState}
                                 handleErrorState={handleErrorState}
                                 schema={schema.nation}
@@ -102,7 +104,7 @@ const LyricForm = () => {
                         </div>
                         <TextArea
                             name='content'
-                            label='Content'
+                            label={t('Content')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.content}
@@ -115,7 +117,7 @@ const LyricForm = () => {
                     <div className={cx('input-container')}>
                         <TextField
                             name='providedBy'
-                            label='Provided By'
+                            label={t('Provided By')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.providedBy}
@@ -131,7 +133,7 @@ const LyricForm = () => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700, marginRight: '10px' }}
                     >
-                        {lyricId === 'new-lyric' ? 'Add Lyric' : 'Update Lyric'}
+                        {lyricId === 'new-lyric' ? t('Add Lyric') : t('Update Lyric')}
                     </Button>
                     <Button
                         variant='contained'
@@ -140,7 +142,7 @@ const LyricForm = () => {
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                         onClick={() => navigate(-1)}
                     >
-                        Back
+                        {t('Back')}
                     </Button>
                 </form>
             </Paper>

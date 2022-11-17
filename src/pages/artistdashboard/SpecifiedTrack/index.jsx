@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Route, Routes, useParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 
 import TrackForm from '~/components/Forms/TrackForm';
 import AlbumsOfTrack from '~/pages/artistdashboard/AlbumsOfTrack';
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 const SpecifiedTrack = () => {
     const { id } = useParams();
+    const { t } = useTranslation();
 
     return (
         <div className={cx('container')}>
@@ -23,19 +25,19 @@ const SpecifiedTrack = () => {
                         className={cx('subnav-item')}
                         to={routes.artist_manageTrack_specifiedTrack_nested_edit}
                     >
-                        Edit
+                        {t('Edit')}
                     </NavLink>
                     <NavLink
                         className={cx('subnav-item')}
                         to={routes.artist_manageTrack_specifiedTrack_nested_albumsOfTrack}
                     >
-                        Albums
+                        {t('Albums')}
                     </NavLink>
                     <NavLink
                         className={cx('subnav-item')}
                         to={routes.artist_manageTrack_specifiedTrack_nested_lyricsOfTrack}
                     >
-                        Lyrics
+                        {t('Lyrics')}
                     </NavLink>
                 </div>
             )}

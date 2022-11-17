@@ -43,7 +43,6 @@ const AlbumForm = () => {
         isReleased: '',
     });
     const { t } = useTranslation();
-
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -77,7 +76,7 @@ const AlbumForm = () => {
 
     const albumTypes = [{ name: t('Album'), value: 'album' }, { name: t('Single'), value: 'single' }];
 
-    const releaseOptions = [{ name: 'True', value: true }, { name: 'False', value: false }];
+    const releaseOptions = [{ name: t('True'), value: true }, { name: t('False'), value: false }];
 
     const months = [
         { name: t('January'), value: '01' },
@@ -144,12 +143,12 @@ const AlbumForm = () => {
     return (
         <div className={cx('container ')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>{id === 'new-album' ? 'Add new album' : 'Edit album'}</h1>
+                <h1 className={cx('heading')}>{id === 'new-album' ? t('Add new album') : t('Edit album')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField
                             name='name'
-                            label='Album Name'
+                            label={t('Album Name')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.name}
@@ -161,7 +160,7 @@ const AlbumForm = () => {
                     <div className={cx('input-container')}>
                         <TextArea
                             name='description'
-                            label='Description'
+                            label={t('Description')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.description}
@@ -172,10 +171,10 @@ const AlbumForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
-                        <div className={cx('input-heading')}>Image</div>
+                        <div className={cx('input-heading')}>{t('Image')}</div>
                         <FileInput
                             name='image'
-                            label='Choose image'
+                            label={t('Choose image')}
                             icon={<ImageIcon />}
                             type='image'
                             value={data.image}
@@ -187,21 +186,21 @@ const AlbumForm = () => {
                             name='type'
                             handleInputState={handleInputState}
                             label={t('Album Type')}
-                            placeholder='Album Type'
+                            placeholder={t('Album Type')}
                             options={albumTypes}
                             value={data.type}
                             required={true}
                         />
                     </div>
                     <div className={cx('date-container')}>
-                        <div className={cx('input-heading')}>Released Date</div>
+                        <div className={cx('input-heading')}>{t('Release Date')}</div>
                         <div className={cx('date')}>
                             <div className={cx('month')}>
                                 <Select
                                     name='month'
                                     handleInputState={handleInputState}
                                     label={t('Month')}
-                                    placeholder='Months'
+                                    placeholder={t('Month')}
                                     options={months}
                                     value={data.month}
                                     required={true}
@@ -234,7 +233,7 @@ const AlbumForm = () => {
                             name='isReleased'
                             handleInputState={handleInputState}
                             label={t('Is Released')}
-                            placeholder='Months'
+                            placeholder={t('Is Released')}
                             options={releaseOptions}
                             value={data.isReleased}
                             required={true}
@@ -247,7 +246,7 @@ const AlbumForm = () => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        {id === 'new-album' ? 'Add Album' : 'Update Album'}
+                        {id === 'new-album' ? t('Add Album') : t('Update Album')}
                     </Button>
                 </form>
             </Paper>

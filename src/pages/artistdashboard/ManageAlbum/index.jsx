@@ -208,7 +208,7 @@ const ManageAlbum = () => {
     return (
         <div className={cx('container')}>
             <div className={cx('header')}>
-                <h1>My Albums</h1>
+                <h1>{t('My Albums')}</h1>
                 <Link to={routes.artist_manageAlbum + '/new-album'}>
                     <Button
                         size='large'
@@ -220,7 +220,7 @@ const ManageAlbum = () => {
                             fontWeight: '600',
                         }}
                     >
-                        Add new album
+                        {t('Add new album')}
                     </Button>
                 </Link>
             </div>
@@ -230,7 +230,7 @@ const ManageAlbum = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='Search for my album'
+                    placeholder={t('Search for my album')}
                     value={searchAlbum}
                     ref={searchAlbumInputRef}
                     onChange={() => setSearchAlbum(searchAlbumInputRef.current.value)}

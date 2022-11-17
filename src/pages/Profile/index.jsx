@@ -133,12 +133,12 @@ const Profile = () => {
     return (
         <div className={cx('container')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>Edit Profile</h1>
+                <h1 className={cx('heading')}>{t('Edit Profile')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField
                             name='name'
-                            label='Name'
+                            label={t('Name')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.name}
@@ -148,14 +148,14 @@ const Profile = () => {
                         />
                     </div>
                     <div className={cx('date-container')}>
-                        <div className={cx('input-heading')}>Date of birth</div>
+                        <div className={cx('input-heading')}>{t('Date of birth')}</div>
                         <div className={cx('date')}>
                             <div className={cx('month')}>
                                 <Select
                                     name='month'
                                     handleInputState={handleInputState}
                                     label={t('Month')}
-                                    placeholder='Months'
+                                    placeholder={t('Month')}
                                     options={months}
                                     value={data.month}
                                     required={true}
@@ -186,7 +186,7 @@ const Profile = () => {
                     <div className={cx('input-container')}>
                         <TextField
                             name='nation'
-                            label='Nation'
+                            label={t('Nation')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.nation}
@@ -197,7 +197,7 @@ const Profile = () => {
                     </div>
                     <div className={cx('input-container')}>
                         <RadioInput
-                            label='Gender'
+                            label={t('Gender')}
                             name='gender'
                             handleInputState={handleInputState}
                             options={genders}
@@ -214,10 +214,10 @@ const Profile = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
-                        <div className={cx('input-heading')}>Image</div>
+                        <div className={cx('input-heading')}>{t('Image')}</div>
                         <FileInput
                             name='image'
-                            label='Choose image'
+                            label={t('Choose image')}
                             icon={<ImageIcon />}
                             type='image'
                             value={data.image}
@@ -231,7 +231,7 @@ const Profile = () => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        Update Profile
+                        {t('Update Profile')}
                     </Button>
                     <Button
                         variant='contained'
@@ -240,7 +240,7 @@ const Profile = () => {
                         onClick={() => navigate(-1)}
                         sx={{ marginTop: '2rem', marginLeft: '5px', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        Back
+                        {t('Back')}
                     </Button>
                 </form>
             </Paper>

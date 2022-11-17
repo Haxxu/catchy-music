@@ -6,6 +6,7 @@ import { Paper, Button } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 import FileInput from '~/components/Inputs/FileInput';
 import TextField from '~/components/Inputs/TextField';
@@ -34,7 +35,7 @@ const TrackForm = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
-
+    const { t } = useTranslation();
     const schema = {
         name: Joi.string()
             .min(1)
@@ -104,12 +105,12 @@ const TrackForm = () => {
     return (
         <div className={cx('container ')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>{id === 'new-track' ? 'Add new track' : 'Edit track'}</h1>
+                <h1 className={cx('heading')}>{id === 'new-track' ? t('Add new track') : t('Edit track')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField
                             name='name'
-                            label='Track Name'
+                            label={t('Track Name')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.name}
@@ -119,10 +120,10 @@ const TrackForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
-                        <div className={cx('input-heading')}>Image</div>
+                        <div className={cx('input-heading')}>{t('Image')}</div>
                         <FileInput
                             name='image'
-                            label='Choose image'
+                            label={t('Choose image')}
                             icon={<ImageIcon />}
                             type='image'
                             value={data.image}
@@ -130,10 +131,10 @@ const TrackForm = () => {
                         />
                     </div>
                     <div className={cx('input-container')}>
-                        <div className={cx('input-heading')}>Audio</div>
+                        <div className={cx('input-heading')}>{t('Audio')}</div>
                         <FileInput
                             name='audio'
-                            label='Choose audio'
+                            label={t('Choose audio')}
                             icon={<MusicNoteIcon />}
                             type='audio'
                             value={data.audio}
@@ -146,14 +147,14 @@ const TrackForm = () => {
                             handleInputState={handleInputState}
                             defaultArtist={{ name: name, id: userId }}
                             type='artist'
-                            label='Artists'
+                            label={t('Artists')}
                         />
                     </div>
                     <div className={cx('input-container')}>
                         <AutoCompleteGenre
                             genres={data.genres}
                             handleInputState={handleInputState}
-                            label='Genres'
+                            label={t('Genres')}
                             type='genre'
                         />
                     </div>
@@ -164,7 +165,7 @@ const TrackForm = () => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        {id === 'new-track' ? 'Add Track' : 'Update Track'}
+                        {id === 'new-track' ? t('Add Track') : t('Update Track')}
                     </Button>
                 </form>
             </Paper>

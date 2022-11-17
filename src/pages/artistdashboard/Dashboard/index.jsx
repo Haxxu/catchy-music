@@ -73,9 +73,6 @@ const Dashboard = () => {
                                 <div className={cx('title')}>{t('Tracks')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{artistInfo.tracks.total}</span>
-                                    <span className={cx('percentage')}>
-                                        {/* {parseFloat(usersInfo.newUsersToday / usersInfo.totalUsers).toPrecision(2)}% */}
-                                    </span>
                                 </div>
                                 <div className={cx('bottom-title')}>{t('Total Tracks')}</div>
                             </div>
@@ -87,9 +84,6 @@ const Dashboard = () => {
                                 <div className={cx('detail-info')}>
                                     {t('Total tracks saved')}:{' '}
                                     <span className={cx('number')}>{artistInfo.tracks.totalSaved}</span>
-                                    <span className={cx('percentage')}>
-                                        {/* {parseFloat(usersInfo.newUsersThisMonth / usersInfo.totalUsers).toPrecision(2)}% */}
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -100,9 +94,6 @@ const Dashboard = () => {
                                 <div className={cx('title')}>{t('Albums')}</div>
                                 <div className={cx('new-today')}>
                                     <span className={cx('number')}>{artistInfo.albums.total}</span>
-                                    <span className={cx('percentage')}>
-                                        {/* {parseFloat(usersInfo.newUsersToday / usersInfo.totalUsers).toPrecision(2)}% */}
-                                    </span>
                                 </div>
                                 <div className={cx('bottom-title')}>{t('Total Albums')}</div>
                             </div>
@@ -116,9 +107,6 @@ const Dashboard = () => {
                                 <div className={cx('detail-info')}>
                                     {t('Total album saved')}:{' '}
                                     <span className={cx('number')}>{artistInfo.albums.totalSaved}</span>
-                                    <span className={cx('percentage')}>
-                                        {/* {parseFloat(usersInfo.newUsersThisMonth / usersInfo.totalUsers).toPrecision(2)}% */}
-                                    </span>
                                 </div>
                             </div>
                         </div>
