@@ -4,6 +4,9 @@ import MainLayout from '~/layouts/MainLayout';
 // Pages
 import Home from '~/pages/Home';
 import Search from '~/pages/Search';
+import Library from '~/pages/Library';
+import LikedTracks from '~/pages/LikedTracks';
+import Playlist from '~/pages/Playlist';
 import Artist from '~/pages/Artist';
 import Settings from '~/pages/Settings';
 import Profile from '~/pages/Profile';
@@ -21,7 +24,28 @@ const privateRoutes = [
         path: routes.search,
         component: Search,
         layout: MainLayout,
-        roles: [roles.admin, roles.artist],
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Library
+    {
+        path: routes.library,
+        component: Library,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Liked Tracks
+    {
+        path: routes.likedTracks,
+        component: LikedTracks,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Playlist
+    {
+        path: routes.playlist,
+        component: Playlist,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
     },
     // Artist
     {

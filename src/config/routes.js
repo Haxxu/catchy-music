@@ -8,7 +8,10 @@ const routes = {
     // private routes
     home: '/',
     search: '/search',
-    artist: '/artist/:artistId',
+    library: '/library/playlists',
+    likedTracks: '/library/tracks',
+    playlist: '/playlist/:id',
+    artist: '/artist/:id',
     profile: '/profile',
     settings: '/settings',
 
