@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import HomeIcon from '@mui/icons-material/Home';
@@ -9,10 +9,24 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import { routes } from '~/config';
 import styles from './styles.scoped.scss';
+import axiosInstance from '~/api/axiosInstance';
+import { getSavedPlaylistsUrl } from '~/api/urls/me';
 
 const cx = classNames.bind(styles);
 
 const Sidebar = () => {
+    const [playlists, setPlaylists] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data } = await axiosInstance.get(getSavedPlaylistsUrl);
+            console.log(data.data);
+            setPlaylists(data.data);
+        };
+
+        fetchData().catch(console.error);
+    }, []);
+
     return (
         <div className={cx('container')}>
             <div className={cx('brand')}>
@@ -41,96 +55,21 @@ const Sidebar = () => {
                 </NavLink>
             </div>
             <div className={cx('playlist-container')}>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
+                {/* <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
                     <span>Playlist 1</span>
                 </NavLink>
                 <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
                     <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 3}>
-                    <span>Playlist 3</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 4}>
-                    <span>Playlist 4</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 5}>
-                    <span>Playlist 5</span>
-                </NavLink>
+                </NavLink> */}
+                {playlists.map(({ playlist }, index) => (
+                    <NavLink
+                        key={index}
+                        className={({ isActive }) => cx('link', { active: isActive })}
+                        to={'/playlist/' + playlist._id}
+                    >
+                        <span>{playlist.name}</span>
+                    </NavLink>
+                ))}
             </div>
         </div>
     );

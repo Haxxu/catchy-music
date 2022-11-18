@@ -7,17 +7,19 @@ import storage from 'redux-persist/lib/storage';
 import { authReducer } from './authSlice';
 import { userInterfaceReducer } from './userInterfaceSlice';
 import { userReducer } from './userSlice';
+import { audioPlayerReducer } from './audioPlayerSlice';
 
 const reducers = combineReducers({
     auth: authReducer,
     userInterface: userInterfaceReducer,
     user: userReducer,
+    audioPlayer: audioPlayerReducer,
 });
 
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['auth', 'userInterface', 'user'],
+    whitelist: ['auth', 'userInterface', 'user', 'audioPlayer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
