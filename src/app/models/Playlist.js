@@ -16,7 +16,7 @@ const playlistSchema = new mongoose.Schema(
             },
         ],
         image: { type: String, default: '' },
-        isPublic: { type: Boolean, default: false },
+        isPublic: { type: Boolean, default: true },
         saved: { type: Number, default: 0 },
     },
     { timestamps: true },
