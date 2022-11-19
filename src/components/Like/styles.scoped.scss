@@ -1,0 +1,19 @@
+.like-btn {
+    font-size: 1.6rem;
+
+    .like-filled {
+        color: var(--primary-color);
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+
+    .like-outlined {
+        color: var(--light-white);
+        width: 1.7rem;
+        height: 1.7rem;
+
+        &:hover {
+            color: var(--white);
+        }
+    }
+}

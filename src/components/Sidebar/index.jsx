@@ -20,7 +20,6 @@ const Sidebar = () => {
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axiosInstance.get(getSavedPlaylistsUrl);
-            console.log(data.data);
             setPlaylists(data.data);
         };
 

@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import Navbar from '~/components/Navbar';
 import Sidebar from '~/components/Sidebar';
 import Footer from '~/components/Footer';
+import AudioPlayer from '~/components/AudioPlayer';
 import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
@@ -19,9 +20,12 @@ const MainLayout = ({ children }) => {
                     <Navbar />
                 </div>
                 <div className={cx('main-content')}>{children}</div>
+                <div className={cx('footer')}>
+                    <Footer />
+                </div>
             </div>
-            <div className={cx('footer')}>
-                <Footer />
+            <div className={cx('audio-player')}>
+                <AudioPlayer />
             </div>
         </div>
     );
