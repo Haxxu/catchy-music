@@ -10,6 +10,8 @@ import Playlist from '~/pages/Playlist';
 import Artist from '~/pages/Artist';
 import Settings from '~/pages/Settings';
 import Profile from '~/pages/Profile';
+import Lyrics from '~/pages/Lyrics';
+import Queue from '~/pages/Queue';
 
 const privateRoutes = [
     // Home
@@ -65,6 +67,20 @@ const privateRoutes = [
     {
         path: routes.profile,
         component: Profile,
+        layout: MainLayout,
+        roles: [roles.admin, roles.artist, roles.user],
+    },
+    // Lyric
+    {
+        path: routes.lyrics,
+        component: Lyrics,
+        layout: MainLayout,
+        roles: [roles.admin, roles.artist, roles.user],
+    },
+    // Queue
+    {
+        path: routes.queue,
+        component: Queue,
         layout: MainLayout,
         roles: [roles.admin, roles.artist, roles.user],
     },

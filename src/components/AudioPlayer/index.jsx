@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { Avatar, IconButton } from '@mui/material';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
@@ -14,10 +15,11 @@ import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 
 import Like from '~/components/Like';
 import TrackProgressBar from '~/components/TrackProgressBar';
+import VolumeControl from '~/components/VolumeControl';
 import { fancyTimeFormat } from '~/utils/Format';
 import styles from './styles.scoped.scss';
 import trackSrc from '~/assets/audio/alone-alan-walker.m4a';
-import VolumeControl from '../VolumeControl';
+import { routes } from '~/config';
 
 const cx = classNames.bind(styles);
 
@@ -31,6 +33,9 @@ const AudioPlayer = () => {
     const [percentage, setPercentage] = useState(0);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const audioRef = useRef();
 
@@ -76,6 +81,22 @@ const AudioPlayer = () => {
 
         setPercentage(+percent);
         setCurrentTime(time.toFixed(2));
+    };
+
+    const handleToggleLyric = () => {
+        if (location.pathname === routes.lyrics) {
+            navigate(-1);
+        } else {
+            navigate(routes.lyrics);
+        }
+    };
+
+    const handleToggleQueue = () => {
+        if (location.pathname === routes.queue) {
+            navigate(-1);
+        } else {
+            navigate(routes.queue);
+        }
     };
 
     useEffect(() => {
@@ -124,21 +145,6 @@ const AudioPlayer = () => {
             </div>
             <div className={cx('center')}>
                 <div className={cx('audio-controls')}>
-                    {/* <ReactAudioPlayer
-                        src={trackSrc}
-                        controls
-                        style={{ display: 'none' }}
-                        onPause={playMode === 'pause'}
-                        onPlay={(e) => {
-                            if (playMode === 'play') {
-                                e.target.play();
-                            } else {
-                                e.target.pause();
-                            }
-                        }}
-                        ref={audioRef}
-                    /> */}
-                    {/* <input type='range' min='0' max='10' value={volume} onChange={(e) => setVolume(e.target.value)} /> */}
                     <IconButton className={cx('control-btn')} onClick={handleToggleShuffle}>
                         <ShuffleIcon className={cx('control', { active: shuffle })} />
                     </IconButton>
@@ -171,13 +177,13 @@ const AudioPlayer = () => {
             </div>
             <div className={cx('end')}>
                 <div className={cx('lyric')}>
-                    <IconButton className={cx('control-btn')}>
-                        <MicExternalOnIcon className={cx('control')} />
+                    <IconButton className={cx('control-btn')} onClick={handleToggleLyric}>
+                        <MicExternalOnIcon className={cx('control', { active: location.pathname === routes.lyrics })} />
                     </IconButton>
                 </div>
                 <div className={cx('queue')}>
-                    <IconButton className={cx('control-btn')}>
-                        <QueueMusicIcon className={cx('control')} />
+                    <IconButton className={cx('control-btn')} onClick={handleToggleQueue}>
+                        <QueueMusicIcon className={cx('control', { active: location.pathname === routes.queue })} />
                     </IconButton>
                 </div>
                 <VolumeControl volume={volume} onChangeVolume={onChangeVolume} />
