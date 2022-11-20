@@ -7,6 +7,7 @@ import Search from '~/pages/Search';
 import Library from '~/pages/Library';
 import LikedTracks from '~/pages/LikedTracks';
 import Playlist from '~/pages/Playlist';
+import Album from '~/pages/Album';
 import Artist from '~/pages/Artist';
 import Settings from '~/pages/Settings';
 import Profile from '~/pages/Profile';
@@ -46,6 +47,13 @@ const privateRoutes = [
     {
         path: routes.playlist,
         component: Playlist,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Album
+    {
+        path: routes.album,
+        component: Album,
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
     },

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import { Avatar, IconButton } from '@mui/material';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
@@ -18,44 +19,40 @@ import TrackProgressBar from '~/components/TrackProgressBar';
 import VolumeControl from '~/components/VolumeControl';
 import { fancyTimeFormat } from '~/utils/Format';
 import styles from './styles.scoped.scss';
-import trackSrc from '~/assets/audio/alone-alan-walker.m4a';
 import { routes } from '~/config';
+import {
+    getAudioPlayerState,
+    getCurrentlyPlayingTrack,
+    changeVolume,
+    playTrack,
+    pauseTrack,
+    skipNext,
+    skipPrevious,
+    changeRepeatMode,
+    changeShuffleMode,
+} from '~/api/audioPlayer';
 
 const cx = classNames.bind(styles);
 
-const artists = [{ name: 'Alan Walker', id: 'fhdslfkdsa32' }, { name: 'Imagine Dragons', id: 'fhdslfkdsa32' }];
-
 const AudioPlayer = () => {
-    const [repeatMode, setRepeatMode] = useState('none');
-    const [shuffle, setShuffle] = useState(false);
-    const [playMode, setPlayMode] = useState('pause');
-    const [volume, setVolume] = useState(25);
     const [percentage, setPercentage] = useState(0);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
 
+    const { currentTrack, volume, isPlaying, update, repeat, shuffle } = useSelector((state) => state.audioPlayer);
+
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const audioRef = useRef();
 
-    const handleTogglePlay = async () => {
-        setPlayMode((prev) => (prev === 'play' ? 'pause' : 'play'));
-    };
+    const getCurrDuration = (e) => {
+        const percent = ((e.currentTarget.currentTime / e.currentTarget.duration) * 100).toFixed(2);
+        const time = e.currentTarget.currentTime;
 
-    const handleToggleShuffle = async () => {
-        setShuffle((prev) => !prev);
-    };
-
-    const handleToggleRepeatMode = async () => {
-        const mode = ['none', 'repeat', 'repeat-one'];
-        let index = mode.indexOf(repeatMode);
-        if (index === 2) {
-            index = 0;
-        } else {
-            index = index + 1;
-        }
-        setRepeatMode(mode[index]);
+        setPercentage(+percent);
+        setCurrentTime(time.toFixed(2));
     };
 
     const onChangeAudio = (e) => {
@@ -65,22 +62,54 @@ const AudioPlayer = () => {
     };
 
     const onChangeVolume = (e) => {
-        setVolume(Math.round(e.target.value));
+        changeVolume(dispatch, Math.round(e.target.value)).catch(console.error);
     };
 
-    const handleEndedTrack = (e) => {
-        if (repeatMode === 'repeat-one' && playMode === 'play') {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play();
+    const handleTogglePlay = async () => {
+        if (isPlaying) {
+            pauseTrack(dispatch).catch(console.error);
+        } else {
+            playTrack(dispatch).catch(console.error);
         }
     };
 
-    const getCurrDuration = (e) => {
-        const percent = ((e.currentTarget.currentTime / e.currentTarget.duration) * 100).toFixed(2);
-        const time = e.currentTarget.currentTime;
+    const handleToggleShuffle = async () => {
+        // setShuffle((prev) => !prev);
+        changeShuffleMode(dispatch, shuffle).catch(console.error);
+    };
 
-        setPercentage(+percent);
-        setCurrentTime(time.toFixed(2));
+    const handleToggleRepeatMode = async () => {
+        changeRepeatMode(dispatch, repeat).catch(console.error);
+    };
+
+    const handleSkipNext = async () => {
+        skipNext(dispatch).catch(console.error);
+        setPercentage(0);
+        setDuration(0);
+        setCurrentTime(0);
+    };
+
+    const handleSkipPrevious = async () => {
+        skipPrevious(dispatch).catch(console.error);
+        setPercentage(0);
+        setDuration(0);
+        setCurrentTime(0);
+    };
+
+    const handleEndedTrack = async (e) => {
+        if (repeat === 'repeat-one' && isPlaying) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+        } else if (repeat === 'repeat' && isPlaying) {
+            handleSkipNext().catch(console.error);
+        } else {
+            handleSkipNext().catch(console.error);
+        }
+
+        // if (repeat === 'none' && isPlaying && currentTrack?.position) {
+        //     await handleSkipNext().catch(console.error);
+        //     await pauseTrack(dispatch).catch(console.error);
+        // }
     };
 
     const handleToggleLyric = () => {
@@ -100,40 +129,64 @@ const AudioPlayer = () => {
     };
 
     useEffect(() => {
-        if (playMode === 'play') {
+        getAudioPlayerState(dispatch).catch(console.error);
+
+        // console.log(currentTrack);
+        // console.log(update);
+    }, [dispatch, update]);
+
+    useEffect(() => {
+        getCurrentlyPlayingTrack(dispatch).catch(console.error);
+        // console.log(currentTrack);
+        // console.log(update);
+    }, [dispatch, update]);
+
+    useEffect(() => {
+        if (isPlaying) {
             audioRef.current.play();
+            // audioRef.current.muted = false;
         } else {
             audioRef.current.pause();
         }
+    }, [dispatch, isPlaying]);
 
+    useEffect(() => {
         audioRef.current.volume = volume / 100.0;
-    }, [playMode, volume]);
+    }, [dispatch, volume]);
 
     return (
         <div className={cx('container')}>
             <audio
-                src={trackSrc}
+                src={currentTrack?.detailTrack.audio}
+                // src={trackSrc}
                 ref={audioRef}
                 onTimeUpdate={getCurrDuration}
                 onLoadedData={(e) => {
                     setDuration(e.currentTarget.duration.toFixed(2));
                 }}
                 onEnded={handleEndedTrack}
+                autoPlay={isPlaying}
+                // muted
             />
             <div className={cx('start')}>
                 <div className={cx('image')}>
-                    <Avatar src='' alt='Tac' variant='square' sx={{ width: '40px', height: '40px' }} />
+                    <Avatar
+                        src={currentTrack?.detailTrack?.image}
+                        alt='Tac'
+                        variant='square'
+                        sx={{ width: '60px', height: '60px' }}
+                    />
                 </div>
                 <div className={cx('info')}>
                     <div className={cx('name')}>
-                        <a href='sfd'>Alone</a>
+                        <Link to={`/album/${currentTrack?.album}`}>{currentTrack?.detailTrack.name}</Link>
                     </div>
                     <div className={cx('artists')}>
-                        {artists.map((artist, index) => {
+                        {currentTrack?.detailTrack.artists.map((artist, index) => {
                             return (
                                 <span key={index}>
                                     {index !== 0 ? ', ' : ''}
-                                    <a href='fsd'>{artist.name}</a>
+                                    <Link to={`/artist/${artist.id}`}>{artist.name}</Link>
                                 </span>
                             );
                         })}
@@ -146,26 +199,26 @@ const AudioPlayer = () => {
             <div className={cx('center')}>
                 <div className={cx('audio-controls')}>
                     <IconButton className={cx('control-btn')} onClick={handleToggleShuffle}>
-                        <ShuffleIcon className={cx('control', { active: shuffle })} />
+                        <ShuffleIcon className={cx('control', { active: shuffle === 'shuffle' })} />
                     </IconButton>
-                    <IconButton className={cx('control-btn')}>
+                    <IconButton className={cx('control-btn')} onClick={handleSkipPrevious}>
                         <SkipPreviousIcon className={cx('control')} />
                     </IconButton>
                     <IconButton className={cx('play-btn')} onClick={handleTogglePlay}>
-                        {playMode === 'play' ? (
+                        {isPlaying ? (
                             <PauseCircleIcon className={cx('control')} />
                         ) : (
                             <PlayCircleIcon className={cx('control')} />
                         )}
                     </IconButton>
-                    <IconButton className={cx('control-btn')}>
+                    <IconButton className={cx('control-btn')} onClick={handleSkipNext}>
                         <SkipNextIcon className={cx('control')} />
                     </IconButton>
                     <IconButton className={cx('control-btn')} onClick={handleToggleRepeatMode}>
-                        {repeatMode === 'repeat-one' ? (
+                        {repeat === 'repeat-one' ? (
                             <RepeatOneIcon className={cx('control', 'active')} />
                         ) : (
-                            <RepeatIcon className={cx('control', { active: repeatMode === 'repeat' })} />
+                            <RepeatIcon className={cx('control', { active: repeat === 'repeat' })} />
                         )}
                     </IconButton>
                 </div>

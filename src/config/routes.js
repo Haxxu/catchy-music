@@ -16,6 +16,7 @@ const routes = {
     settings: '/settings',
     lyrics: '/lyrics',
     queue: '/queue',
+    album: '/album/:id',
 
     // admin routes
     admin_dashboard: '/admin-dashboard/home',

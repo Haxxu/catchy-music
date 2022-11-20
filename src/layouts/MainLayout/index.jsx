@@ -19,8 +19,8 @@ const MainLayout = ({ children }) => {
                 <div className={cx('navbar')}>
                     <Navbar />
                 </div>
-                <div className={cx('main-content')}>{children}</div>
-                <div className={cx('footer')}>
+                <div className={cx('main-content')}>
+                    {children}
                     <Footer />
                 </div>
             </div>

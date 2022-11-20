@@ -2,10 +2,42 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const audioPlayer = createSlice({
     name: 'audioPlayer',
-    initialState: {},
-    reducers: {},
+    initialState: {
+        currentTrack: null,
+        isPlaying: false,
+        repeat: 'none',
+        shuffle: 'none',
+        volume: 40,
+        update: false,
+    },
+    reducers: {
+        setCurrentTrack: (state, action) => {
+            state.currentTrack = action.payload;
+        },
+
+        setRepeat: (state, action) => {
+            state.repeat = action.payload;
+        },
+
+        setShuffle: (state, action) => {
+            state.shuffle = action.payload;
+        },
+
+        setVolume: (state, action) => {
+            state.volume = action.payload;
+        },
+
+        setPlayMode: (state, action) => {
+            state.isPlaying = action.payload;
+        },
+
+        updateTrack: (state, action) => {
+            state.update = !state.update;
+        },
+    },
 });
 
 export const audioPlayerReducer = audioPlayer.reducer;
+export const { setCurrentTrack, setVolume, setRepeat, setPlayMode, setShuffle, updateTrack } = audioPlayer.actions;
 
 export default audioPlayer;
