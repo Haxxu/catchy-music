@@ -45,6 +45,12 @@ router.put('/tracks', userAuth, meController.saveTrack);
 // [DELETE] /api/me/tracks => remove liked track from library
 router.delete('/tracks', userAuth, meController.removeLikedTrack);
 
+// [GET] /api/me/audio-player => get audio player state
+router.get('/audio-player/currently-playing', userAuth, audioPlayerController.getCurrentlyPlayingTrack);
+
+// [GET] /api/me/audio-player => get audio player state
+router.get('/audio-player', userAuth, audioPlayerController.getAudioPlayerState);
+
 // [PUT] /api/me/audio-player/repeat => set repeat mode
 router.put('/audio-player/repeat', userAuth, audioPlayerController.setRepeat);
 

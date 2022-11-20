@@ -649,6 +649,59 @@ class AudioPlayerController {
         await player.save();
         res.status(200).send({ message: 'Remove track from queue' });
     }
+
+    async getAudioPlayerState(req, res, next) {
+        try {
+            const player = await AudioPlayer.findOne({ owner: req.user._id }).lean();
+            if (!player) {
+                return res.status(404).send({ message: 'AudioPlayer not found' });
+            }
+
+            const context = {};
+            if (player.currentPlayingTrack.context_uri !== '') {
+                const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
+                context.type = contextType;
+                context._id = contextId;
+                context.trackId = trackId;
+                context.albumId = albumId;
+            }
+
+            return res
+                .status(200)
+                .send({ data: { ...player, context }, message: 'Get audio player state successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getCurrentlyPlayingTrack(req, res, next) {
+        try {
+            const player = await AudioPlayer.findOne({ owner: req.user._id }).lean();
+            if (!player) {
+                return res.status(404).send({ message: 'AudioPlayer not found' });
+            }
+
+            const context = {};
+            if (player.currentPlayingTrack.context_uri !== '') {
+                const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
+                context.type = contextType;
+                context._id = contextId;
+                context.trackId = trackId;
+                context.albumId = albumId;
+
+                const track = await Track.findOne({ _id: trackId }).lean();
+                const album = await Album.findOne({ _id: albumId }).lean();
+                player.currentPlayingTrack.detailTrack = track;
+                player.currentPlayingTrack.detailAlbum = album;
+            }
+
+            return res
+                .status(200)
+                .send({ data: { ...player, context }, message: 'Get audio player state successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
 }
 
 const shuffleArray = (array) => {
