@@ -327,6 +327,7 @@ class AudioPlayerController {
             }
         }
 
+        player.isPlaying = true;
         await player.save();
         res.status(200).send({ message: 'skip to next' });
     }
@@ -493,6 +494,7 @@ class AudioPlayerController {
             }
         }
 
+        player.isPlaying = true;
         await player.save();
         res.status(200).send({ message: 'skip to previous' });
     }
