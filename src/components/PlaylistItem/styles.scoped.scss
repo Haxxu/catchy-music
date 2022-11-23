@@ -1,6 +1,7 @@
 .container {
     display: flex;
     flex-direction: column;
+    align-items: center;
     position: relative;
     border-radius: 5px;
     padding: 16px;
@@ -12,11 +13,14 @@
         justify-content: center;
         overflow: hidden;
         border-radius: 5px;
+        width: 160px;
+        height: 160px;
+        max-width: 100%;
 
         img {
             object-fit: cover;
-            width: 160px;
-            height: 160px;
+            width: 100%;
+            height: 100%;
             border-radius: 5px;
 
             &.active {
@@ -70,10 +74,11 @@
     .play-btn {
         position: absolute;
         top: 40%;
-        left: auto;
+        left: 15%;
         right: auto;
         opacity: 0;
         color: var(--primary-color);
+        z-index: 10;
 
         &.active {
             opacity: 1;
@@ -133,6 +138,7 @@
     .reduce-play-btn {
         opacity: 0;
         color: var(--primary-color);
+        z-index: 10;
 
         &.active {
             opacity: 1;

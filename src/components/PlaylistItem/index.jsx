@@ -3,9 +3,14 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { Avatar, IconButton } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 
 import image from '~/assets/images/anh_test.jpg';
+import unknownPlaylistImg from '~/assets/images/playlist_unknown.jpg';
 import styles from './styles.scoped.scss';
+import { playTrack, pauseTrack } from '~/api/audioPlayer';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateTrack } from '~/redux/audioPlayerSlice';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +27,22 @@ const cx = classNames.bind(styles);
 
 const PlaylistItem = ({ type = 'default', playlist, to }) => {
     const [activePlayBtn, setActivePlayBtn] = useState(false);
+    const { context, isPlaying } = useSelector((state) => state.audioPlayer);
+
+    const dispatch = useDispatch();
+
+    const handlePlayTrack = async () => {
+        playTrack(dispatch, playlist.firstTrack).catch(console.error);
+        dispatch(updateTrack());
+    };
+
+    const handleTogglePlay = async () => {
+        if (isPlaying) {
+            pauseTrack(dispatch).catch(console.error);
+        } else {
+            playTrack(dispatch).catch(console.error);
+        }
+    };
 
     return (
         <>
@@ -62,41 +83,58 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                     onMouseLeave={() => setActivePlayBtn(false)}
                 >
                     <Link className={cx('playlist-img-link')} to={to}>
-                        {/* <Avatar
-                            className={cx('image', { active: true })}
-                            variant='rounded'
-                            src={image}
-                            alt='anh'
-                            sx={{ width: '200px', height: '200px' }}
-                        /> */}
-                        <img className={cx('image', { active: activePlayBtn })} src={image} alt='anh' />
+                        <img
+                            className={cx('image', { active: activePlayBtn })}
+                            src={playlist.image.trim() === '' ? unknownPlaylistImg : playlist.image}
+                            alt={playlist.name}
+                        />
                     </Link>
                     <div className={cx('info')}>
-                        <Link className={cx('playlist-link')}>
-                            <p className={cx('name')}>Today's Top Hits</p>
+                        <Link className={cx('playlist-link')} to={to}>
+                            <p className={cx('name')}>{playlist.name}</p>
                         </Link>
                         <div className={cx('detail')}>
-                            {/* <div className={cx('artists')}>
-                                {artists.map((artist) => (
-                                    <>
-                                        <Link to={artist.id}>{artist.name}</Link>,{' '}
-                                    </>
-                                ))}
-                            </div> */}
-                            <div className={cx('description')}>
-                                fdsa fdsa fdsflds Lorem ipsum dolor sit amet consectetur, adipisicing elit. A asperiores
-                                facere, obcaecati soluta minima aut voluptates id
-                            </div>
+                            <div className={cx('description')}>{playlist.description}</div>
                         </div>
                     </div>
-                    <IconButton className={cx('play-btn', { active: activePlayBtn })} disableRipple>
-                        <PlayCircleIcon
-                            sx={{
-                                width: '50px',
-                                height: '50px',
-                            }}
-                        />
-                    </IconButton>
+                    {context.contextType === 'playlist' && context.contextId === playlist._id ? (
+                        <IconButton
+                            className={cx('play-btn', { active: activePlayBtn || isPlaying })}
+                            disableRipple
+                            onClick={handleTogglePlay}
+                        >
+                            {isPlaying ? (
+                                <PauseCircleIcon
+                                    className={cx('control')}
+                                    sx={{
+                                        width: '50px',
+                                        height: '50px',
+                                    }}
+                                />
+                            ) : (
+                                <PlayCircleIcon
+                                    className={cx('control')}
+                                    sx={{
+                                        width: '50px',
+                                        height: '50px',
+                                    }}
+                                />
+                            )}
+                        </IconButton>
+                    ) : (
+                        <IconButton
+                            className={cx('play-btn', { active: activePlayBtn })}
+                            disableRipple
+                            onClick={handlePlayTrack}
+                        >
+                            <PlayCircleIcon
+                                sx={{
+                                    width: '50px',
+                                    height: '50px',
+                                }}
+                            />
+                        </IconButton>
+                    )}
                 </div>
             )}
         </>

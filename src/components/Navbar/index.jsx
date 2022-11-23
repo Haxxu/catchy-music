@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames/bind';
@@ -6,18 +6,21 @@ import { Avatar } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LogoutIcon from '@mui/icons-material/Logout';
-
-import useAuth from '~/hooks/useAuth';
-import { menuOptions } from './config';
-import { logout } from '~/redux/authSlice';
-import DarkModeToggle from '~/components/DarkMode/DarkModeToggle';
-import styles from './styles.scoped.scss';
 import { toast } from 'react-toastify';
+
+import DarkModeToggle from '~/components/DarkMode/DarkModeToggle';
+import { menuOptions } from './config';
+import useAuth from '~/hooks/useAuth';
+import { logout } from '~/redux/authSlice';
+import axiosInstance from '~/api/axiosInstance';
+import styles from './styles.scoped.scss';
+import { getCurrentUserProfileUrl } from '~/api/urls/me';
 
 const cx = classNames.bind(styles);
 
 const Navbar = () => {
     const [profileMenu, setProfileMenu] = useState(false);
+    const [profileImage, setProfileImage] = useState('');
 
     const { name, email, type } = useAuth();
     const navigate = useNavigate();
@@ -32,6 +35,15 @@ const Navbar = () => {
         navigate('/');
         toast.success('Logout successfully');
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data } = await axiosInstance.get(getCurrentUserProfileUrl);
+            setProfileImage(data?.data?.image);
+        };
+
+        fetchData().catch(console.error);
+    }, []);
 
     return (
         <div className={cx('container')}>
@@ -48,10 +60,10 @@ const Navbar = () => {
                 <div className={cx('profile')}>
                     <div className={cx('avatar')} onClick={toggleProfileMenu}>
                         <Avatar
+                            src={profileImage}
                             sizes='large'
                             sx={{
-                                boxShadow:
-                                    'rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px',
+                                boxShadow: 3,
                             }}
                         />
                     </div>

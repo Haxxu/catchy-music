@@ -4,6 +4,7 @@ const audioPlayer = createSlice({
     name: 'audioPlayer',
     initialState: {
         currentTrack: null,
+        context: null,
         isPlaying: false,
         repeat: 'none',
         shuffle: 'none',
@@ -13,6 +14,10 @@ const audioPlayer = createSlice({
     reducers: {
         setCurrentTrack: (state, action) => {
             state.currentTrack = action.payload;
+        },
+
+        setContext: (state, action) => {
+            state.context = action.payload;
         },
 
         setRepeat: (state, action) => {
@@ -38,6 +43,14 @@ const audioPlayer = createSlice({
 });
 
 export const audioPlayerReducer = audioPlayer.reducer;
-export const { setCurrentTrack, setVolume, setRepeat, setPlayMode, setShuffle, updateTrack } = audioPlayer.actions;
+export const {
+    setCurrentTrack,
+    setVolume,
+    setRepeat,
+    setPlayMode,
+    setShuffle,
+    updateTrack,
+    setContext,
+} = audioPlayer.actions;
 
 export default audioPlayer;

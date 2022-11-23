@@ -10,7 +10,15 @@ import {
     setRepeatModeUrl,
     setShuffleModeUrl,
 } from '~/api/urls/me';
-import { setCurrentTrack, setVolume, setPlayMode, setShuffle, setRepeat, updateTrack } from '~/redux/audioPlayerSlice';
+import {
+    setCurrentTrack,
+    setVolume,
+    setPlayMode,
+    setShuffle,
+    setRepeat,
+    updateTrack,
+    setContext,
+} from '~/redux/audioPlayerSlice';
 
 export const getAudioPlayerState = async (dispatch, payload) => {
     try {
@@ -28,6 +36,7 @@ export const getCurrentlyPlayingTrack = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.get(getCurrentlyPlayingTrackUrl);
         await dispatch(setCurrentTrack(data.data.currentPlayingTrack));
+        dispatch(setContext(data.data.context));
         // console.log(data.data);
     } catch (error) {
         console.log(error);
@@ -49,7 +58,7 @@ export const playTrack = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.put(playTrackUrl, payload);
         if (data) {
-            await dispatch(setPlayMode(true));
+            dispatch(setPlayMode(true));
         }
     } catch (error) {
         console.log(error);

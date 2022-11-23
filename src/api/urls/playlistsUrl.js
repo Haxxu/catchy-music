@@ -6,6 +6,9 @@ export const getPlaylistsInfoUrl = baseApiUrl + '/playlists/info';
 // [GET]
 export const getPlaylistsByContextUrl = baseApiUrl + '/playlists/context';
 
+// [GET] get popular playlists
+export const getPopularPlaylistsUrl = baseApiUrl + '/playlists/popular';
+
 // [PUT]
 export const togglePublicPlaylistUrl = (id) => baseApiUrl + `/playlists/${id}/toggle-public`;
 
