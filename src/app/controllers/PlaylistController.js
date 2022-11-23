@@ -112,6 +112,31 @@ class PlaylistController {
         }
     }
 
+    async getPopularPlaylists(req, res, next) {
+        try {
+            const playlists = await Playlist.find({ isPublic: true }).sort({ saved: 'desc' }).limit(8).lean();
+
+            const detailPlaylists = playlists.map((playlist) => {
+                if (playlist.tracks.length === 0) {
+                    return playlist;
+                } else {
+                    return {
+                        ...playlist,
+                        firstTrack: {
+                            context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                            position: 0,
+                        },
+                    };
+                }
+            });
+
+            return res.status(200).send({ data: detailPlaylists, message: 'Get popular playlists successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     async createPlaylist(req, res, next) {
         const { error } = validatePlaylist(req.body);
         if (error) {

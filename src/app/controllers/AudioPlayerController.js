@@ -686,8 +686,8 @@ class AudioPlayerController {
             const context = {};
             if (player.currentPlayingTrack.context_uri !== '') {
                 const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
-                context.type = contextType;
-                context._id = contextId;
+                context.contextType = contextType;
+                context.contextId = contextId;
                 context.trackId = trackId;
                 context.albumId = albumId;
 
