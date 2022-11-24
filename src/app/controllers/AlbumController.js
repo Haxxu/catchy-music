@@ -108,6 +108,82 @@ class AlbumController {
         }
     }
 
+    async getAlbumsByTags(req, res, next) {
+        try {
+            if (req.query.tags) {
+                const tags = req.query.tags;
+
+                let popularAlbums;
+                let newReleaseAlbums;
+                let randomAlbums;
+
+                if (tags.includes('popular')) {
+                    const albums = await Album.find({ isReleased: true }).sort({ saved: 'desc' }).limit(8).lean();
+
+                    popularAlbums = albums.map((album) => {
+                        if (album.tracks.length === 0) {
+                            return album;
+                        } else {
+                            return {
+                                ...album,
+                                firstTrack: {
+                                    context_uri: `album:${album._id}:${album.tracks[0].track}:${album._id}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                if (tags.includes('new-release')) {
+                    const albums = await Album.find({ isReleased: true }).sort({ releaseDate: 'desc' }).limit(8).lean();
+
+                    newReleaseAlbums = albums.map((album) => {
+                        if (album.tracks.length === 0) {
+                            return album;
+                        } else {
+                            return {
+                                ...album,
+                                firstTrack: {
+                                    context_uri: `album:${album._id}:${album.tracks[0].track}:${album._id}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                if (tags.includes('random')) {
+                    const albums = await Album.aggregate([{ $match: { isReleased: true } }, { $sample: { size: 8 } }]);
+
+                    randomAlbums = albums.map((album) => {
+                        if (album.tracks.length === 0) {
+                            return album;
+                        } else {
+                            return {
+                                ...album,
+                                firstTrack: {
+                                    context_uri: `album:${album._id}:${album.tracks[0].track}:${album._id}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                return res.status(200).send({
+                    data: { popularAlbums, newReleaseAlbums, randomAlbums },
+                    message: 'Get albums by tags successfully',
+                });
+            }
+
+            return res.status(200).send({ data: [], message: 'Nothing to send' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     // create new album
     async createAlbum(req, res, next) {
         console.log(req.body.tracks);

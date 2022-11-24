@@ -15,6 +15,9 @@ router.get('/info', adminAuth, albumController.getAlbumsInfo);
 // [GET] /api/albums/context?search => get ablums by context
 router.get('/context', adminAuth, albumController.getAlbumsByContext);
 
+// [GET] /api/albums/tags => get ablums by tags
+router.get('/tags', userAuth, albumController.getAlbumsByTags);
+
 // [POST] /api/albums/:id/tracks => add track to album {track} (:id => album_id)
 router.post('/:id/tracks', [artistAuth, validateObjectId], albumController.addTrackToAlbum);
 

@@ -137,7 +137,7 @@ class PlaylistController {
         }
     }
 
-    async getPlaylistsByTags(req, res, ndex) {
+    async getPlaylistsByTags(req, res, next) {
         try {
             if (req.query.tags) {
                 const tags = req.query.tags;
@@ -219,7 +219,7 @@ class PlaylistController {
 
             return res.status(200).send({ data: [], message: 'Nothing to send' });
         } catch (error) {
-            console.log(err);
+            console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
