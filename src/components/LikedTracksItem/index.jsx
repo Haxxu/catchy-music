@@ -5,6 +5,7 @@ import { Avatar, IconButton } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 
+import image from '~/assets/images/anh_test.jpg';
 import unknownPlaylistImg from '~/assets/images/playlist_unknown.jpg';
 import styles from './styles.scoped.scss';
 import { playTrack, pauseTrack } from '~/api/audioPlayer';
@@ -24,7 +25,7 @@ const cx = classNames.bind(styles);
 //     },
 // ];
 
-const PlaylistItem = ({ type = 'default', playlist, to }) => {
+const LikedTracksItem = ({ type = 'default', playlist, to }) => {
     const [activePlayBtn, setActivePlayBtn] = useState(false);
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
 
@@ -56,53 +57,24 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                             <Avatar
                                 className={cx('image')}
                                 variant='square'
-                                src={playlist?.image.trim() === '' ? unknownPlaylistImg : playlist?.image}
-                                alt={playlist?.name}
+                                src={image}
+                                alt='anh'
                                 sx={{ width: '75px', height: '75px' }}
                             />
                             <div className={cx('info')}>
-                                <p className={cx('name')}>{playlist?.name}</p>
+                                Bài hát yêu thích fdsf asdf sdf sdafsd afsdfsdfsdaf sdf asdf sdafa sdf sdfa dsfas fds
+                                fsdaf asdfads fas fasfa fdsf sdfasd fasdf sadf as <p className={cx('name')} />
                             </div>
                         </div>
                     </Link>
-                    {context.contextType === 'playlist' && context.contextId === playlist._id ? (
-                        <IconButton
-                            className={cx('reduce-play-btn', { active: activePlayBtn || isPlaying })}
-                            disableRipple
-                            onClick={handleTogglePlay}
-                        >
-                            {isPlaying ? (
-                                <PauseCircleIcon
-                                    className={cx('control')}
-                                    sx={{
-                                        width: '50px',
-                                        height: '50px',
-                                    }}
-                                />
-                            ) : (
-                                <PlayCircleIcon
-                                    className={cx('control')}
-                                    sx={{
-                                        width: '50px',
-                                        height: '50px',
-                                    }}
-                                />
-                            )}
-                        </IconButton>
-                    ) : (
-                        <IconButton
-                            className={cx('reduce-play-btn', { active: activePlayBtn })}
-                            disableRipple
-                            onClick={handlePlayTrack}
-                        >
-                            <PlayCircleIcon
-                                sx={{
-                                    width: '50px',
-                                    height: '50px',
-                                }}
-                            />
-                        </IconButton>
-                    )}
+                    <IconButton className={cx('reduce-play-btn', { active: activePlayBtn })} disableRipple>
+                        <PlayCircleIcon
+                            sx={{
+                                width: '50px',
+                                height: '50px',
+                            }}
+                        />
+                    </IconButton>
                 </div>
             ) : (
                 <div
@@ -169,4 +141,4 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
     );
 };
 
-export default PlaylistItem;
+export default LikedTracksItem;
