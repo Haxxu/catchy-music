@@ -6,10 +6,13 @@ export const getAlbumsInfoUrl = baseApiUrl + '/albums/info';
 // [GET] (admin)
 export const getAlbumsByContextUrl = baseApiUrl + '/albums/context';
 
+// [GET] get albums by tags
+export const getAlbumsByTagsUrl = baseApiUrl + '/albums/tags';
+
 // [GEt] (userauth)
 export const getAlbumByIdUrl = (id) => baseApiUrl + `/albums/${id}`;
 
-//
+// [POST]
 export const createAlbumUrl = baseApiUrl + `/albums`;
 
 // [PUT] update album

@@ -6,16 +6,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 import { routes } from '~/config';
 import styles from './styles.scoped.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { getSavedPlaylistsUrl } from '~/api/urls/me';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 const Sidebar = () => {
     const [playlists, setPlaylists] = useState([]);
+
+    const { context } = useSelector((state) => state.audioPlayer);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,10 +67,20 @@ const Sidebar = () => {
                 {playlists.map(({ playlist }, index) => (
                     <NavLink
                         key={index}
-                        className={({ isActive }) => cx('link', { active: isActive })}
+                        className={({ isActive }) =>
+                            cx('link', {
+                                active: isActive,
+                            })
+                        }
                         to={'/playlist/' + playlist._id}
                     >
-                        <span>{playlist.name}</span>
+                        <div className={cx('name')}>
+                            <span>{playlist.name} fsadfasd fasdf dsaf sdf sadfasd asdfas</span>
+                        </div>
+
+                        {context && context?.contextType === 'playlist' && context?.contextId === playlist._id && (
+                            <VolumeUpIcon />
+                        )}
                     </NavLink>
                 ))}
             </div>

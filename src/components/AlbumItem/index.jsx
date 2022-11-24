@@ -13,25 +13,14 @@ import { updateTrack } from '~/redux/audioPlayerSlice';
 
 const cx = classNames.bind(styles);
 
-// const artists = [
-//     {
-//         id: '1',
-//         name: 'Imagine Dragons',
-//     },
-//     {
-//         id: '2',
-//         name: 'Alan Walker',
-//     },
-// ];
-
-const PlaylistItem = ({ type = 'default', playlist, to }) => {
+const AlbumItem = ({ type = 'default', album, to }) => {
     const [activePlayBtn, setActivePlayBtn] = useState(false);
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
 
     const dispatch = useDispatch();
 
     const handlePlayTrack = async () => {
-        playTrack(dispatch, playlist.firstTrack).catch(console.error);
+        playTrack(dispatch, album.firstTrack).catch(console.error);
         dispatch(updateTrack());
     };
 
@@ -51,21 +40,21 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                     onMouseEnter={() => setActivePlayBtn(true)}
                     onMouseLeave={() => setActivePlayBtn(false)}
                 >
-                    <Link className={cx('playlist-link')} to={to}>
-                        <div className={cx('playlist')}>
+                    <Link className={cx('album-link')} to={to}>
+                        <div className={cx('album')}>
                             <Avatar
                                 className={cx('image')}
                                 variant='square'
-                                src={playlist?.image.trim() === '' ? unknownPlaylistImg : playlist?.image}
-                                alt={playlist?.name}
+                                src={album?.image.trim() === '' ? unknownPlaylistImg : album?.image}
+                                alt={album?.name}
                                 sx={{ width: '75px', height: '75px' }}
                             />
                             <div className={cx('info')}>
-                                <p className={cx('name')}>{playlist?.name}</p>
+                                <p className={cx('name')}>{album?.name}</p>
                             </div>
                         </div>
                     </Link>
-                    {context.contextType === 'playlist' && context.contextId === playlist._id ? (
+                    {context.contextType === 'album' && context.contextId === album._id ? (
                         <IconButton
                             className={cx('reduce-play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple
@@ -110,22 +99,22 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                     onMouseEnter={() => setActivePlayBtn(true)}
                     onMouseLeave={() => setActivePlayBtn(false)}
                 >
-                    <Link className={cx('playlist-img-link')} to={to}>
+                    <Link className={cx('album-img-link')} to={to}>
                         <img
                             className={cx('image', { active: activePlayBtn })}
-                            src={playlist?.image.trim() === '' ? unknownPlaylistImg : playlist?.image}
-                            alt={playlist?.name}
+                            src={album?.image.trim() === '' ? unknownPlaylistImg : album?.image}
+                            alt={album?.name}
                         />
                     </Link>
                     <div className={cx('info')}>
-                        <Link className={cx('playlist-link')} to={to}>
-                            <p className={cx('name')}>{playlist?.name}</p>
+                        <Link className={cx('album-link')} to={to}>
+                            <p className={cx('name')}>{album?.name}</p>
                         </Link>
                         <div className={cx('detail')}>
-                            <div className={cx('description')}>{playlist?.description}</div>
+                            <div className={cx('description')}>{album?.description}</div>
                         </div>
                     </div>
-                    {context.contextType === 'playlist' && context.contextId === playlist?._id ? (
+                    {context.contextType === 'album' && context.contextId === album?._id ? (
                         <IconButton
                             className={cx('play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple
@@ -169,4 +158,4 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
     );
 };
 
-export default PlaylistItem;
+export default AlbumItem;
