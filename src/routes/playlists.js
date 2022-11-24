@@ -18,6 +18,9 @@ router.get('/context', adminAuth, playlistController.getPlaylistsByContext);
 // [GET] /api/playlists/popular => get popular playlist
 router.get('/popular', userAuth, playlistController.getPopularPlaylists);
 
+// [GET] /api/playlists/tags => get playlists by tags
+router.get('/tags', userAuth, playlistController.getPlaylistsByTags);
+
 // [PUT] /api/playlists/:id/toggle-public=> toggle public playlist
 router.put('/:id/toggle-public', [userAuth, validateObjectId], playlistController.togglePublicPlaylist);
 

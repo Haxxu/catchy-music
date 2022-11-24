@@ -191,7 +191,7 @@ class MeController {
         res.status(200).send({ message: 'Removed from library' });
     }
 
-    // Get saved albums
+    // Get saved playlist
     async getSavedPlaylists(req, res, next) {
         const library = await Library.findOne({ owner: req.user._id });
 
@@ -201,14 +201,21 @@ class MeController {
             return new Date(b.addedAt) - new Date(a.addedAt);
         });
         // Get saved playlists ( array of playlist obj)
-        const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } });
+        const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } }).lean();
         // array of playlist id
         const pClean = p.map((item) => item._id.toString());
 
         // Add album detail to savedAlbums
         const detailSavedPlaylists = playlists.map((obj) => {
+            let index = pClean.indexOf(obj.playlist);
             return {
-                playlist: p[pClean.indexOf(obj.playlist)],
+                playlist: {
+                    ...p[index],
+                    firstTrack: {
+                        context_uri: `playlist:${p[index]._id}:${p[index].tracks[0].track}:${p[index].tracks[0].album}`,
+                        position: 0,
+                    },
+                },
                 addedAt: obj.addedAt,
             };
         });

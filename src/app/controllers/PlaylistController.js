@@ -137,6 +137,93 @@ class PlaylistController {
         }
     }
 
+    async getPlaylistsByTags(req, res, ndex) {
+        try {
+            if (req.query.tags) {
+                const tags = req.query.tags;
+
+                let popularPlaylists;
+                let recommendPlaylists;
+                let randomPlaylists;
+
+                if (tags.includes('popular')) {
+                    const p = await Playlist.find({ isPublic: true }).sort({ saved: 'desc' }).limit(8).lean();
+
+                    popularPlaylists = p.map((playlist) => {
+                        if (playlist.tracks.length === 0) {
+                            return playlist;
+                        } else {
+                            return {
+                                ...playlist,
+                                firstTrack: {
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                if (tags.includes('recommend')) {
+                    const admin = await User.find({ type: 'admin' }).select('_id').lean();
+
+                    const adminId = admin.map((item) => item._id);
+
+                    // const p = await Playlist.find({ isPublic: true, owner: { $in: adminId } })
+                    //     .limit(8)
+                    //     .lean();
+
+                    const p = await Playlist.aggregate([
+                        { $match: { isPublic: true, owner: { $in: adminId } } },
+                        { $sample: { size: 8 } },
+                    ]);
+
+                    recommendPlaylists = p.map((playlist) => {
+                        if (playlist.tracks.length === 0) {
+                            return playlist;
+                        } else {
+                            return {
+                                ...playlist,
+                                firstTrack: {
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                if (tags.includes('random')) {
+                    const p = await Playlist.aggregate([{ $match: { isPublic: true } }, { $sample: { size: 8 } }]);
+
+                    randomPlaylists = p.map((playlist) => {
+                        if (playlist.tracks.length === 0) {
+                            return playlist;
+                        } else {
+                            return {
+                                ...playlist,
+                                firstTrack: {
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                }
+
+                return res.status(200).send({
+                    data: { popularPlaylists, recommendPlaylists, randomPlaylists },
+                    message: 'Get playlists by tags successfully',
+                });
+            }
+
+            return res.status(200).send({ data: [], message: 'Nothing to send' });
+        } catch (error) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     async createPlaylist(req, res, next) {
         const { error } = validatePlaylist(req.body);
         if (error) {
