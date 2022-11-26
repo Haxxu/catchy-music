@@ -12,6 +12,32 @@ class MeController {
         res.status(200).send({ data: user, message: 'Get user profile successfully' });
     }
 
+    // Check saved playlist
+    async checkSavedTrack(req, res, next) {
+        try {
+            let saved = false;
+            if (req.query.trackId && req.query.albumId) {
+                const library = await Library.findOne({ owner: req.user._id }).select('likedTracks');
+                if (!library) {
+                    return res.status(404).send({ message: 'Library not found' });
+                }
+
+                if (
+                    library.likedTracks.find(
+                        (item) => item.track === req.query.trackId && item.album === req.query.albumId,
+                    )
+                ) {
+                    saved = true;
+                }
+            }
+
+            return res.status(200).send({ data: saved, message: 'Check saved track' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     // Get liked tracks
     async getLikedTracks(req, res, next) {
         const library = await Library.findOne({ owner: req.user._id });
@@ -36,14 +62,49 @@ class MeController {
         res.status(200).send({ data: likedTracks, message: 'Get liked tracks successfully' });
     }
 
+    // Check following user
+    async checkFollowingUser(req, res, next) {
+        try {
+            let saved = false;
+            if (req.query.id) {
+                const library = await Library.findOne({ owner: req.user._id }).select('followings');
+                if (!library) {
+                    return res.status(404).send({ message: 'Library not found' });
+                }
+
+                if (library.followings.find((item) => item.user === req.query.id)) {
+                    saved = true;
+                }
+            }
+
+            return res.status(200).send({ data: saved, message: 'Check following user' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     // Get following users
     async getFollowing(req, res, next) {
-        const library = await Library.findOne({ owner: req.user._id });
-        const followings = library.followings.map((item) => item.user);
-        const artists = await User.find({ _id: { $in: followings }, type: 'artist' });
-        const users = await User.find({ _id: { $in: followings } });
+        try {
+            const library = await Library.findOne({ owner: req.user._id });
+            const followings = library.followings.map((item) => item.user);
+            const artists = await User.find({ _id: { $in: followings }, type: 'artist' })
+                .select('-password -__v -email -createdAt -updatedAt')
+                .lean();
+            let users = await User.find({ _id: { $in: followings }, type: { $ne: 'artist' } })
+                .select('-password -__v -email -createdAt -updatedAt')
+                .lean();
+            users = users.map((user) => ({ ...user, type: 'user' }));
 
-        res.status(200).send({ data: { artists: artists, users: users }, message: 'Get following user successfully' });
+            return res.status(200).send({
+                data: { artists: artists, users: users, all: [...artists, users] },
+                message: 'Get following user successfully',
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Follow user or arist
@@ -106,6 +167,28 @@ class MeController {
         await userFollowLibrary.save();
 
         res.status(200).send({ message: 'Unfollow user or artist successfully' });
+    }
+
+    // Check saved albums
+    async checkSavedAlbum(req, res, next) {
+        try {
+            let saved = false;
+            if (req.query.albumId) {
+                const library = await Library.findOne({ owner: req.user._id }).select('albums');
+                if (!library) {
+                    return res.status(404).send({ message: 'Library not found' });
+                }
+
+                if (library.albums.find((item) => item.album === req.query.albumId)) {
+                    saved = true;
+                }
+            }
+
+            return res.status(200).send({ data: saved, message: 'Check saved album' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Get saved albums
@@ -189,6 +272,28 @@ class MeController {
         await album.save();
 
         res.status(200).send({ message: 'Removed from library' });
+    }
+
+    // Check saved playlist
+    async checkSavedPlaylist(req, res, next) {
+        try {
+            let saved = false;
+            if (req.query.playlistId) {
+                const library = await Library.findOne({ owner: req.user._id }).select('playlists');
+                if (!library) {
+                    return res.status(404).send({ message: 'Library not found' });
+                }
+
+                if (library.playlists.find((item) => item.playlist === req.query.playlistId)) {
+                    saved = true;
+                }
+            }
+
+            return res.status(200).send({ data: saved, message: 'Check saved playlist' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Get saved playlist

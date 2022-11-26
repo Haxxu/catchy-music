@@ -690,6 +690,7 @@ class AudioPlayerController {
                 context.contextId = contextId;
                 context.trackId = trackId;
                 context.albumId = albumId;
+                context.context_uri = player.currentPlayingTrack.context_uri;
 
                 const track = await Track.findOne({ _id: trackId }).lean();
                 const album = await Album.findOne({ _id: albumId }).lean();

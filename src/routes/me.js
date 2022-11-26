@@ -9,6 +9,9 @@ const validateObjectId = require('../app/middlewares/validateObjectId');
 // [GET] /api/me => get current user profile
 router.get('/', userAuth, meController.getCurrentUserProfile);
 
+// [GET] /api/me/following/contains => check following user
+router.get('/following/contains', userAuth, meController.checkFollowingUser);
+
 // [GET] /api/me/following => get following user
 router.get('/following', userAuth, meController.getFollowing);
 
@@ -17,6 +20,9 @@ router.put('/following', userAuth, meController.followUser);
 
 // [DELETE] /api/me/following => unfollow user or artist
 router.delete('/following', userAuth, meController.unfollowUser);
+
+// [GET] /api/me/albums/contains => check saved albums
+router.get('/albums/contains', userAuth, meController.checkSavedAlbum);
 
 // [GET] /api/me/albums => get saved albums
 router.get('/albums', userAuth, meController.getSavedAlbums);
@@ -27,6 +33,9 @@ router.put('/albums', userAuth, meController.saveAblum);
 // [DELETE] /api/me/albums => remove saved album from library
 router.delete('/albums', userAuth, meController.removeSavedAlbum);
 
+// [GET] /api/me/playlists/contains => check saved playlists
+router.get('/playlists/contains', userAuth, meController.checkSavedPlaylist);
+
 // [GET] /api/me/playlists => get saved playlists
 router.get('/playlists', userAuth, meController.getSavedPlaylists);
 
@@ -35,6 +44,9 @@ router.put('/playlists', userAuth, meController.savePlaylist);
 
 // [DELETE] /api/me/playlists => remove saved playlist from library
 router.delete('/playlists', userAuth, meController.removeSavedPlaylist);
+
+// [GET] /api/me/tracks/contains => check liked tracks
+router.get('/tracks/contains', userAuth, meController.checkSavedTrack);
 
 // [GET] /api/me/tracks => get liked tracks
 router.get('/tracks', userAuth, meController.getLikedTracks);
