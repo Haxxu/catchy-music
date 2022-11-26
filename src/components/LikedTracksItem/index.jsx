@@ -14,17 +14,6 @@ import { updateTrack } from '~/redux/audioPlayerSlice';
 
 const cx = classNames.bind(styles);
 
-// const artists = [
-//     {
-//         id: '1',
-//         name: 'Imagine Dragons',
-//     },
-//     {
-//         id: '2',
-//         name: 'Alan Walker',
-//     },
-// ];
-
 const LikedTracksItem = ({ type = 'default', playlist, to }) => {
     const [activePlayBtn, setActivePlayBtn] = useState(false);
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);

@@ -30,7 +30,7 @@ const VolumeControl = ({ volume, onChangeVolume }) => {
 
     return (
         <div className={cx('container')}>
-            <IconButton className={cx('button')}>
+            <IconButton className={cx('button')} disableRipple>
                 {volume === 0 && <VolumeOffIcon className={cx('icon')} />}
                 {volume > 0 && volume <= 10 && <VolumeMuteIcon className={cx('icon')} />}
                 {volume > 10 && volume <= 50 && <VolumeDownIcon className={cx('icon')} />}

@@ -137,7 +137,6 @@ const AudioPlayer = () => {
 
     useEffect(() => {
         getCurrentlyPlayingTrack(dispatch).catch(console.error);
-        // console.log(currentTrack);
         // console.log(update);
     }, [dispatch, update]);
 
@@ -193,28 +192,33 @@ const AudioPlayer = () => {
                     </div>
                 </div>
                 <div className={cx('like')}>
-                    <Like />
+                    <Like
+                        type='track'
+                        size='normal'
+                        trackId={currentTrack?.detailTrack?._id}
+                        albumId={currentTrack?.detailAlbum?._id}
+                    />
                 </div>
             </div>
             <div className={cx('center')}>
                 <div className={cx('audio-controls')}>
-                    <IconButton className={cx('control-btn')} onClick={handleToggleShuffle}>
+                    <IconButton className={cx('control-btn')} onClick={handleToggleShuffle} disableRipple>
                         <ShuffleIcon className={cx('control', { active: shuffle === 'shuffle' })} />
                     </IconButton>
-                    <IconButton className={cx('control-btn')} onClick={handleSkipPrevious}>
+                    <IconButton className={cx('control-btn')} onClick={handleSkipPrevious} disableRipple>
                         <SkipPreviousIcon className={cx('control')} />
                     </IconButton>
-                    <IconButton className={cx('play-btn')} onClick={handleTogglePlay}>
+                    <IconButton className={cx('play-btn')} onClick={handleTogglePlay} disableRipple>
                         {isPlaying ? (
                             <PauseCircleIcon className={cx('control')} />
                         ) : (
                             <PlayCircleIcon className={cx('control')} />
                         )}
                     </IconButton>
-                    <IconButton className={cx('control-btn')} onClick={handleSkipNext}>
+                    <IconButton className={cx('control-btn')} onClick={handleSkipNext} disableRipple>
                         <SkipNextIcon className={cx('control')} />
                     </IconButton>
-                    <IconButton className={cx('control-btn')} onClick={handleToggleRepeatMode}>
+                    <IconButton className={cx('control-btn')} onClick={handleToggleRepeatMode} disableRipple>
                         {repeat === 'repeat-one' ? (
                             <RepeatOneIcon className={cx('control', 'active')} />
                         ) : (
@@ -230,12 +234,12 @@ const AudioPlayer = () => {
             </div>
             <div className={cx('end')}>
                 <div className={cx('lyric')}>
-                    <IconButton className={cx('control-btn')} onClick={handleToggleLyric}>
+                    <IconButton className={cx('control-btn')} onClick={handleToggleLyric} disableRipple>
                         <MicExternalOnIcon className={cx('control', { active: location.pathname === routes.lyrics })} />
                     </IconButton>
                 </div>
                 <div className={cx('queue')}>
-                    <IconButton className={cx('control-btn')} onClick={handleToggleQueue}>
+                    <IconButton className={cx('control-btn')} onClick={handleToggleQueue} disableRipple>
                         <QueueMusicIcon className={cx('control', { active: location.pathname === routes.queue })} />
                     </IconButton>
                 </div>

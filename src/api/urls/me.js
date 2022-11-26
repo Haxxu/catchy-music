@@ -3,6 +3,9 @@ const baseApiUrl = process.env.REACT_APP_API_URL;
 // [GET]
 export const getCurrentUserProfileUrl = baseApiUrl + '/me';
 
+// [GET] get liked tracks
+export const getLikedTracksUrl = baseApiUrl + '/me/tracks';
+
 // [GET] get saved playlists
 export const getSavedPlaylistsUrl = baseApiUrl + '/me/playlists';
 
@@ -32,3 +35,30 @@ export const setShuffleModeUrl = baseApiUrl + '/me/audio-player/shuffle';
 
 // [PUT] set repeat mode
 export const setRepeatModeUrl = baseApiUrl + '/me/audio-player/repeat';
+
+// [GET] check liked track
+export const checkLikedTrackUrl = baseApiUrl + '/me/tracks/contains';
+
+// [GET] check saved album
+export const checkSavedAlbumUrl = baseApiUrl + '/me/albums/contains';
+
+// [GET] check saved playlist
+export const checkSavedPlaylistUrl = baseApiUrl + '/me/playlists/contains';
+
+// [DELETE] remove liked track from library
+export const removeLikedTrackFromLibraryUrl = baseApiUrl + '/me/tracks';
+
+// [PUT] save track to library
+export const saveTrackToLibraryUrl = baseApiUrl + '/me/tracks';
+
+// [DELETE] remove album from library
+export const removeAlbumFromLibraryUrl = baseApiUrl + '/me/albums';
+
+// [PUT] save album to library
+export const saveAlbumToLibraryUrl = baseApiUrl + '/me/albums';
+
+// [DELETE] remove playlist from library
+export const removePlaylistFromLibraryUrl = baseApiUrl + '/me/playlists';
+
+// [PUT] save playlist to library
+export const savePlaylistToLibraryUrl = baseApiUrl + '/me/playlists';

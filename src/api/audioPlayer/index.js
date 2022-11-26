@@ -36,7 +36,7 @@ export const getCurrentlyPlayingTrack = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.get(getCurrentlyPlayingTrackUrl);
         await dispatch(setCurrentTrack(data.data.currentPlayingTrack));
-        dispatch(setContext(data.data.context));
+        await dispatch(setContext(data.data.context));
         // console.log(data.data);
     } catch (error) {
         console.log(error);
@@ -58,7 +58,11 @@ export const playTrack = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.put(playTrackUrl, payload);
         if (data) {
+            const { data } = await axiosInstance.get(getCurrentlyPlayingTrackUrl);
+            dispatch(setContext(data.data.context));
+            dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
+            // dispatch(updateTrack());
         }
     } catch (error) {
         console.log(error);

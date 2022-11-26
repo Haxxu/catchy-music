@@ -1,2 +1,2 @@
 export { nFormatter } from './numberFormat';
-export { fancyTimeFormat, dateFormat } from './timeFormat';
+export { fancyTimeFormat, dateFormat, timeAgoFormat } from './timeFormat';

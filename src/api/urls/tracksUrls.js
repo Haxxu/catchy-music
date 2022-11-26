@@ -16,4 +16,4 @@ export const getTrackByIdUrl = (id) => baseApiUrl + `/tracks/${id}`;
 export const createTrackUrl = baseApiUrl + '/tracks';
 
 // [PUT] update track
-export const updateTrackUrl = (id) => `/tracks/${id}`;
+export const updateTrackUrl = (id) => baseApiUrl + `/tracks/${id}`;
