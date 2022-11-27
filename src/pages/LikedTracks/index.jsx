@@ -28,6 +28,7 @@ import { getLikedTracksUrl } from '~/api/urls/me';
 import { updateTrack } from '~/redux/audioPlayerSlice';
 import Like from '~/components/Like';
 import { timeAgoFormat, fancyTimeFormat } from '~/utils/Format';
+import TrackMenu from '~/components/TrackMenu';
 
 const cx = classNames.bind(styles);
 
@@ -254,8 +255,16 @@ const LikedTracks = () => {
                                     <TableCell align='left'>
                                         <div className={cx('duration')}>{fancyTimeFormat(item.track.duration)}</div>
                                     </TableCell>
-                                    <TableCell align='left'>
-                                        <div className={cx('track-menu')} />
+                                    <TableCell align='left' sx={{ padding: 0 }}>
+                                        <div className={cx('track-menu')}>
+                                            <TrackMenu
+                                                trackId={item?.track._id}
+                                                albumId={item?.album._id}
+                                                artists={item?.track.artists}
+                                                context_uri={item?.context_uri}
+                                                position={item?.position}
+                                            />
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

@@ -20,3 +20,6 @@ export const deletePlaylistUrl = (id) => baseApiUrl + `/playlists/${id}`;
 
 // [DELETE] reomve track from playlist
 export const removeTrackFromPlaylistUrl = (id) => baseApiUrl + `/playlists/${id}/tracks`;
+
+// [POST] add track to playlist
+export const addTrackToPlaylistUrl = (playlistId) => baseApiUrl + `/playlists/${playlistId}/tracks`;

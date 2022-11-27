@@ -12,6 +12,9 @@ export const getSavedPlaylistsUrl = baseApiUrl + '/me/playlists';
 // [GET] get audio player state
 export const getAudioPlayerStateUrl = baseApiUrl + '/me/audio-player';
 
+// [POST] add item to queue
+export const addItemToQueueUrl = baseApiUrl + '/me/audio-player/queue';
+
 // [GET] get audio player state
 export const getCurrentlyPlayingTrackUrl = baseApiUrl + '/me/audio-player/currently-playing';
 

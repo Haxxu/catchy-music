@@ -205,15 +205,16 @@
                         }
 
                         .artists {
+                            display: -webkit-box;
+                            overflow: hidden;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 1;
+
                             a {
                                 font-size: 1.4rem;
                                 font-weight: 700;
                                 color: var(--text-secondary);
                                 text-decoration: none;
-                                display: -webkit-box;
-                                overflow: hidden;
-                                -webkit-box-orient: vertical;
-                                -webkit-line-clamp: 1;
 
                                 &:hover {
                                     text-decoration: underline;
@@ -246,6 +247,11 @@
                     font-weight: 700;
                     color: var(--text-secondary);
                     cursor: default;
+                }
+
+                .track-menu {
+                    // display: none;
+                    min-width: 25px;
                 }
 
                 &:hover {
@@ -281,6 +287,10 @@
                             color: var(--text-primary);
                         }
                     }
+
+                    .track-menu {
+                        // display: flex;
+                    }
                 }
 
                 &.active {
@@ -289,6 +299,10 @@
 
                     .order {
                         color: var(--primary-color);
+                    }
+
+                    .track-menu {
+                        display: flex;
                     }
                 }
             }

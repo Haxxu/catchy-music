@@ -13,6 +13,7 @@ import Settings from '~/pages/Settings';
 import Profile from '~/pages/Profile';
 import Lyrics from '~/pages/Lyrics';
 import Queue from '~/pages/Queue';
+import Track from '~/pages/Track';
 
 const privateRoutes = [
     // Home
@@ -61,6 +62,13 @@ const privateRoutes = [
     {
         path: routes.artist,
         component: Artist,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Artist
+    {
+        path: routes.track,
+        component: Track,
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
     },

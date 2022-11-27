@@ -19,7 +19,7 @@ const cx = classNames.bind(styles);
 const Sidebar = () => {
     const [playlists, setPlaylists] = useState([]);
 
-    const { context } = useSelector((state) => state.audioPlayer);
+    const { context, isPlaying } = useSelector((state) => state.audioPlayer);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -58,12 +58,6 @@ const Sidebar = () => {
                 </NavLink>
             </div>
             <div className={cx('playlist-container')}>
-                {/* <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 1}>
-                    <span>Playlist 1</span>
-                </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={'/playlist/' + 2}>
-                    <span>Playlist 2</span>
-                </NavLink> */}
                 {playlists.map(({ playlist }, index) => (
                     <NavLink
                         key={index}
@@ -75,12 +69,13 @@ const Sidebar = () => {
                         to={'/playlist/' + playlist._id}
                     >
                         <div className={cx('name')}>
-                            <span>{playlist.name} fsadfasd fasdf dsaf sdf sadfasd asdfas</span>
+                            <span>{playlist.name}</span>
                         </div>
 
-                        {context && context?.contextType === 'playlist' && context?.contextId === playlist._id && (
-                            <VolumeUpIcon />
-                        )}
+                        {context &&
+                            context?.contextType === 'playlist' &&
+                            context?.contextId === playlist._id &&
+                            isPlaying && <VolumeUpIcon />}
                     </NavLink>
                 ))}
             </div>
