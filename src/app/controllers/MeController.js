@@ -298,34 +298,39 @@ class MeController {
 
     // Get saved playlist
     async getSavedPlaylists(req, res, next) {
-        const library = await Library.findOne({ owner: req.user._id });
+        try {
+            const library = await Library.findOne({ owner: req.user._id });
 
-        const playlists = [...library.playlists];
-        // Sort newest addedAt first
-        playlists.sort((a, b) => {
-            return new Date(b.addedAt) - new Date(a.addedAt);
-        });
-        // Get saved playlists ( array of playlist obj)
-        const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } }).lean();
-        // array of playlist id
-        const pClean = p.map((item) => item._id.toString());
+            const playlists = [...library.playlists];
+            // Sort newest addedAt first
+            playlists.sort((a, b) => {
+                return new Date(b.addedAt) - new Date(a.addedAt);
+            });
+            // Get saved playlists ( array of playlist obj)
+            const p = await Playlist.find({ _id: { $in: playlists.map((item) => item.playlist) } }).lean();
+            // array of playlist id
+            const pClean = p.map((item) => item._id.toString());
 
-        // Add album detail to savedAlbums
-        const detailSavedPlaylists = playlists.map((obj) => {
-            let index = pClean.indexOf(obj.playlist);
-            return {
-                playlist: {
-                    ...p[index],
-                    firstTrack: {
-                        context_uri: `playlist:${p[index]._id}:${p[index].tracks[0].track}:${p[index].tracks[0].album}`,
-                        position: 0,
+            // Add album detail to savedAlbums
+            const detailSavedPlaylists = playlists.map((obj) => {
+                let index = pClean.indexOf(obj.playlist);
+                return {
+                    playlist: {
+                        ...p[index],
+                        firstTrack: {
+                            context_uri: `playlist:${p[index]._id}:${p[index].tracks[0]?.track}:${p[index].tracks[0]?.album}`,
+                            position: 0,
+                        },
                     },
-                },
-                addedAt: obj.addedAt,
-            };
-        });
+                    addedAt: obj.addedAt,
+                };
+            });
 
-        await res.status(200).send({ data: detailSavedPlaylists, message: 'Get saved playlist successfully' });
+            await res.status(200).send({ data: detailSavedPlaylists, message: 'Get saved playlist successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Save playlist to user library

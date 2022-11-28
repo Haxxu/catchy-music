@@ -127,7 +127,7 @@ class AlbumController {
                             return {
                                 ...album,
                                 firstTrack: {
-                                    context_uri: `album:${album._id}:${album.tracks[0].track}:${album._id}`,
+                                    context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
                                     position: 0,
                                 },
                             };
@@ -145,7 +145,7 @@ class AlbumController {
                             return {
                                 ...album,
                                 firstTrack: {
-                                    context_uri: `album:${album._id}:${album.tracks[0].track}:${album._id}`,
+                                    context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
                                     position: 0,
                                 },
                             };

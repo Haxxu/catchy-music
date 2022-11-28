@@ -123,7 +123,7 @@ class PlaylistController {
                     return {
                         ...playlist,
                         firstTrack: {
-                            context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                            context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
                             position: 0,
                         },
                     };
@@ -156,7 +156,7 @@ class PlaylistController {
                             return {
                                 ...playlist,
                                 firstTrack: {
-                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
                                     position: 0,
                                 },
                             };
@@ -185,7 +185,7 @@ class PlaylistController {
                             return {
                                 ...playlist,
                                 firstTrack: {
-                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
                                     position: 0,
                                 },
                             };
@@ -203,7 +203,7 @@ class PlaylistController {
                             return {
                                 ...playlist,
                                 firstTrack: {
-                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0].track}:${playlist.tracks[0].album}`,
+                                    context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
                                     position: 0,
                                 },
                             };
