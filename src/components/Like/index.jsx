@@ -18,14 +18,15 @@ import {
     savePlaylistToLibraryUrl,
     removePlaylistFromLibraryUrl,
 } from '~/api/urls/me';
-import { updateLikeTrackState } from '~/redux/updateStateSlice';
+import { updateLikeTrackState, updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
-const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId, setUpdate }) => {
+const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId }) => {
     const [liked, setLiked] = useState(false);
 
-    const { likeTrackState } = useSelector((state) => state.updateState);
+    const { likeTrackState, playlistInSidebarState } = useSelector((state) => state.updateState);
 
     const dispatch = useDispatch();
 
@@ -38,6 +39,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId, s
                     });
                     setLiked(data.data);
                     dispatch(updateLikeTrackState());
+                    toast.success(data.message);
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.delete(removeAlbumFromLibraryUrl, {
                         data: { album: albumId },
@@ -48,18 +50,23 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId, s
                         data: { playlist: playlistId },
                     });
                     setLiked(data.data);
+                    dispatch(updatePlaylistInSidebarState());
+                    toast.success(data.message);
                 }
             } else {
                 if (type === 'track') {
                     const { data } = await axiosInstance.put(saveTrackToLibraryUrl, { track: trackId, album: albumId });
                     setLiked(data.data);
                     dispatch(updateLikeTrackState());
+                    toast.success(data.message);
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.put(saveAlbumToLibraryUrl, { album: albumId });
                     setLiked(data.data);
                 } else {
                     const { data } = await axiosInstance.put(savePlaylistToLibraryUrl, { playlist: playlistId });
                     setLiked(data.data);
+                    dispatch(updatePlaylistInSidebarState());
+                    toast.success(data.message);
                 }
             }
         } catch (err) {
@@ -83,7 +90,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId, s
 
         fetchData().catch(console.error);
         // eslint-disable-next-line
-    }, [liked, trackId, albumId, playlistId, likeTrackState]);
+    }, [liked, trackId, albumId, playlistId, likeTrackState, playlistInSidebarState]);
 
     return (
         <IconButton className={cx('like-btn')} onClick={handleLike} disableRipple>

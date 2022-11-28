@@ -12,6 +12,9 @@ export const getPopularPlaylistsUrl = baseApiUrl + '/playlists/popular';
 // [GET] get playlists by tags
 export const getPlaylistsByTagsUrl = baseApiUrl + '/playlists/tags';
 
+// [GET] get playlist by id
+export const getPlaylistByIdUrl = (id) => baseApiUrl + `/playlists/${id}`;
+
 // [PUT]
 export const togglePublicPlaylistUrl = (id) => baseApiUrl + `/playlists/${id}/toggle-public`;
 

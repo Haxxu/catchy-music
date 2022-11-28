@@ -20,6 +20,7 @@ const Sidebar = () => {
     const [playlists, setPlaylists] = useState([]);
 
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
+    const { playlistsInSidebarState } = useSelector((state) => state.updateState);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,7 +29,7 @@ const Sidebar = () => {
         };
 
         fetchData().catch(console.error);
-    }, []);
+    }, [playlistsInSidebarState]);
 
     return (
         <div className={cx('container')}>

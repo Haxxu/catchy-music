@@ -8,12 +8,15 @@ import axiosInstance from '~/api/axiosInstance';
 import { getSavedPlaylistsUrl } from '~/api/urls/me';
 import { addTrackToPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { toast } from 'react-toastify';
+import { useAuth } from '~/hooks';
 
 const cx = classNames.bind(styles);
 
 const AddToPlaylistMenu = ({ trackId, albumId }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [playlists, setPlaylists] = useState([]);
+
+    const { userId } = useAuth();
 
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -55,51 +58,18 @@ const AddToPlaylistMenu = ({ trackId, albumId }) => {
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
-                            {playlists.map((item, index) => (
-                                <div
-                                    className={cx('menu-item')}
-                                    key={index}
-                                    onClick={() => addTrackToPlaylist(item?.playlist._id)}
-                                >
-                                    {item?.playlist.name}
-                                </div>
-                            ))}
-                            {playlists.map((item, index) => (
-                                <div
-                                    className={cx('menu-item')}
-                                    key={index}
-                                    onClick={() => addTrackToPlaylist(item?.playlist._id)}
-                                >
-                                    {item?.playlist.name}
-                                </div>
-                            ))}
-                            {playlists.map((item, index) => (
-                                <div
-                                    className={cx('menu-item')}
-                                    key={index}
-                                    onClick={() => addTrackToPlaylist(item?.playlist._id)}
-                                >
-                                    {item?.playlist.name}
-                                </div>
-                            ))}
-                            {playlists.map((item, index) => (
-                                <div
-                                    className={cx('menu-item')}
-                                    key={index}
-                                    onClick={() => addTrackToPlaylist(item?.playlist._id)}
-                                >
-                                    {item?.playlist.name}
-                                </div>
-                            ))}
-                            {playlists.map((item, index) => (
-                                <div
-                                    className={cx('menu-item')}
-                                    key={index}
-                                    onClick={() => addTrackToPlaylist(item?.playlist._id)}
-                                >
-                                    {item?.playlist.name}
-                                </div>
-                            ))}
+                            {playlists.map(
+                                (item, index) =>
+                                    item?.playlist?.owner === userId && (
+                                        <div
+                                            className={cx('menu-item')}
+                                            key={index}
+                                            onClick={() => addTrackToPlaylist(item?.playlist?._id)}
+                                        >
+                                            {item?.playlist?.name}
+                                        </div>
+                                    ),
+                            )}
                         </div>
                     </Paper>
                 </ClickAwayListener>

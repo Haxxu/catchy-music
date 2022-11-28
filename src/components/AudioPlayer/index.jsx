@@ -156,7 +156,7 @@ const AudioPlayer = () => {
     return (
         <div className={cx('container')}>
             <audio
-                src={currentTrack?.detailTrack.audio}
+                src={currentTrack?.detailTrack?.audio}
                 // src={trackSrc}
                 ref={audioRef}
                 onTimeUpdate={getCurrDuration}
@@ -178,10 +178,10 @@ const AudioPlayer = () => {
                 </div>
                 <div className={cx('info')}>
                     <div className={cx('name')}>
-                        <Link to={`/album/${currentTrack?.album}`}>{currentTrack?.detailTrack.name}</Link>
+                        <Link to={`/album/${currentTrack?.album}`}>{currentTrack?.detailTrack?.name}</Link>
                     </div>
                     <div className={cx('artists')}>
-                        {currentTrack?.detailTrack.artists.map((artist, index) => {
+                        {currentTrack?.detailTrack?.artists.map((artist, index) => {
                             return (
                                 <span key={index}>
                                     {index !== 0 ? ', ' : ''}

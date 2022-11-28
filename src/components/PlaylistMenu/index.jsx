@@ -18,7 +18,7 @@ import { useAuth } from '~/hooks';
 
 const cx = classNames.bind(styles);
 
-const TrackMenu = ({
+const PlaylistMenu = ({
     trackId,
     albumId,
     playlistId,
@@ -83,45 +83,19 @@ const TrackMenu = ({
     return (
         <div className={cx('container')} onDoubleClick={(e) => e.stopPropagation()}>
             <IconButton onClick={handleClick} disableRipple sx={{ padding: 0 }}>
-                <MoreHorizIcon sx={{ color: 'var(--text-primary)', width: '20px', height: '20px', padding: 0 }} />
+                <MoreHorizIcon sx={{ color: 'var(--text-primary)', width: '34px', height: '34px', padding: 0 }} />
             </IconButton>
-            <Popper placement='left-start' open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: 9999 }}>
+            <Popper placement='bottom-start' open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: 9999 }}>
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
                                 Add to queue
                             </div>
-                            <div className={cx('menu-item', 'item-have-sub-menu')}>
-                                <AddToPlaylistMenu trackId={trackId} albumId={albumId} />
-                            </div>
                             <Divider />
-                            <div className={cx('menu-item')} onClick={goToTrackPage}>
-                                Go to track
-                            </div>
-                            <div className={cx('menu-item', 'item-have-sub-menu')}>
-                                <GoToArtistMenu artists={artists} />
-                            </div>
-                            <div className={cx('menu-item')} onClick={goToAlbumPage}>
-                                Go to album
-                            </div>
+                            <div className={cx('menu-item')}>Edit details</div>
                             <Divider />
-                            {inPage === 'liked-tracks' && (
-                                <div
-                                    className={cx('menu-item')}
-                                    onClick={() => removeTrackFromLikedTracks(trackId, albumId)}
-                                >
-                                    Remove from your liked tracks
-                                </div>
-                            )}
-                            {inPage === 'playlist' && playlistOwnerId === userId && (
-                                <div
-                                    className={cx('menu-item')}
-                                    onClick={() => removeTrackFromPlaylist(trackId, albumId)}
-                                >
-                                    Remove track from this playlist
-                                </div>
-                            )}
+                            <div className={cx('menu-item')}>Remove this playlist</div>
                         </div>
                     </Paper>
                 </ClickAwayListener>
@@ -130,4 +104,4 @@ const TrackMenu = ({
     );
 };
 
-export default TrackMenu;
+export default PlaylistMenu;
