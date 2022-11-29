@@ -67,7 +67,7 @@ const Playlist = () => {
         const fetchData = async () => {
             const { data } = await axiosInstance.get(getPlaylistByIdUrl(id));
             setPlaylist(data.data);
-            // console.log(data.data);
+            console.log(data.data);
         };
 
         fetchData().catch(console.error);
@@ -90,7 +90,7 @@ const Playlist = () => {
                     <span className={cx('name')}>{playlist?.name}</span>
                     <div className='description'>{playlist?.description}</div>
                     <div className={cx('detail')}>
-                        <Link to={`/user/${playlist?.owner?._id}`} className={cx('owner-name')}>
+                        <Link to={`/${playlist?.owner?.type}/${playlist?.owner?._id}`} className={cx('owner-name')}>
                             {playlist?.owner?.name}
                         </Link>
                         <span className={cx('total-saved')}>{playlist?.saved} likes</span>

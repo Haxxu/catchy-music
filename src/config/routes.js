@@ -12,6 +12,7 @@ const routes = {
     likedTracks: '/library/tracks',
     playlist: '/playlist/:id',
     artist: '/artist/:id',
+    user: '/user/:id',
     profile: '/profile',
     settings: '/settings',
     lyrics: '/lyrics',
