@@ -6,7 +6,7 @@ import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
-const TextField = ({ label, error, handleInputState, handleErrorState, schema, ...rest }) => {
+const TextField = ({ label, error, handleInputState, handleErrorState, schema, customStyles, ...rest }) => {
     const validateProperty = ({ name, value }) => {
         const obj = { [name]: value };
         const inputSchema = Joi.object({ [name]: schema });
@@ -40,6 +40,7 @@ const TextField = ({ label, error, handleInputState, handleErrorState, schema, .
                 className={cx('input', {
                     error,
                 })}
+                style={{ ...customStyles }}
             />
             {error && (
                 <p className={cx('error-msg')}>

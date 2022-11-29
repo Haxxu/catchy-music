@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,7 +12,12 @@ import { routes } from '~/config';
 import styles from './styles.scoped.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { getSavedPlaylistsUrl } from '~/api/urls/me';
-import { useSelector } from 'react-redux';
+import { createPlaylistUrl } from '~/api/urls/playlistsUrl';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '~/hooks';
+import { updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
+import unknownPlaylistImage from '~/assets/images/playlist_unknown.jpg';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
@@ -21,11 +26,39 @@ const Sidebar = () => {
 
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
     const { playlistsInSidebarState } = useSelector((state) => state.updateState);
+    const { userId, name } = useAuth();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleCreateNewPlaylist = async () => {
+        try {
+            let newPlaylistIndex =
+                playlists.reduce(
+                    (playlistOfOwnerLength, item) => (playlistOfOwnerLength += item.playlist.owner === userId ? 1 : 0),
+                    0,
+                ) + 1;
+            const res = await axiosInstance.post(createPlaylistUrl, {
+                name: `My playlist #${newPlaylistIndex}`,
+                description: `By ${name}`,
+                image: unknownPlaylistImage,
+            });
+            if (res.status === 200) {
+                dispatch(updatePlaylistInSidebarState());
+                toast.success(res.data.message);
+                navigate(`/playlist/${res.data.data._id}`);
+            } else {
+                toast.error(res.data.message);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosInstance.get(getSavedPlaylistsUrl);
-            setPlaylists(data.data);
+            const res = await axiosInstance.get(getSavedPlaylistsUrl);
+            setPlaylists(res.data.data);
+            // console.log(res);
         };
 
         fetchData().catch(console.error);
@@ -49,7 +82,7 @@ const Sidebar = () => {
                     <LibraryMusicIcon />
                     <span>Library</span>
                 </NavLink>
-                <div className={cx('create-playlist-btn link')}>
+                <div className={cx('create-playlist-btn link')} onClick={handleCreateNewPlaylist}>
                     <AddBoxIcon />
                     <span>Create playlist</span>
                 </div>

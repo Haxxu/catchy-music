@@ -6,6 +6,7 @@ const updateState = createSlice({
         likeTrackState: false,
         playlistState: false,
         playlistsInSidebarState: false,
+        userProfileState: false,
     },
     reducers: {
         updateLikeTrackState: (state, payload) => {
@@ -19,10 +20,19 @@ const updateState = createSlice({
         updatePlaylistInSidebarState: (state, payload) => {
             state.playlistsInSidebarState = !state.playlistsInSidebarState;
         },
+
+        updateUserProfileState: (state, payload) => {
+            state.userProfileState = !state.userProfileState;
+        },
     },
 });
 
 export const updateStateReducer = updateState.reducer;
-export const { updateLikeTrackState, updatePlaylistState, updatePlaylistInSidebarState } = updateState.actions;
+export const {
+    updateLikeTrackState,
+    updatePlaylistState,
+    updatePlaylistInSidebarState,
+    updateUserProfileState,
+} = updateState.actions;
 
 export default updateState;

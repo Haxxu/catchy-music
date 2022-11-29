@@ -6,7 +6,7 @@ import styles from './styles.scoped.scss';
 
 const cx = classNames.bind(styles);
 
-const TextArea = ({ label, error, handleInputState, handleErrorState, schema, rows, cols, ...rest }) => {
+const TextArea = ({ label, error, handleInputState, handleErrorState, schema, rows, cols, customStyles, ...rest }) => {
     const validateProperty = ({ name, value }) => {
         const obj = { [name]: value };
         const inputSchema = Joi.object({ [name]: schema });
@@ -42,7 +42,7 @@ const TextArea = ({ label, error, handleInputState, handleErrorState, schema, ro
                 className={cx('input', {
                     error,
                 })}
-                style={{ maxWidth: '100%', minWidth: '100%' }}
+                style={{ maxWidth: '100%', minWidth: '100%', ...customStyles }}
             />
             {error && (
                 <p className={cx('error-msg')}>

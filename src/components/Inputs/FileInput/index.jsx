@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
-const FileInput = ({ name, label, value, icon, type, handleInputState, ...rest }) => {
+const FileInput = ({ name, label, value, icon, type, handleInputState, customStyles, ...rest }) => {
     const [progress, setProgress] = useState(0);
     const [progressShow, setProgressShow] = useState(false);
     const inputRef = useRef();
@@ -51,7 +51,7 @@ const FileInput = ({ name, label, value, icon, type, handleInputState, ...rest }
     };
 
     return (
-        <div className={cx('container')}>
+        <div className={cx('container')} style={{ ...customStyles }}>
             <input
                 type='file'
                 ref={inputRef}

@@ -15,6 +15,12 @@ export const getPlaylistsByTagsUrl = baseApiUrl + '/playlists/tags';
 // [GET] get playlist by id
 export const getPlaylistByIdUrl = (id) => baseApiUrl + `/playlists/${id}`;
 
+// [POST] create new playlist
+export const createPlaylistUrl = baseApiUrl + `/playlists`;
+
+// [PUT] update playlist by id
+export const updatePlaylistUrl = (id) => baseApiUrl + `/playlists/${id}`;
+
 // [PUT]
 export const togglePublicPlaylistUrl = (id) => baseApiUrl + `/playlists/${id}/toggle-public`;
 

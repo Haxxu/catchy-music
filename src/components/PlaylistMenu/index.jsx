@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import { useDispatch } from 'react-redux';
-import { ClickAwayListener, Divider, IconButton, Paper, Popper } from '@mui/material';
+import { ClickAwayListener, Divider, IconButton, Paper, Popper, Modal, Typography, Box } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { confirmAlert } from 'react-confirm-alert';
 
-import GoToArtistMenu from '~/components/GoToArtistMenu';
 import styles from './styles.module.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { addItemToQueueUrl } from '~/api/urls/me';
-import AddToPlaylistMenu from '~/components/AddToPlaylistMenu';
-import { removeLikedTrackFromLibraryUrl } from '~/api/urls/me';
-import { updateLikeTrackState, updatePlaylistState } from '~/redux/updateStateSlice';
-import { removeTrackFromPlaylistUrl } from '~/api/urls/playlistsUrl';
+import { updatePlaylistState, updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
+import { deletePlaylistUrl, togglePublicPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { useAuth } from '~/hooks';
+import { routes } from '~/config';
+import PlaylistForm from '../Forms/PlaylistForm';
 
 const cx = classNames.bind(styles);
 
-const PlaylistMenu = ({
-    trackId,
-    albumId,
-    playlistId,
-    artists,
-    context_uri,
-    position,
-    inPage = 'playlist',
-    playlistOwnerId,
-}) => {
+const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [openPlaylistForm, setOpenPlaylistForm] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -43,41 +35,46 @@ const PlaylistMenu = ({
     };
 
     const addTrackToQueue = async () => {
-        const { data } = await axiosInstance.post(addItemToQueueUrl, { items: [{ context_uri, position }] });
-        toast.success(data.message);
-        setAnchorEl(null);
-    };
-
-    const goToTrackPage = () => {
-        navigate(`/track/${trackId}`);
-    };
-
-    const goToAlbumPage = () => {
-        navigate(`/album/${albumId}`);
-    };
-
-    const removeTrackFromLikedTracks = async (trackId, albumId) => {
         try {
-            const { data } = await axiosInstance.delete(removeLikedTrackFromLibraryUrl, {
-                data: { track: trackId, album: albumId },
+            const { data } = await axiosInstance.post(addItemToQueueUrl, {
+                items: tracks?.map((item) => ({ context_uri: item.context_uri, position: item.position })),
             });
-            dispatch(updateLikeTrackState());
             toast.success(data.message);
+            setAnchorEl(null);
         } catch (err) {
             console.log(err);
         }
     };
 
-    const removeTrackFromPlaylist = async (trackId, albumId) => {
+    const handleDeletePlaylist = async () => {
         try {
-            const { data } = await axiosInstance.delete(removeTrackFromPlaylistUrl(playlistId), {
-                data: { track: trackId, album: albumId },
-            });
-            dispatch(updatePlaylistState());
+            const { data } = await axiosInstance.delete(deletePlaylistUrl(playlistId));
+            dispatch(updatePlaylistInSidebarState());
             toast.success(data.message);
+            navigate(routes.library);
         } catch (err) {
             console.log(err);
         }
+    };
+
+    const handleTogglePublicOfPlaylist = async () => {
+        try {
+            const res = await axiosInstance.put(togglePublicPlaylistUrl(playlistId));
+            if (res.status === 200) {
+                dispatch(updatePlaylistState());
+                toast.success(res.data.message);
+            } else {
+                toast.error(res.data.message);
+            }
+            setAnchorEl(null);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const handleOpenPlaylistForm = async () => {
+        setOpenPlaylistForm(true);
+        // setAnchorEl(null);
     };
 
     return (
@@ -85,17 +82,114 @@ const PlaylistMenu = ({
             <IconButton onClick={handleClick} disableRipple sx={{ padding: 0 }}>
                 <MoreHorizIcon sx={{ color: 'var(--text-primary)', width: '34px', height: '34px', padding: 0 }} />
             </IconButton>
-            <Popper placement='bottom-start' open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: 9999 }}>
+            <Popper placement='bottom-start' open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: 500 }}>
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
                                 Add to queue
                             </div>
-                            <Divider />
-                            <div className={cx('menu-item')}>Edit details</div>
-                            <Divider />
-                            <div className={cx('menu-item')}>Remove this playlist</div>
+                            {playlistOwnerId === userId && (
+                                <>
+                                    <Divider />
+                                    <div className={cx('menu-item')} onClick={handleOpenPlaylistForm}>
+                                        Edit details
+                                    </div>
+                                    <div className={cx('menu-item')} onClick={handleTogglePublicOfPlaylist}>
+                                        {isPublic ? 'Private this playlist' : 'Public this playlist'}
+                                    </div>
+                                    <Modal
+                                        open={openPlaylistForm}
+                                        onClose={() => setOpenPlaylistForm(false)}
+                                        aria-labelledby='modal-playlist-detail-title'
+                                        aria-describedby='modal-playlist-detail-description'
+                                        sx={{
+                                            zIndex: '501',
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                color: 'var(--text-primary)',
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                minWidth: 500,
+                                                bgcolor: 'var(--background2-color)',
+                                                border: '2px solid #000',
+                                                boxShadow: 24,
+                                                p: 4,
+                                            }}
+                                        >
+                                            <Typography
+                                                id='modal-playlist-detail-title'
+                                                variant='h6'
+                                                component='h2'
+                                                sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
+                                            >
+                                                Playlist detail
+                                            </Typography>
+                                            <div
+                                                id='modal-playlist-detail-description'
+                                                style={{
+                                                    mt: 2,
+                                                    fontSize: '1.6rem',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    maxWidth: '500px',
+                                                    height: '500px',
+                                                    overflow: 'hidden',
+                                                    overflowY: 'scroll',
+                                                    color: '#000',
+                                                    borderRadius: '5px',
+                                                }}
+                                            >
+                                                <PlaylistForm
+                                                    customStyles={{
+                                                        inputStyles: {
+                                                            color: '#000',
+                                                            border: '0.15rem solid #000',
+                                                        },
+                                                        textAreaStyles: {
+                                                            color: '#000',
+                                                            resize: 'vertical',
+                                                            border: '0.15rem solid #000',
+                                                        },
+                                                        fileInputStyles: {
+                                                            border: '0.15rem solid #000',
+                                                        },
+                                                    }}
+                                                    handleClose={() => setAnchorEl(null)}
+                                                />
+                                            </div>
+                                        </Box>
+                                    </Modal>
+                                    <Divider />
+                                    <div
+                                        className={cx('menu-item')}
+                                        onClick={() => {
+                                            setAnchorEl(null);
+                                            confirmAlert({
+                                                title: 'Confirm to delete this playlist',
+
+                                                message: 'Are you sure to do this.',
+                                                buttons: [
+                                                    {
+                                                        label: 'Yes',
+                                                        onClick: () => handleDeletePlaylist(),
+                                                    },
+                                                    {
+                                                        label: 'No',
+                                                    },
+                                                ],
+                                            });
+                                        }}
+                                    >
+                                        Delete this playlist
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </Paper>
                 </ClickAwayListener>

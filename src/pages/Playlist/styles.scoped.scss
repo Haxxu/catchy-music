@@ -58,20 +58,22 @@
                         text-decoration: underline;
                     }
 
-                    &::after {
-                        content: '\00B7';
-                        padding-left: 5px;
-                    }
+                    // &::before {
+                    //     content: '\00B7';
+                    //     padding-left: 5px;
+                    // }
                 }
-                .total-tracks {
+
+                .total-tracks,
+                .total-saved {
                     font-size: 1.5rem;
                     font-weight: 700;
                     margin-right: 5px;
                     color: var(--text-primary);
 
-                    &::after {
+                    &::before {
                         content: '\00B7';
-                        padding-left: 5px;
+                        padding-right: 5px;
                     }
                 }
                 .total-time {
@@ -310,5 +312,11 @@
                 }
             }
         }
+    }
+
+    .notification {
+        margin: 40px 0;
+        font-size: 2rem;
+        text-align: center;
     }
 }

@@ -43,9 +43,13 @@ const TrackMenu = ({
     };
 
     const addTrackToQueue = async () => {
-        const { data } = await axiosInstance.post(addItemToQueueUrl, { items: [{ context_uri, position }] });
-        toast.success(data.message);
-        setAnchorEl(null);
+        try {
+            const { data } = await axiosInstance.post(addItemToQueueUrl, { items: [{ context_uri, position }] });
+            toast.success(data.message);
+            setAnchorEl(null);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const goToTrackPage = () => {
@@ -74,6 +78,7 @@ const TrackMenu = ({
                 data: { track: trackId, album: albumId },
             });
             dispatch(updatePlaylistState());
+            setAnchorEl(null);
             toast.success(data.message);
         } catch (err) {
             console.log(err);

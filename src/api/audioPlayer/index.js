@@ -85,7 +85,11 @@ export const skipNext = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.post(skipNextUrl, {});
         if (data) {
-            dispatch(updateTrack());
+            const { data } = await axiosInstance.get(getCurrentlyPlayingTrackUrl);
+            dispatch(setContext(data.data.context));
+            dispatch(setCurrentTrack(data.data.currentPlayingTrack));
+            dispatch(setPlayMode(true));
+            // dispatch(updateTrack());
         }
     } catch (err) {
         console.log(err);
@@ -96,7 +100,11 @@ export const skipPrevious = async (dispatch, payload) => {
     try {
         const { data } = await axiosInstance.post(skipPreviousUrl, {});
         if (data) {
-            dispatch(updateTrack());
+            const { data } = await axiosInstance.get(getCurrentlyPlayingTrackUrl);
+            dispatch(setContext(data.data.context));
+            dispatch(setCurrentTrack(data.data.currentPlayingTrack));
+            dispatch(setPlayMode(true));
+            // dispatch(updateTrack());
         }
     } catch (err) {
         console.log(err);

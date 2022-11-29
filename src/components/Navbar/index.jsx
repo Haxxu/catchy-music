@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import { Avatar, ClickAwayListener } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -20,11 +20,12 @@ const cx = classNames.bind(styles);
 
 const Navbar = () => {
     const [profileMenu, setProfileMenu] = useState(false);
-    const [profileImage, setProfileImage] = useState('');
+    const [user, setUser] = useState(null);
 
-    const { name, email, type } = useAuth();
+    const { type } = useAuth();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { userProfileState } = useSelector((state) => state.updateState);
 
     const toggleProfileMenu = () => {
         setProfileMenu((prev) => !prev);
@@ -43,11 +44,12 @@ const Navbar = () => {
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axiosInstance.get(getCurrentUserProfileUrl);
-            setProfileImage(data?.data?.image);
+            setUser(data.data);
+            // console.log(data.data);
         };
 
         fetchData().catch(console.error);
-    }, []);
+    }, [userProfileState]);
 
     return (
         <div className={cx('container')}>
@@ -64,7 +66,7 @@ const Navbar = () => {
                 <div className={cx('profile')}>
                     <div className={cx('avatar')} onClick={toggleProfileMenu}>
                         <Avatar
-                            src={profileImage}
+                            src={user?.image}
                             sizes='large'
                             sx={{
                                 boxShadow: 3,
@@ -75,8 +77,8 @@ const Navbar = () => {
                         <ClickAwayListener onClickAway={handleClickAwayProfileMenu}>
                             <div className={cx('profile-menu')}>
                                 <div className={cx('info')}>
-                                    <p className={cx('name')}>{name}</p>
-                                    <p className={cx('email')}>{email}</p>
+                                    <p className={cx('name')}>{user?.name}</p>
+                                    <p className={cx('email')}>{user?.email}</p>
                                 </div>
                                 <div className={cx('options')}>
                                     {menuOptions.map((option, index) => {

@@ -17,6 +17,8 @@ import { getCurrentUserProfileUrl } from '~/api/urls/me';
 import { updateUserByIdUrl } from '~/api/urls/usersUrl';
 import { useAuth } from '~/hooks';
 import styles from './st;yles.scoped.scss';
+import { updateUserProfileState } from '~/redux/updateStateSlice';
+import { useDispatch } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -45,6 +47,7 @@ const Profile = () => {
         nation: '',
     });
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleInputState = (name, value) => {
         setData((prev) => ({ ...prev, [name]: value }));
@@ -99,6 +102,7 @@ const Profile = () => {
         { name: t('December'), value: '12' },
     ];
     const genders = ['male', 'female', 'non-binary'];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { error } = Joi.object(schema).validate(data);
@@ -106,6 +110,7 @@ const Profile = () => {
             const { data: response } = await axiosInstance.put(updateUserByIdUrl(userId), data);
             toast.success(response.message);
             setUpdate((prev) => !prev);
+            dispatch(updateUserProfileState());
         } else {
             toast.error(error.message);
         }
