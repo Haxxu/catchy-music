@@ -45,6 +45,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                         data: { album: albumId },
                     });
                     setLiked(data.data);
+                    toast.success(data.message);
                 } else {
                     const { data } = await axiosInstance.delete(removePlaylistFromLibraryUrl, {
                         data: { playlist: playlistId },
@@ -62,6 +63,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.put(saveAlbumToLibraryUrl, { album: albumId });
                     setLiked(data.data);
+                    toast.success(data.message);
                 } else {
                     const { data } = await axiosInstance.put(savePlaylistToLibraryUrl, { playlist: playlistId });
                     setLiked(data.data);

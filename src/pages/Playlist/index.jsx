@@ -77,7 +77,6 @@ const Playlist = () => {
         <div className={cx('container')}>
             <div className={cx('header')}>
                 <div className={cx('image')}>
-                    {/* <FavoriteIcon sx={{ width: '80px', height: '80px' }} /> */}
                     <Avatar
                         className={cx('image')}
                         variant='square'
@@ -105,7 +104,7 @@ const Playlist = () => {
             </div>
             <div className={cx('actions')}>
                 {playlist?.tracks?.length !== 0 && (
-                    <>
+                    <div className={cx('action')}>
                         {context.contextType === 'playlist' && context.contextId === id ? (
                             <IconButton className={cx('play-btn')} disableRipple onClick={handleTogglePlay}>
                                 {isPlaying ? (
@@ -137,17 +136,22 @@ const Playlist = () => {
                                 />
                             </IconButton>
                         )}
-                    </>
+                    </div>
                 )}
+
                 {playlist && playlist?.owner?._id !== userId && (
-                    <Like type='playlist' size='large' playlistId={playlist?._id} />
+                    <div className={cx('action')}>
+                        <Like type='playlist' size='large' playlistId={playlist?._id} />
+                    </div>
                 )}
-                <PlaylistMenu
-                    playlistId={playlist?._id}
-                    playlistOwnerId={playlist?.owner?._id}
-                    tracks={playlist?.tracks}
-                    isPublic={playlist?.isPublic}
-                />
+                <div className={cx('action')}>
+                    <PlaylistMenu
+                        playlistId={playlist?._id}
+                        playlistOwnerId={playlist?.owner?._id}
+                        tracks={playlist?.tracks}
+                        isPublic={playlist?.isPublic}
+                    />
+                </div>
             </div>
             <div className={cx('content')}>
                 {playlist?.tracks?.length !== 0 ? (

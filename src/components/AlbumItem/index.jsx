@@ -111,7 +111,10 @@ const AlbumItem = ({ type = 'default', album, to }) => {
                             <p className={cx('name')}>{album?.name}</p>
                         </Link>
                         <div className={cx('detail')}>
-                            <div className={cx('description')}>{album?.description}</div>
+                            {/* <div className={cx('description')}>{album?.description}</div> */}
+                            <Link className={cx('artist')} to={`/artist/${album?.owner?._id}`}>
+                                {album?.owner?.name}
+                            </Link>
                         </div>
                     </div>
                     {context.contextType === 'album' && context.contextId === album?._id ? (

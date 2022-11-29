@@ -64,6 +64,7 @@
                     // }
                 }
 
+                .year,
                 .total-tracks,
                 .total-saved {
                     font-size: 1.5rem;
@@ -323,5 +324,15 @@
         margin: 40px 0;
         font-size: 2rem;
         text-align: center;
+    }
+
+    .section-container {
+        margin-top: 50px;
+        padding: 0 32px 24px;
+
+        .heading {
+            font-size: 2.4rem;
+            margin: 40px 0 25px;
+        }
     }
 }

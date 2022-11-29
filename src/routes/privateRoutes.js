@@ -65,7 +65,7 @@ const privateRoutes = [
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
     },
-    // Artist
+    // Track
     {
         path: routes.track,
         component: Track,
