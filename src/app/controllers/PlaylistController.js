@@ -11,10 +11,15 @@ class PlaylistController {
     // get playlist public or playlist (user own)
     async getPlaylistById(req, res, next) {
         const playlist = await Playlist.findOne({ _id: req.params.id })
-            .populate({ path: 'owner', select: '_id name' })
+            .populate({ path: 'owner', select: '_id name type' })
             .select('-__v');
+
         if (!playlist) {
             return res.status(404).send({ message: 'Playlist does not exist' });
+        }
+
+        if (playlist.owner.type !== 'artist') {
+            playlist.owner.type = 'user';
         }
 
         if (playlist.isPublic || req.user._id === playlist.owner._id.toString()) {
@@ -105,7 +110,17 @@ class PlaylistController {
                 };
             }
 
-            const playlists = await Playlist.find({ ...searchCondition }).populate('owner', '_id name');
+            const playlists = await Playlist.find({ ...searchCondition })
+                .populate('owner', '_id name type')
+                .lean();
+
+            let length = playlists.length;
+            for (let i = 0; i < length; ++i) {
+                if (playlists[i].owner.type !== 'artist') {
+                    playlists[i].owner.type = 'user';
+                }
+            }
+
             return res.status(200).send({ data: playlists, message: 'Get playlists successfully' });
         } catch (error) {
             return res.status(500).send({ message: 'Something went wrong' });
