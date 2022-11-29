@@ -118,7 +118,11 @@ class AlbumController {
                 let randomAlbums;
 
                 if (tags.includes('popular')) {
-                    const albums = await Album.find({ isReleased: true }).sort({ saved: 'desc' }).limit(8).lean();
+                    const albums = await Album.find({ isReleased: true })
+                        .sort({ saved: 'desc' })
+                        .populate({ path: 'owner', select: '_id name' })
+                        .limit(8)
+                        .lean();
 
                     popularAlbums = albums.map((album) => {
                         if (album.tracks.length === 0) {
@@ -136,7 +140,11 @@ class AlbumController {
                 }
 
                 if (tags.includes('new-release')) {
-                    const albums = await Album.find({ isReleased: true }).sort({ releaseDate: 'desc' }).limit(8).lean();
+                    const albums = await Album.find({ isReleased: true })
+                        .sort({ releaseDate: 'desc' })
+                        .populate({ path: 'owner', select: '_id name' })
+                        .limit(8)
+                        .lean();
 
                     newReleaseAlbums = albums.map((album) => {
                         if (album.tracks.length === 0) {
@@ -154,7 +162,9 @@ class AlbumController {
                 }
 
                 if (tags.includes('random')) {
-                    const albums = await Album.aggregate([{ $match: { isReleased: true } }, { $sample: { size: 8 } }]);
+                    const result = await Album.aggregate([{ $match: { isReleased: true } }, { $sample: { size: 8 } }]);
+
+                    const albums = await Album.populate(result, { path: 'owner', select: '_id name' });
 
                     randomAlbums = albums.map((album) => {
                         if (album.tracks.length === 0) {
@@ -184,9 +194,23 @@ class AlbumController {
         }
     }
 
+    async getArtistsOfAlbum(req, res, next) {
+        try {
+            const album = await Album.findOne({ _id: req.params.id }).lean();
+            if (!album) {
+                return res.status(404).send({ message: 'Album not found' });
+            }
+
+            let length = album.tracks.length;
+            for (let i = 0; i < length; ++i) {}
+        } catch (err) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
     // create new album
     async createAlbum(req, res, next) {
-        console.log(req.body.tracks);
+        // console.log(req.body.tracks);
         const { error } = validateAlbum(req.body);
         if (error) {
             return res.status(400).send({ message: error.details[0].message });

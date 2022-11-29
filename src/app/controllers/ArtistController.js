@@ -219,9 +219,28 @@ class ArtistController {
                 };
             }
 
-            const albums = await Album.find({ owner: artist._id.toString(), ...condition });
+            const albums = await Album.find({ owner: artist._id.toString(), ...condition })
+                .populate({
+                    path: 'owner',
+                    select: '_id name',
+                })
+                .lean();
 
-            return res.status(200).send({ data: albums, message: 'Get albums successfully' });
+            const detailAlbums = albums.map((album) => {
+                if (album.tracks.length === 0) {
+                    return album;
+                } else {
+                    return {
+                        ...album,
+                        firstTrack: {
+                            context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
+                            position: 0,
+                        },
+                    };
+                }
+            });
+
+            return res.status(200).send({ data: detailAlbums, message: 'Get albums successfully' });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });
