@@ -102,7 +102,7 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                     <Link className={cx('playlist-img-link')} to={to}>
                         <img
                             className={cx('image', { active: activePlayBtn })}
-                            src={playlist?.image.trim() === '' ? unknownPlaylistImg : playlist?.image}
+                            src={playlist?.image?.trim() === '' ? unknownPlaylistImg : playlist?.image}
                             alt={playlist?.name}
                         />
                     </Link>

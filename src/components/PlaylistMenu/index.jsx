@@ -51,7 +51,7 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
             const { data } = await axiosInstance.delete(deletePlaylistUrl(playlistId));
             dispatch(updatePlaylistInSidebarState());
             toast.success(data.message);
-            navigate(routes.library);
+            navigate(routes.library_home);
         } catch (err) {
             console.log(err);
         }

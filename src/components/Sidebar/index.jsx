@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
@@ -29,6 +29,7 @@ const Sidebar = () => {
     const { userId, name } = useAuth();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleCreateNewPlaylist = async () => {
         try {
@@ -78,7 +79,17 @@ const Sidebar = () => {
                     <SearchIcon />
                     <span>Search</span>
                 </NavLink>
-                <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={routes.library}>
+                <NavLink
+                    className={({ isActive }) =>
+                        cx('link', {
+                            active:
+                                isActive ||
+                                location.pathname === routes.library_albums_route ||
+                                location.pathname === routes.library_artists_route,
+                        })
+                    }
+                    to={routes.library_home}
+                >
                     <LibraryMusicIcon />
                     <span>Library</span>
                 </NavLink>

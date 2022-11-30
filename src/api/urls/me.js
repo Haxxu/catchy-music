@@ -9,6 +9,12 @@ export const getLikedTracksUrl = baseApiUrl + '/me/tracks';
 // [GET] get saved playlists
 export const getSavedPlaylistsUrl = baseApiUrl + '/me/playlists';
 
+// [GET] get saved albums
+export const getSavedAlbumsUrl = baseApiUrl + '/me/albums';
+
+// [GET] get following user
+export const getFollowingUsersUrl = baseApiUrl + '/me/following';
+
 // [GET] get audio player state
 export const getAudioPlayerStateUrl = baseApiUrl + '/me/audio-player';
 

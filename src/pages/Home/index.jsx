@@ -44,6 +44,7 @@ const Home = () => {
             setPopularPlaylists(playlistsResponse.data.popularPlaylists);
             setRecommendPlaylists(playlistsResponse.data.recommendPlaylists);
             setRandomPlaylists(playlistsResponse.data.randomPlaylists);
+            // console.log(playlistsResponse.data.randomPlaylists);
 
             const { data: albumsResponse } = await axiosInstance.get(getAlbumsByTagsUrl, {
                 params: {
@@ -56,6 +57,7 @@ const Home = () => {
 
             const { data: savedPlaylistsRes } = await axiosInstance(getSavedPlaylistsUrl);
             setSavedPlaylists(savedPlaylistsRes.data);
+            // console.log(savedPlaylistsRes.data);
         };
 
         fetchData().catch(console.error);
@@ -68,12 +70,51 @@ const Home = () => {
                 <h1 className={cx('heading')}>{hiToUser()}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
-                        {popularPlaylists?.length !== 0 &&
-                            popularPlaylists?.map((item, index) => (
-                                <Grid item xl={4} md={6} xs={12} key={index}>
-                                    <PlaylistItem type='reduce' playlist={item} to={`/playlist/${item._id}`} />
-                                </Grid>
-                            ))}
+                        {popularPlaylists?.length !== 0 && (
+                            <Grid item xl={4} md={6} xs={12}>
+                                <PlaylistItem
+                                    type='reduce'
+                                    playlist={popularPlaylists[0]}
+                                    to={`/playlist/${popularPlaylists[0]?._id}`}
+                                />
+                            </Grid>
+                        )}
+                        {recommendPlaylists?.length !== 0 && (
+                            <Grid item xl={4} md={6} xs={12}>
+                                <PlaylistItem
+                                    type='reduce'
+                                    playlist={recommendPlaylists[0]}
+                                    to={`/playlist/${recommendPlaylists[0]?._id}`}
+                                />
+                            </Grid>
+                        )}
+                        {recommendPlaylists?.length > 1 && (
+                            <Grid item xl={4} md={6} xs={12}>
+                                <PlaylistItem
+                                    type='reduce'
+                                    playlist={recommendPlaylists[1]}
+                                    to={`/playlist/${recommendPlaylists[1]?._id}`}
+                                />
+                            </Grid>
+                        )}
+                        {randomPlaylists?.length !== 0 && (
+                            <Grid item xl={4} md={6} xs={12}>
+                                <PlaylistItem
+                                    type='reduce'
+                                    playlist={randomPlaylists[0]}
+                                    to={`/playlist/${randomPlaylists[0]?._id}`}
+                                />
+                            </Grid>
+                        )}
+                        {savedPlaylists?.length !== 0 && (
+                            <Grid item xl={4} md={6} xs={12}>
+                                <PlaylistItem
+                                    type='reduce'
+                                    playlist={savedPlaylists[0].playlist}
+                                    to={`/playlist/${savedPlaylists[0]?.playlist?._id}`}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
                 </div>
             </section>
