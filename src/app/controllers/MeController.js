@@ -193,27 +193,44 @@ class MeController {
 
     // Get saved albums
     async getSavedAlbums(req, res, next) {
-        const library = await Library.findOne({ owner: req.user._id });
+        try {
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Library not found' });
+            }
 
-        const albums = [...library.albums];
-        // Sort newest addedAt first
-        albums.sort((a, b) => {
-            return new Date(b.addedAt) - new Date(a.addedAt);
-        });
-        // Get saved albums ( array of album obj)
-        const a = await Album.find({ _id: { $in: albums.map((item) => item.album) } });
-        // array of album id
-        const aClean = a.map((item) => item._id.toString());
+            const albums = [...library.albums];
+            // Sort newest addedAt first
+            albums.sort((a, b) => {
+                return new Date(b.addedAt) - new Date(a.addedAt);
+            });
+            // Get saved albums ( array of album obj)
+            const a = await Album.find({ _id: { $in: albums.map((item) => item.album) } })
+                .populate({ path: 'owner', select: '_id name' })
+                .lean();
+            // array of album id
+            const aClean = a.map((item) => item._id.toString());
 
-        // Add album detail to savedAlbums
-        const detailSavedAlbums = albums.map((obj) => {
-            return {
-                album: a[aClean.indexOf(obj.album)],
-                addedAt: obj.addedAt,
-            };
-        });
+            // Add album detail to savedAlbums
+            const detailSavedAlbums = albums.map((obj) => {
+                let index = aClean.indexOf(obj.album);
+                return {
+                    album: {
+                        ...a[index],
+                        firstTrack: {
+                            context_uri: `album:${a[index]._id}:${a[index].tracks[0]?.track}:${a[index]._id}`,
+                            position: 0,
+                        },
+                    },
+                    addedAt: obj.addedAt,
+                };
+            });
 
-        await res.status(200).send({ data: detailSavedAlbums, message: 'Get saved album successfully' });
+            return res.status(200).send({ data: detailSavedAlbums, message: 'Get saved album successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Save album to user library
