@@ -6,11 +6,12 @@ const { Library } = require('../models/Library');
 const { Playlist } = require('../models/Playlist');
 const { Album } = require('../models/Album');
 const { AudioPlayer } = require('../models/AudioPlayer');
+const { Track } = require('../models/Track');
 
 class UserController {
     // Get user by id
-    async getUser(req, res, next) {
-        const user = await User.findOne({ _id: req.params.id });
+    async getUserById(req, res, next) {
+        const user = await User.findOne({ _id: req.params.id }).select('-password -__v -email').lean();
         if (!user) {
             return res.status(400).send({ message: 'User does not exist' });
         }
@@ -18,6 +19,111 @@ class UserController {
         user.password = undefined;
         user.__v = undefined;
         if (user.type === 'admin') user.type = 'user';
+
+        if (req.query.detail) {
+            const library = await Library.findOne({ owner: req.params.id });
+
+            const playlistIds = library.playlists.map((item) => item.playlist);
+            const playlists = await Playlist.find({ isPublic: true, _id: { $in: playlistIds } })
+                .sort({ saved: 'desc' })
+                .limit(12)
+                .lean();
+
+            const publicPlaylists = playlists.map((playlist) => {
+                if (playlist.tracks.length === 0) {
+                    return playlist;
+                } else {
+                    return {
+                        ...playlist,
+                        firstTrack: {
+                            context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
+                            position: 0,
+                        },
+                    };
+                }
+            });
+
+            const followerIds = library.followers.map((item) => item.user);
+            const followers = await User.find({ _id: { $in: followerIds } })
+                .select('_id name description image type')
+                .lean();
+
+            const followingIds = library.followings.map((item) => item.user);
+            const followings = await User.find({ _id: { $in: followingIds } })
+                .select('_id name description image type')
+                .lean();
+
+            user.publicPlaylists = publicPlaylists;
+            user.followers = followers.map((item) => {
+                if (item.type === 'admin') {
+                    item.type === 'user';
+                }
+                return item;
+            });
+            user.followings = followings.map((item) => {
+                if (item.type === 'admin') {
+                    item.type === 'user';
+                }
+                return item;
+            });
+
+            if (user.type === 'artist') {
+                const albums = await Album.find({ isReleased: true, owner: req.params.id })
+                    .populate({ path: 'owner', select: '_id name' })
+                    .sort({ releaseDate: 'desc' })
+                    .lean();
+
+                const releasedAlbums = albums.map((album) => {
+                    if (album.tracks.length === 0) {
+                        return album;
+                    } else {
+                        return {
+                            ...album,
+                            firstTrack: {
+                                context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
+                                position: 0,
+                            },
+                        };
+                    }
+                });
+
+                user.releasedAlbums = releasedAlbums;
+
+                const tracks = await Track.find({ owner: req.params.id })
+                    .populate({
+                        path: 'owner',
+                        select: '_id name',
+                    })
+                    .sort({ plays: 'desc' })
+                    .limit(10)
+                    .lean();
+
+                let trackLenght = tracks.length;
+                const popularTracks = [];
+
+                for (let i = 0; i < trackLenght; ++i) {
+                    const album = await Album.findOne({
+                        isReleased: true,
+                        tracks: { $elemMatch: { track: tracks[i]._id } },
+                    }).lean();
+
+                    if (!album) {
+                        continue;
+                    }
+
+                    let position = album.tracks.map((item) => item.track).indexOf(tracks[0]._id);
+
+                    popularTracks.push({
+                        track: tracks[i],
+                        album: album,
+                        context_uri: 'album' + ':' + album._id + ':' + tracks[i]._id + ':' + album._id,
+                        position: position,
+                    });
+                }
+
+                user.popularTracks = popularTracks;
+            }
+        }
 
         res.status(200).send({ data: user, message: 'Get user successfully' });
     }

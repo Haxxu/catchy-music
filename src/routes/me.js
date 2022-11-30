@@ -60,6 +60,9 @@ router.delete('/tracks', userAuth, meController.removeLikedTrack);
 // [GET] /api/me/audio-player => get audio player state
 router.get('/audio-player/currently-playing', userAuth, audioPlayerController.getCurrentlyPlayingTrack);
 
+// [PUT] /api/me/audio-player/plays/increase => increase plays of current Track
+router.put('/audio-player/plays/increase', userAuth, audioPlayerController.increasePlay);
+
 // [GET] /api/me/audio-player => get audio player state
 router.get('/audio-player', userAuth, audioPlayerController.getAudioPlayerState);
 

@@ -26,6 +26,6 @@ router.put('/:id', [artistAuth, validateObjectId], trackController.updateTrack);
 router.delete('/:id', [artistAuth, validateObjectId], trackController.deleteTrack);
 
 // [POST] /api/tracks/:id/plays => Play track
-router.post('/:id/plays', [userAuth, validateObjectId], trackController.playTrack);
+// router.post('/:id/plays', [userAuth, validateObjectId], trackController.playTrack);
 
 module.exports = router;

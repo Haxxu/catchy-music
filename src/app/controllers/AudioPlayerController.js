@@ -705,6 +705,30 @@ class AudioPlayerController {
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
+
+    async increasePlay(req, res, next) {
+        try {
+            const player = await AudioPlayer.findOne({ owner: req.user._id });
+            if (!player) {
+                return res.status(404).send({ message: 'Player not found' });
+            }
+
+            if (player.currentPlayingTrack.track === '') {
+                return res.status(404).send({ message: 'Current Track not found' });
+            } else {
+                const track = await Track.findOne({ _id: player.currentPlayingTrack.track });
+                if (!track) {
+                    return res.status(404).send({ message: 'Track not found' });
+                }
+                track.plays = track.plays + 1;
+                await track.save();
+                return res.status(200).send({ message: 'Increase plays of track successfully' });
+            }
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
 }
 
 const shuffleArray = (array) => {
