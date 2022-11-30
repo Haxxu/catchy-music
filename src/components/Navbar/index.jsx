@@ -22,7 +22,7 @@ const Navbar = () => {
     const [profileMenu, setProfileMenu] = useState(false);
     const [user, setUser] = useState(null);
 
-    const { type } = useAuth();
+    const { type, userId } = useAuth();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userProfileState } = useSelector((state) => state.updateState);
@@ -85,7 +85,7 @@ const Navbar = () => {
                                         if (option.roles.includes(type)) {
                                             return (
                                                 <Link
-                                                    to={option.path}
+                                                    to={option.title !== 'Profile' ? option.path : `/${type}/${userId}`}
                                                     className={cx('option')}
                                                     key={index}
                                                     onClick={() => toggleProfileMenu()}

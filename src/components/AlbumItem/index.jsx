@@ -54,7 +54,7 @@ const AlbumItem = ({ type = 'default', album, to }) => {
                             </div>
                         </div>
                     </Link>
-                    {context.contextType === 'album' && context.contextId === album._id ? (
+                    {context?.contextType === 'album' && context?.contextId === album._id ? (
                         <IconButton
                             className={cx('reduce-play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple
@@ -117,7 +117,7 @@ const AlbumItem = ({ type = 'default', album, to }) => {
                             </Link>
                         </div>
                     </div>
-                    {context.contextType === 'album' && context.contextId === album?._id ? (
+                    {context?.contextType === 'album' && context?.contextId === album?._id ? (
                         <IconButton
                             className={cx('play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple

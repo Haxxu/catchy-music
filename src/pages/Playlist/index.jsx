@@ -67,7 +67,7 @@ const Playlist = () => {
         const fetchData = async () => {
             const { data } = await axiosInstance.get(getPlaylistByIdUrl(id));
             setPlaylist(data.data);
-            console.log(data.data);
+            // console.log(data.data);
         };
 
         fetchData().catch(console.error);

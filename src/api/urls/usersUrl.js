@@ -9,6 +9,9 @@ export const getUsersInfoUrl = baseApiUrl + '/users/info';
 // [GET] (admin)
 export const getUsersByContextUrl = baseApiUrl + '/users/context';
 
+// [GET]
+export const getUserByIdUrl = (id) => baseApiUrl + `/users/${id}`;
+
 // [PUT]
 export const updateUserByIdUrl = (id) => baseApiUrl + `/users/${id}`;
 

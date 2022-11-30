@@ -9,6 +9,7 @@ import {
     skipPreviousUrl,
     setRepeatModeUrl,
     setShuffleModeUrl,
+    increaseCurrenTrackPlaysUrl,
 } from '~/api/urls/me';
 import {
     setCurrentTrack,
@@ -63,6 +64,11 @@ export const playTrack = async (dispatch, payload) => {
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
             // dispatch(updateTrack());
+            // console.log('test');
+            const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
+            // console.log(data2);
+            if (data2) {
+            }
         }
     } catch (error) {
         console.log(error);
@@ -90,6 +96,11 @@ export const skipNext = async (dispatch, payload) => {
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
             // dispatch(updateTrack());
+            // console.log('test');
+            const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
+            // console.log(data2);
+            if (data2) {
+            }
         }
     } catch (err) {
         console.log(err);
@@ -105,6 +116,11 @@ export const skipPrevious = async (dispatch, payload) => {
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
             // dispatch(updateTrack());
+            // console.log('test');
+            const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
+            // console.log(data2);
+            if (data2) {
+            }
         }
     } catch (err) {
         console.log(err);

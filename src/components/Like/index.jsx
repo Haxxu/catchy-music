@@ -18,7 +18,12 @@ import {
     savePlaylistToLibraryUrl,
     removePlaylistFromLibraryUrl,
 } from '~/api/urls/me';
-import { updateLikeTrackState, updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
+import {
+    updateLikeTrackState,
+    updatePlaylistInSidebarState,
+    updatePlaylistState,
+    updateAlbumState,
+} from '~/redux/updateStateSlice';
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
@@ -45,6 +50,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                         data: { album: albumId },
                     });
                     setLiked(data.data);
+                    dispatch(updateAlbumState());
                     toast.success(data.message);
                 } else {
                     const { data } = await axiosInstance.delete(removePlaylistFromLibraryUrl, {
@@ -52,6 +58,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                     });
                     setLiked(data.data);
                     dispatch(updatePlaylistInSidebarState());
+                    dispatch(updatePlaylistState());
                     toast.success(data.message);
                 }
             } else {
@@ -63,11 +70,13 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.put(saveAlbumToLibraryUrl, { album: albumId });
                     setLiked(data.data);
+                    dispatch(updateAlbumState());
                     toast.success(data.message);
                 } else {
                     const { data } = await axiosInstance.put(savePlaylistToLibraryUrl, { playlist: playlistId });
                     setLiked(data.data);
                     dispatch(updatePlaylistInSidebarState());
+                    dispatch(updatePlaylistState());
                     toast.success(data.message);
                 }
             }

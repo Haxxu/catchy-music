@@ -41,6 +41,7 @@ const Album = () => {
     const [album, setAlbum] = useState(null);
     const [moreAlbums, setMoreAlbums] = useState([]);
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
+    const { albumState } = useSelector((state) => state.updateState);
     const { id } = useParams();
     const { userId } = useAuth();
     const dispatch = useDispatch();
@@ -82,7 +83,7 @@ const Album = () => {
         fetchAlbum()
             .catch(console.error)
             .then((id) => fetchMoreAlbums(id));
-    }, [id]);
+    }, [id, albumState]);
 
     return (
         <div className={cx('container')}>

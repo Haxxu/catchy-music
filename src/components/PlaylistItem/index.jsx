@@ -54,7 +54,7 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                             </div>
                         </div>
                     </Link>
-                    {context.contextType === 'playlist' && context.contextId === playlist._id ? (
+                    {context?.contextType === 'playlist' && context?.contextId === playlist._id ? (
                         <IconButton
                             className={cx('reduce-play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple
@@ -114,7 +114,7 @@ const PlaylistItem = ({ type = 'default', playlist, to }) => {
                             <div className={cx('description')}>{playlist?.description}</div>
                         </div>
                     </div>
-                    {context.contextType === 'playlist' && context.contextId === playlist?._id ? (
+                    {context?.contextType === 'playlist' && context?.contextId === playlist?._id ? (
                         <IconButton
                             className={cx('play-btn', { active: activePlayBtn || isPlaying })}
                             disableRipple

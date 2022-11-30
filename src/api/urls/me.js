@@ -12,6 +12,9 @@ export const getSavedPlaylistsUrl = baseApiUrl + '/me/playlists';
 // [GET] get audio player state
 export const getAudioPlayerStateUrl = baseApiUrl + '/me/audio-player';
 
+// [PUT] increase track play
+export const increaseCurrenTrackPlaysUrl = baseApiUrl + '/me/audio-player/currently-playing/increase';
+
 // [POST] add item to queue
 export const addItemToQueueUrl = baseApiUrl + '/me/audio-player/queue';
 
@@ -48,6 +51,9 @@ export const checkSavedAlbumUrl = baseApiUrl + '/me/albums/contains';
 // [GET] check saved playlist
 export const checkSavedPlaylistUrl = baseApiUrl + '/me/playlists/contains';
 
+// [GET] check following user
+export const checkFollowingUserUrl = baseApiUrl + '/me/following/contains';
+
 // [DELETE] remove liked track from library
 export const removeLikedTrackFromLibraryUrl = baseApiUrl + '/me/tracks';
 
@@ -65,3 +71,9 @@ export const removePlaylistFromLibraryUrl = baseApiUrl + '/me/playlists';
 
 // [PUT] save playlist to library
 export const savePlaylistToLibraryUrl = baseApiUrl + '/me/playlists';
+
+// [DELETE] remove playlist from library
+export const followUserUrl = baseApiUrl + '/me/following';
+
+// [PUT] save playlist to library
+export const unfollowUserUrl = baseApiUrl + '/me/following';
