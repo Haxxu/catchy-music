@@ -15,6 +15,7 @@ import Lyrics from '~/pages/Lyrics';
 import Queue from '~/pages/Queue';
 import Track from '~/pages/Track';
 import User from '~/pages/User';
+import Genre from '~/pages/Genre';
 
 const privateRoutes = [
     // Home
@@ -70,6 +71,13 @@ const privateRoutes = [
     {
         path: routes.user,
         component: User,
+        layout: MainLayout,
+        roles: [roles.user, roles.admin, roles.artist],
+    },
+    // Genre
+    {
+        path: routes.genre,
+        component: Genre,
         layout: MainLayout,
         roles: [roles.user, roles.admin, roles.artist],
     },

@@ -25,6 +25,7 @@
         "jwt-decode": "^3.1.2",
         "moment": "^2.29.4",
         "normalize.css": "^8.0.1",
+        "randomcolor": "^0.6.2",
         "react": "^18.2.0",
         "react-audio-player": "^0.17.0",
         "react-confirm-alert": "^3.0.6",

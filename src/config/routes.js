@@ -25,6 +25,7 @@ const routes = {
     queue: '/queue',
     album: '/album/:id',
     track: '/track/:id',
+    genre: '/genre/:id',
 
     // admin routes
     admin_dashboard: '/admin-dashboard/home',
