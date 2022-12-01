@@ -7,6 +7,7 @@ const genreRotues = require('./genres');
 const albumRoutes = require('./albums');
 const playlistRoutes = require('./playlists');
 const artistRoutes = require('./artists');
+const searchRoutes = require('./search');
 
 const routes = (app) => {
     // - /api
@@ -42,6 +43,9 @@ const routes = (app) => {
 
     // - /api/artists
     app.use('/api/artists', artistRoutes);
+
+    // - /api/search
+    app.use('/api/search', searchRoutes);
 };
 
 module.exports = routes;

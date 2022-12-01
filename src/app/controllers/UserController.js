@@ -111,7 +111,7 @@ class UserController {
                         continue;
                     }
 
-                    let position = album.tracks.map((item) => item.track).indexOf(tracks[0]._id);
+                    let position = album.tracks.map((item) => item.track).indexOf(tracks[i]._id.toString());
 
                     popularTracks.push({
                         track: tracks[i],
