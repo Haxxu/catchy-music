@@ -85,7 +85,11 @@ const Navbar = () => {
                                         if (option.roles.includes(type)) {
                                             return (
                                                 <Link
-                                                    to={option.title !== 'Profile' ? option.path : `/${type}/${userId}`}
+                                                    to={
+                                                        option.title !== 'Profile'
+                                                            ? option.path
+                                                            : `/${type === 'admin' ? 'user' : type}/${userId}`
+                                                    }
                                                     className={cx('option')}
                                                     key={index}
                                                     onClick={() => toggleProfileMenu()}

@@ -16,7 +16,7 @@ const GenreList = () => {
         const fetchData = async () => {
             const { data } = await axiosInstance.get(getGenresUrl);
             setGenres(data.data);
-            console.log(data.data);
+            // console.log(data.data);
         };
 
         fetchData().catch(console.error);

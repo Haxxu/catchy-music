@@ -7,7 +7,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import styles from './styles.scoped.scss';
 import GenreList from '~/components/GenreList';
 import SearchResults from '~/components/SearchResults';
-import { useDebounce } from '~/hooks';
 
 const cx = classNames.bind(styles);
 
@@ -36,11 +35,15 @@ const Search = () => {
                 )}
             </div>
             <div className={cx('data-container')}>
-                {searchInput.trim() !== '' && <SearchResults searchInput={searchInput} />}
-                <div className={cx('genres', { hide: searchInput.trim() !== '' })}>
+                <SearchResults searchInput={searchInput} />
+                <div className={cx('genres')}>
                     <div className={cx('heading')}>Browse All</div>
                     <GenreList />
                 </div>
+                {/* <div className={cx('genres', { hide: searchInput.trim() !== '' })}>
+                    <div className={cx('heading')}>Browse All</div>
+                    <GenreList />
+                </div> */}
             </div>
         </div>
     );
