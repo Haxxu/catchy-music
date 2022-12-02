@@ -63,6 +63,9 @@ router.put('/audio-player/currently-playing/increase', userAuth, audioPlayerCont
 // [GET] /api/me/audio-player => get audio player state
 router.get('/audio-player/currently-playing', userAuth, audioPlayerController.getCurrentlyPlayingTrack);
 
+// [GET] /api/me/audio-player/queue => get queue
+router.get('/audio-player/queue', userAuth, audioPlayerController.getQueue);
+
 // [GET] /api/me/audio-player => get audio player state
 router.get('/audio-player', userAuth, audioPlayerController.getAudioPlayerState);
 

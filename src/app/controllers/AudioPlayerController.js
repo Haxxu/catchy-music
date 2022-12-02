@@ -57,7 +57,7 @@ class AudioPlayerController {
 
         if (player.shuffle === 'none') {
             if (contextType === 'album') {
-                const album = await Album.findOne({ _id: contextId });
+                const album = await Album.findOne({ _id: contextId }).lean();
                 if (!album) {
                     return res.status(404).send({ message: 'Album does not exist' });
                 }
@@ -71,7 +71,7 @@ class AudioPlayerController {
                     req.body.position,
                 );
             } else if (contextType === 'playlist') {
-                const playlist = await Playlist.findOne({ _id: contextId });
+                const playlist = await Playlist.findOne({ _id: contextId }).lean();
                 if (!playlist) {
                     return res.status(404).send({ message: 'Playlist does not exist' });
                 }
@@ -85,7 +85,7 @@ class AudioPlayerController {
                     req.body.position,
                 );
             } else if (contextType === 'liked') {
-                const library = await Library.findOne({ _id: contextId });
+                const library = await Library.findOne({ _id: contextId }).lean();
                 if (!library) {
                     return res.status(404).send({ message: 'Library does not exist' });
                 }
@@ -102,7 +102,7 @@ class AudioPlayerController {
         } else {
             // Che do shuffle
             if (contextType === 'album') {
-                const album = await Album.findOne({ _id: contextId });
+                const album = await Album.findOne({ _id: contextId }).lean();
                 if (!album) {
                     return res.status(404).send({ message: 'Album does not exist' });
                 }
@@ -116,13 +116,13 @@ class AudioPlayerController {
                     req.body.position,
                 );
             } else if (contextType === 'playlist') {
-                const playlist = await Playlist.findOne({ _id: contextId });
+                const playlist = await Playlist.findOne({ _id: contextId }).lean();
                 if (!playlist) {
                     return res.status(404).send({ message: 'Playlist does not exist' });
                 }
                 playWithShuffleOn(player, playlist.tracks, contextType, contextId, trackId, albumId, req.body.position);
             } else if (contextType === 'liked') {
-                const library = await Library.findOne({ _id: contextId });
+                const library = await Library.findOne({ _id: contextId }).lean();
                 if (!library) {
                     return res.status(404).send({ message: 'Library does not exist' });
                 }
@@ -271,7 +271,7 @@ class AudioPlayerController {
 
             if (player.shuffle === 'none') {
                 if (contextType === 'album') {
-                    const album = await Album.findOne({ _id: contextId });
+                    const album = await Album.findOne({ _id: contextId }).lean();
                     if (!album) {
                         return res.status(404).send({ message: 'Album not found' });
                     }
@@ -284,13 +284,13 @@ class AudioPlayerController {
                         albumId,
                     );
                 } else if (contextType === 'playlist') {
-                    const playlist = await Playlist.findOne({ _id: contextId });
+                    const playlist = await Playlist.findOne({ _id: contextId }).lean();
                     if (!playlist) {
                         return res.status(404).send({ message: 'Playlist not found' });
                     }
                     skipNextWithShuffleOff(player, playlist.tracks, contextType, contextId, trackId, albumId);
                 } else if (contextType === 'liked') {
-                    const library = await Library.findOne({ _id: contextId });
+                    const library = await Library.findOne({ _id: contextId }).lean();
                     if (!library) {
                         return res.status(404).send({ message: 'Library not found' });
                     }
@@ -299,7 +299,7 @@ class AudioPlayerController {
             } else {
                 // Che do shuffle
                 if (contextType === 'album') {
-                    const album = await Album.findOne({ _id: contextId });
+                    const album = await Album.findOne({ _id: contextId }).lean();
                     if (!album) {
                         return res.status(404).send({ message: 'Album not found' });
                     }
@@ -312,13 +312,13 @@ class AudioPlayerController {
                         albumId,
                     );
                 } else if (contextType === 'playlist') {
-                    const playlist = await Playlist.findOne({ _id: contextId });
+                    const playlist = await Playlist.findOne({ _id: contextId }).lean();
                     if (!playlist) {
                         return res.status(404).send({ message: 'Playlist not found' });
                     }
                     skipNextWithShuffleOn(player, playlist.tracks, contextType, contextId, trackId, albumId);
                 } else if (contextType === 'liked') {
-                    const library = await Library.findOne({ _id: contextId });
+                    const library = await Library.findOne({ _id: contextId }).lean();
                     if (!library) {
                         return res.status(404).send({ message: 'Library not found' });
                     }
@@ -672,6 +672,167 @@ class AudioPlayerController {
                 .status(200)
                 .send({ data: { ...player, context }, message: 'Get audio player state successfully' });
         } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getQueue(req, res, next) {
+        try {
+            const player = await AudioPlayer.findOne({ owner: req.user._id }).lean();
+            if (!player) {
+                return res.status(404).send({ message: 'Audio Player not found' });
+            }
+
+            const [contextType, contextId, trackId, albumId] = player.currentPlayingTrack.context_uri.split(':');
+
+            let currentTrack;
+
+            const t = await Track.findOne({ _id: trackId });
+            const a = await Album.findOne({ _id: albumId });
+
+            currentTrack = {
+                track: t,
+                album: a,
+                context_uri: player.currentPlayingTrack.context_uri,
+                position: player.currentPlayingTrack.position,
+            };
+
+            async function getTracksInQueue(item) {
+                const track = await Track.findOne({ _id: item.track });
+                const album = await Album.findOne({ _id: item.album });
+                return {
+                    track: track,
+                    album: album,
+                    addedAt: item.addedAt,
+                    context_uri: item.context_uri,
+                    position: item.position,
+                    order: item.order,
+                };
+            }
+
+            const tracksInQueue = await Promise.all(player.queue.tracks.map(getTracksInQueue));
+
+            let nextTracks;
+
+            if (player.shuffle !== 'none') {
+                async function getTracksInShuffle(item) {
+                    const track = await Track.findOne({ _id: item.track });
+                    const album = await Album.findOne({ _id: item.album });
+                    return {
+                        track: track,
+                        album: album,
+                        context_uri: item.context_uri,
+                        position: item.position,
+                    };
+                }
+
+                let index;
+                if (player.queue.currentTrackWhenQueueActive) {
+                    index = player.shuffleTracks
+                        .map((item) => item.position)
+                        .indexOf(player.queue.currentTrackWhenQueueActive?.position);
+                } else {
+                    index = player.shuffleTracks
+                        .map((item) => item.position)
+                        .indexOf(player.currentPlayingTrack?.position);
+                }
+
+                let nextTr = player.shuffleTracks.slice(index + 1);
+
+                // nextTracks = await Promise.all(player.shuffleTracks.map(getTracksInShuffle));
+                nextTracks = await Promise.all(nextTr.map(getTracksInShuffle));
+            } else {
+                if (contextType === 'liked') {
+                    async function getTracksInLiked(item, index, libraryId) {
+                        const track = await Track.findOne({ _id: item.track });
+                        const album = await Album.findOne({ _id: item.album });
+                        return {
+                            track: track,
+                            album: album,
+                            context_uri: `liked:${libraryId}:${track._id}:${album._id}`,
+                            position: index,
+                        };
+                    }
+
+                    const library = await Library.findOne({ owner: req.user._id }).lean();
+
+                    let nextTrs = await Promise.all(
+                        library.likedTracks.map((item, index) => getTracksInLiked(item, index, library._id)),
+                    );
+
+                    let index;
+                    if (player.queue.currentTrackWhenQueueActive) {
+                        index = player.queue.currentTrackWhenQueueActive?.position;
+                    } else {
+                        index = player.currentPlayingTrack.position;
+                    }
+
+                    nextTracks = nextTrs.slice(index + 1);
+                } else if (contextType === 'playlist') {
+                    async function getTracksInPlaylist(item, index, playlistId) {
+                        const track = await Track.findOne({ _id: item.track });
+                        const album = await Album.findOne({ _id: item.album });
+                        return {
+                            track: track,
+                            album: album,
+                            context_uri: `playlist:${playlistId}:${track._id}:${album._id}`,
+                            position: index,
+                        };
+                    }
+
+                    let index;
+                    let playlistId;
+                    if (player.queue.currentTrackWhenQueueActive) {
+                        index = player.queue.currentTrackWhenQueueActive?.position;
+                        playlistId = player.queue.currentTrackWhenQueueActive?.context_uri.split(':')[1];
+                    } else {
+                        index = player.currentPlayingTrack.position;
+                        playlistId = contextId;
+                    }
+
+                    const playlist = await Playlist.findOne({ _id: playlistId }).lean();
+
+                    let nextTrs = await Promise.all(
+                        playlist.tracks.map((item, index) => getTracksInPlaylist(item, index, playlistId)),
+                    );
+
+                    nextTracks = nextTrs.slice(index + 1);
+                } else {
+                    async function getTracksInPlaylist(item, index, albumId, album) {
+                        const track = await Track.findOne({ _id: item.track });
+                        return {
+                            track: track,
+                            album: album,
+                            context_uri: `album:${albumId}:${track._id}:${albumId}`,
+                            position: index,
+                        };
+                    }
+
+                    let index;
+                    let albumId;
+                    if (player.queue.currentTrackWhenQueueActive) {
+                        index = player.queue.currentTrackWhenQueueActive?.position;
+                        albumId = player.queue.currentTrackWhenQueueActive?.context_uri.split(':')[1];
+                    } else {
+                        index = player.currentPlayingTrack.position;
+                        albumId = contextId;
+                    }
+
+                    const album = await Album.findOne({ _id: albumId }).lean();
+
+                    let nextTrs = await Promise.all(
+                        album.tracks.map((item, index) => getTracksInPlaylist(item, index, albumId, album)),
+                    );
+
+                    nextTracks = nextTrs.slice(index + 1);
+                }
+            }
+
+            return res
+                .status(200)
+                .send({ data: { currentTrack, tracksInQueue, nextTracks }, message: 'Get queue successfuly' });
+        } catch (err) {
+            console.log(err);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
