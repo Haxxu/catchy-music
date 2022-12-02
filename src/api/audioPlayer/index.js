@@ -20,6 +20,7 @@ import {
     updateTrack,
     setContext,
 } from '~/redux/audioPlayerSlice';
+import { updateQueueState } from '~/redux/updateStateSlice';
 
 export const getAudioPlayerState = async (dispatch, payload) => {
     try {
@@ -63,6 +64,7 @@ export const playTrack = async (dispatch, payload) => {
             dispatch(setContext(data.data.context));
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
+            dispatch(updateQueueState());
             // dispatch(updateTrack());
             // console.log('test');
             const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
@@ -95,6 +97,7 @@ export const skipNext = async (dispatch, payload) => {
             dispatch(setContext(data.data.context));
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
+            dispatch(updateQueueState());
             // dispatch(updateTrack());
             // console.log('test');
             const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
@@ -115,6 +118,7 @@ export const skipPrevious = async (dispatch, payload) => {
             dispatch(setContext(data.data.context));
             dispatch(setCurrentTrack(data.data.currentPlayingTrack));
             dispatch(setPlayMode(true));
+            dispatch(updateQueueState());
             // dispatch(updateTrack());
             // console.log('test');
             const { data: data2 } = await axiosInstance.put(increaseCurrenTrackPlaysUrl, {});
@@ -152,6 +156,7 @@ export const changeShuffleMode = async (dispatch, payload) => {
         if (data) {
             dispatch(setShuffle(newMode));
             dispatch(updateTrack());
+            dispatch(updateQueueState());
         }
     } catch (err) {
         console.log(err);

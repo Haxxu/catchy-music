@@ -9,7 +9,7 @@ import { confirmAlert } from 'react-confirm-alert';
 
 import styles from './styles.module.scss';
 import axiosInstance from '~/api/axiosInstance';
-import { addItemToQueueUrl } from '~/api/urls/me';
+import { addItemsToQueueUrl } from '~/api/urls/me';
 import { updatePlaylistState, updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
 import { deletePlaylistUrl, togglePublicPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { useAuth } from '~/hooks';
@@ -36,7 +36,7 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
 
     const addTrackToQueue = async () => {
         try {
-            const { data } = await axiosInstance.post(addItemToQueueUrl, {
+            const { data } = await axiosInstance.post(addItemsToQueueUrl, {
                 items: tracks?.map((item) => ({ context_uri: item.context_uri, position: item.position })),
             });
             toast.success(data.message);

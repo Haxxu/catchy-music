@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import GoToArtistMenu from '~/components/GoToArtistMenu';
 import styles from './styles.module.scss';
 import axiosInstance from '~/api/axiosInstance';
-import { addItemToQueueUrl } from '~/api/urls/me';
+import { addItemsToQueueUrl, removeItemsFromQueueUrl } from '~/api/urls/me';
 import AddToPlaylistMenu from '~/components/AddToPlaylistMenu';
 import { removeLikedTrackFromLibraryUrl } from '~/api/urls/me';
-import { updateLikeTrackState, updatePlaylistState } from '~/redux/updateStateSlice';
+import { updateLikeTrackState, updatePlaylistState, updateQueueState } from '~/redux/updateStateSlice';
 import { removeTrackFromPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { useAuth } from '~/hooks';
 
@@ -26,6 +26,7 @@ const TrackMenu = ({
     context_uri,
     position,
     inPage = 'playlist',
+    order,
     playlistOwnerId,
 }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -44,9 +45,25 @@ const TrackMenu = ({
 
     const addTrackToQueue = async () => {
         try {
-            const { data } = await axiosInstance.post(addItemToQueueUrl, { items: [{ context_uri, position }] });
+            const { data } = await axiosInstance.post(addItemsToQueueUrl, { items: [{ context_uri, position }] });
             toast.success(data.message);
             setAnchorEl(null);
+            dispatch(updateQueueState());
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const removeTrackFromQueue = async () => {
+        try {
+            const { data } = await axiosInstance.delete(removeItemsFromQueueUrl, {
+                data: {
+                    items: [{ context_uri, position, order }],
+                },
+            });
+            toast.success(data.message);
+            setAnchorEl(null);
+            dispatch(updateQueueState());
         } catch (err) {
             console.log(err);
         }
@@ -97,6 +114,11 @@ const TrackMenu = ({
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
                                 Add to queue
                             </div>
+                            {inPage === 'queue' && (
+                                <div className={cx('menu-item')} onClick={removeTrackFromQueue}>
+                                    Remove from queue
+                                </div>
+                            )}
                             <div className={cx('menu-item', 'item-have-sub-menu')}>
                                 <AddToPlaylistMenu trackId={trackId} albumId={albumId} />
                             </div>

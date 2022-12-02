@@ -9,6 +9,7 @@ const updateState = createSlice({
         userProfileState: false,
         userPageState: false,
         albumState: false,
+        queueState: false,
     },
     reducers: {
         updateLikeTrackState: (state, payload) => {
@@ -34,6 +35,10 @@ const updateState = createSlice({
         updateAlbumState: (state, payload) => {
             state.albumState = !state.albumState;
         },
+
+        updateQueueState: (state, payload) => {
+            state.queueState = !state.queueState;
+        },
     },
 });
 
@@ -45,6 +50,7 @@ export const {
     updateUserProfileState,
     updateUserPageState,
     updateAlbumState,
+    updateQueueState,
 } = updateState.actions;
 
 export default updateState;

@@ -18,11 +18,17 @@ export const getFollowingUsersUrl = baseApiUrl + '/me/following';
 // [GET] get audio player state
 export const getAudioPlayerStateUrl = baseApiUrl + '/me/audio-player';
 
+// [GET] get queue
+export const getQueueUrl = baseApiUrl + '/me/audio-player/queue';
+
 // [PUT] increase track play
 export const increaseCurrenTrackPlaysUrl = baseApiUrl + '/me/audio-player/currently-playing/increase';
 
 // [POST] add item to queue
-export const addItemToQueueUrl = baseApiUrl + '/me/audio-player/queue';
+export const addItemsToQueueUrl = baseApiUrl + '/me/audio-player/queue';
+
+// [DELETE] add item to queue
+export const removeItemsFromQueueUrl = baseApiUrl + '/me/audio-player/queue';
 
 // [GET] get audio player state
 export const getCurrentlyPlayingTrackUrl = baseApiUrl + '/me/audio-player/currently-playing';
