@@ -91,7 +91,7 @@ const SearchResults = ({ searchInput }) => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('heading')}>Search results: {searchInput}</div>
+            {searchInput.trim() !== '' && <div className={cx('heading')}>Search results: {searchInput}</div>}
 
             {tracks.length !== 0 && (
                 <section className={cx('section-container')}>
