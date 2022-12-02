@@ -198,10 +198,21 @@ class AudioPlayerController {
                         contextType + ':' + contextId + ':' + tracks[nextIndex].track + ':' + tracks[nextIndex].album;
                     player.currentPlayingTrack.position = nextIndex;
                 } else {
-                    player.currentPlayingTrack.track = '';
-                    player.currentPlayingTrack.album = '';
-                    player.currentPlayingTrack.context_uri = '';
-                    player.currentPlayingTrack.position = -1;
+                    // player.currentPlayingTrack.track = '';
+                    // player.currentPlayingTrack.album = '';
+                    // player.currentPlayingTrack.context_uri = '';
+                    // player.currentPlayingTrack.position = -1;
+                    player.currentPlayingTrack.track = tracks[player.currentPlayingTrack.position].track;
+                    player.currentPlayingTrack.album = tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.context_uri =
+                        contextType +
+                        ':' +
+                        contextId +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].track +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.position = player.currentPlayingTrack.position;
                 }
             };
 
@@ -260,12 +271,35 @@ class AudioPlayerController {
                     player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
                     player.shufflePosition = nextIndexInShuffle;
                 } else {
-                    player.currentPlayingTrack.track = '';
-                    player.currentPlayingTrack.album = '';
-                    player.currentPlayingTrack.context_uri = '';
-                    player.currentPlayingTrack.position = -1;
-                    player.shuffleTracks = [];
-                    player.shufflePosition = -1;
+                    // player.currentPlayingTrack.track = '';
+                    // player.currentPlayingTrack.album = '';
+                    // player.currentPlayingTrack.context_uri = '';
+                    // player.currentPlayingTrack.position = -1;
+                    // player.shuffleTracks = [];
+                    // player.shufflePosition = -1;
+
+                    player.currentPlayingTrack.track = tracks[player.currentPlayingTrack.position].track;
+                    player.currentPlayingTrack.album = tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.context_uri = player.currentPlayingTrack.context_uri =
+                        contextType +
+                        ':' +
+                        contextId +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].track +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.position = player.currentPlayingTrack.position;
+                    const shuffleTracks = shuffleArray(tracks);
+                    player.shuffleTracks = shuffleTracks.map((obj) => ({
+                        track: obj.track,
+                        album: obj.album,
+                        context_uri: contextType + ':' + contextId + ':' + obj.track + ':' + obj.album,
+                        position: obj.position,
+                    }));
+                    indexInShuffle = player.shuffleTracks
+                        .map((obj) => obj.track + obj.album)
+                        .indexOf(trackId + albumId);
+                    player.shufflePosition = indexInShuffle;
                 }
             };
 
@@ -365,10 +399,21 @@ class AudioPlayerController {
                         contextType + ':' + contextId + ':' + tracks[nextIndex].track + ':' + tracks[nextIndex].album;
                     player.currentPlayingTrack.position = nextIndex;
                 } else {
-                    player.currentPlayingTrack.track = '';
-                    player.currentPlayingTrack.album = '';
-                    player.currentPlayingTrack.context_uri = '';
-                    player.currentPlayingTrack.position = -1;
+                    // player.currentPlayingTrack.track = '';
+                    // player.currentPlayingTrack.album = '';
+                    // player.currentPlayingTrack.context_uri = '';
+                    // player.currentPlayingTrack.position = -1;
+                    player.currentPlayingTrack.track = tracks[player.currentPlayingTrack.position].track;
+                    player.currentPlayingTrack.album = tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.context_uri =
+                        contextType +
+                        ':' +
+                        contextId +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].track +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.position = player.currentPlayingTrack.position;
                 }
             };
 
@@ -427,12 +472,35 @@ class AudioPlayerController {
                     player.currentPlayingTrack.position = player.shuffleTracks[nextIndexInShuffle].position;
                     player.shufflePosition = nextIndexInShuffle;
                 } else {
-                    player.currentPlayingTrack.track = '';
-                    player.currentPlayingTrack.album = '';
-                    player.currentPlayingTrack.context_uri = '';
-                    player.currentPlayingTrack.position = -1;
-                    player.shuffleTracks = [];
-                    player.shufflePosition = -1;
+                    // player.currentPlayingTrack.track = '';
+                    // player.currentPlayingTrack.album = '';
+                    // player.currentPlayingTrack.context_uri = '';
+                    // player.currentPlayingTrack.position = -1;
+                    // player.shuffleTracks = [];
+                    // player.shufflePosition = -1;
+
+                    player.currentPlayingTrack.track = tracks[player.currentPlayingTrack.position].track;
+                    player.currentPlayingTrack.album = tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.context_uri = player.currentPlayingTrack.context_uri =
+                        contextType +
+                        ':' +
+                        contextId +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].track +
+                        ':' +
+                        tracks[player.currentPlayingTrack.position].album;
+                    player.currentPlayingTrack.position = player.currentPlayingTrack.position;
+                    const shuffleTracks = shuffleArray(tracks);
+                    player.shuffleTracks = shuffleTracks.map((obj) => ({
+                        track: obj.track,
+                        album: obj.album,
+                        context_uri: contextType + ':' + contextId + ':' + obj.track + ':' + obj.album,
+                        position: obj.position,
+                    }));
+                    indexInShuffle = player.shuffleTracks
+                        .map((obj) => obj.track + obj.album)
+                        .indexOf(trackId + albumId);
+                    player.shufflePosition = indexInShuffle;
                 }
             };
 
