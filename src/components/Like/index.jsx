@@ -23,6 +23,7 @@ import {
     updatePlaylistInSidebarState,
     updatePlaylistState,
     updateAlbumState,
+    updateQueueState,
 } from '~/redux/updateStateSlice';
 import { toast } from 'react-toastify';
 
@@ -44,6 +45,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                     });
                     setLiked(data.data);
                     dispatch(updateLikeTrackState());
+                    dispatch(updateQueueState());
                     toast.success(data.message);
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.delete(removeAlbumFromLibraryUrl, {
@@ -66,6 +68,7 @@ const Like = ({ type = 'track', size = 'normal', trackId, albumId, playlistId })
                     const { data } = await axiosInstance.put(saveTrackToLibraryUrl, { track: trackId, album: albumId });
                     setLiked(data.data);
                     dispatch(updateLikeTrackState());
+                    dispatch(updateQueueState());
                     toast.success(data.message);
                 } else if (type === 'album') {
                     const { data } = await axiosInstance.put(saveAlbumToLibraryUrl, { album: albumId });

@@ -70,7 +70,7 @@ const Album = () => {
         const fetchAlbum = async () => {
             const { data } = await axiosInstance.get(getAlbumByIdUrl(id));
             setAlbum(data.data);
-            // console.log(album.data);
+            // console.log(data.data);
             return data.data?.owner?._id;
         };
 
@@ -260,6 +260,7 @@ const Album = () => {
                                                                         active:
                                                                             context.context_uri === item.context_uri,
                                                                     })}
+                                                                    to={`/track/${item?.track?._id}`}
                                                                 >
                                                                     {item?.track.name}
                                                                 </Link>
