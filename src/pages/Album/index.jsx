@@ -260,7 +260,9 @@ const Album = () => {
                                                                         active:
                                                                             context.context_uri === item.context_uri,
                                                                     })}
-                                                                    to={`/track/${item?.track?._id}`}
+                                                                    to={`/track/${item?.track?._id}/album/${
+                                                                        item?.track?._id
+                                                                    }`}
                                                                 >
                                                                     {item?.track.name}
                                                                 </Link>

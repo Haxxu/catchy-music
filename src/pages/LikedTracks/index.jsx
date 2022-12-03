@@ -230,7 +230,9 @@ const LikedTracks = () => {
                                                         <div className={cx('right')}>
                                                             <div className={cx('name')}>
                                                                 <Link
-                                                                    to={`/track/${item?.track?._id}`}
+                                                                    to={`/track/${item?.track?._id}/album/${
+                                                                        item?.album?._id
+                                                                    }`}
                                                                     className={cx('name-link', {
                                                                         active:
                                                                             context.context_uri === item?.context_uri,

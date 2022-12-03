@@ -70,7 +70,7 @@ const TrackMenu = ({
     };
 
     const goToTrackPage = () => {
-        navigate(`/track/${trackId}`);
+        navigate(`/track/${trackId}/album/${albumId}`);
     };
 
     const goToAlbumPage = () => {

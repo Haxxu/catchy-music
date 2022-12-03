@@ -24,7 +24,7 @@ const routes = {
     lyrics: '/lyrics',
     queue: '/queue',
     album: '/album/:id',
-    track: '/track/:id',
+    track: '/track/:id/album/:albumId',
     genre: '/genre/:id',
 
     // admin routes

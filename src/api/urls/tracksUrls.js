@@ -12,6 +12,9 @@ export const deleteTrackUrl = (id) => baseApiUrl + `/tracks/${id}`;
 // [GET] get track by id
 export const getTrackByIdUrl = (id) => baseApiUrl + `/tracks/${id}`;
 
+// [GET] get lyric of track
+export const getLyricsOfTrack = (trackId) => baseApiUrl + `/tracks/${trackId}/lyrics`;
+
 // [POST] create track
 export const createTrackUrl = baseApiUrl + '/tracks';
 
