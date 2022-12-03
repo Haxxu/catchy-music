@@ -16,8 +16,11 @@ router.get('/context', adminAuth, trackController.getTracksByContext);
 // [GET] /api/tracks/info => get tracks info
 router.get('/info', adminAuth, trackController.getTracksInfo);
 
+// [GET] /api/tracks/:id/lyrics => get lyrics of track
+router.get('/:id/lyrics', [userAuth, validateObjectId], trackController.getLyricsOfTrack);
+
 // [GET] /api/tracks/:id => get track by id
-router.get('/:id', [userAuth, validateObjectId], trackController.getTrack);
+router.get('/:id', [userAuth, validateObjectId], trackController.getTrackById);
 
 // [PUT] /api/tracks/:id => update track by id
 router.put('/:id', [artistAuth, validateObjectId], trackController.updateTrack);

@@ -9,13 +9,58 @@ const { Comment } = require('../models/Comment');
 const { User } = require('../models/User');
 class TrackController {
     // Get track by id
-    async getTrack(req, res, next) {
-        const track = await Track.findOne({ _id: req.params.id });
-        if (!track) {
-            return res.status(400).send({ message: 'Track does not exist' });
-        }
+    async getTrackById(req, res, next) {
+        try {
+            const track = await Track.findOne({ _id: req.params.id }).lean();
+            if (!track) {
+                return res.status(400).send({ message: 'Track does not exist' });
+            }
 
-        res.status(200).send({ data: track, message: 'Get track successfully' });
+            if (req.query.detail || req.query.detail === true) {
+                let artistsLength = track.artists.length;
+                for (let i = 0; i < artistsLength; ++i) {
+                    const user = await User.findOne({ _id: track.artists[i].id }).select('image name type').lean();
+                    const albums = await Album.find({ owner: track.artists[i].id, isReleased: true })
+                        .populate({
+                            path: 'owner',
+                            select: '_id name type image',
+                        })
+                        .sort({ saved: 'desc' })
+                        .limit(10)
+                        .lean();
+
+                    const popularAlbums = albums.map((album) => {
+                        if (album.tracks.length === 0) {
+                            return album;
+                        } else {
+                            return {
+                                ...album,
+                                firstTrack: {
+                                    context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+                    track.artists[i].popularAlbums = popularAlbums;
+                    track.artists[i].image = user.image;
+                    track.artists[i].type = user.type;
+                }
+
+                const lyrics = await Lyric.find({ track: track._id })
+                    .populate({
+                        path: 'owner',
+                        select: '_id name',
+                    })
+                    .lean();
+                track.lyrics = lyrics;
+            }
+
+            res.status(200).send({ data: track, message: 'Get track successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     async getTracksInfo(req, res, next) {
@@ -211,6 +256,22 @@ class TrackController {
             await track.save();
             return res.status(200).send({ message: 'Play track successfully' });
         } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
+    }
+
+    async getLyricsOfTrack(req, res, next) {
+        try {
+            const lyrics = await Lyric.find({ track: req.params.id })
+                .populate({
+                    path: 'owner',
+                    select: '_id name',
+                })
+                .lean();
+
+            return res.status(200).send({ data: lyrics, message: 'Get lyric successfully' });
+        } catch (err) {
+            console.log(err);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
