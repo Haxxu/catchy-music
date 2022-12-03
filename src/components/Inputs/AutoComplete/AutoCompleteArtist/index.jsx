@@ -5,11 +5,14 @@ import classNames from 'classnames/bind';
 import { getArtistsUrl } from '~/api/urls/artistsUrl';
 import axiosInstance from '~/api/axiosInstance';
 import styles from './styles.scoped.scss';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const AutoCompleteArtist = ({ artists, handleInputState, defaultArtist, label }) => {
     const [value, setValue] = useState([]);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,7 +55,7 @@ const AutoCompleteArtist = ({ artists, handleInputState, defaultArtist, label })
                     <TextField
                         {...params}
                         variant='outlined'
-                        placeholder='Search artist'
+                        placeholder={t('Search artist')}
                         sx={{
                             '& input': {
                                 fontSize: '1.5rem',

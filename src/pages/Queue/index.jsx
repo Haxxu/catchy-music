@@ -28,6 +28,7 @@ import axiosInstance from '~/api/axiosInstance';
 import { getQueueUrl, removeItemsFromQueueUrl } from '~/api/urls/me';
 import { toast } from 'react-toastify';
 import { updateQueueState } from '~/redux/updateStateSlice';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -39,6 +40,7 @@ const Queue = () => {
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
     const { queueState } = useSelector((state) => state.updateState);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handlePlayTrack = async (payload) => {
         playTrack(dispatch, payload).catch(console.error);
@@ -85,7 +87,7 @@ const Queue = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('heading')}>Queue</div>
+            <div className={cx('heading')}>{t('Queue')}</div>
             <section className={cx('section-container')}>
                 <div className={cx('content')}>
                     <TableContainer component={Paper} className={cx('table-container')} sx={{ overflowX: 'inherit' }}>
@@ -102,7 +104,7 @@ const Queue = () => {
                                                         color: 'var(--text-secondary)',
                                                     }}
                                                 >
-                                                    Now playing
+                                                    {t('Now playing')}
                                                 </span>
                                             </TableCell>
                                         </TableRow>
@@ -265,7 +267,7 @@ const Queue = () => {
                                                         color: 'var(--text-secondary)',
                                                     }}
                                                 >
-                                                    Next in queue
+                                                    {t('Next in queue')}
                                                 </span>
                                             </TableCell>
                                             <TableCell colSpan={4} align='right' sx={{ padding: 0 }}>
@@ -275,7 +277,7 @@ const Queue = () => {
                                                     sx={{ fontSize: '1rem', marginRight: '8px' }}
                                                     onClick={clearQueue}
                                                 >
-                                                    Clear queue
+                                                    {t('Clear queue')}
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -404,7 +406,7 @@ const Queue = () => {
                                                         color: 'var(--text-secondary)',
                                                     }}
                                                 >
-                                                    Next up
+                                                    {t('Next up')}
                                                 </span>
                                             </TableCell>
                                         </TableRow>
@@ -528,320 +530,6 @@ const Queue = () => {
                     </TableContainer>
                 </div>
             </section>
-
-            {/* {tracksInQueue.length !== 0 && (
-                <section className={cx('section-container')}>
-                    <div className={cx('heading')}>Next in queue</div>
-                    <div className={cx('content')}>
-                        <TableContainer
-                            component={Paper}
-                            className={cx('table-container')}
-                            sx={{ overflowX: 'inherit' }}
-                        >
-                            <Table sx={{ minWidth: 650 }} stickyHeader>
-                                <TableBody>
-                                    {tracksInQueue.map((item, index) => (
-                                        <TableRow
-                                            key={index}
-                                            className={cx('track-container', {
-                                                active: context.context_uri === item?.context_uri,
-                                            })}
-                                            onDoubleClick={() =>
-                                                handlePlayTrack({
-                                                    context_uri: item?.context_uri,
-                                                    position: item?.position,
-                                                })
-                                            }
-                                        >
-                                            <TableCell align='left'>
-                                                <div className={cx('order')}>
-                                                    {context.context_uri === item?.context_uri ? (
-                                                        <IconButton
-                                                            disableRipple
-                                                            onClick={handleTogglePlay}
-                                                            sx={{ padding: 0 }}
-                                                        >
-                                                            {isPlaying ? (
-                                                                <PauseIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            ) : (
-                                                                <PlayArrowIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            )}
-                                                        </IconButton>
-                                                    ) : (
-                                                        <>
-                                                            <IconButton
-                                                                disableRipple
-                                                                onClick={() =>
-                                                                    handlePlayTrack({
-                                                                        context_uri: item?.context_uri,
-                                                                        position: item?.position,
-                                                                    })
-                                                                }
-                                                                className={cx('play-btn')}
-                                                                sx={{ padding: 0 }}
-                                                            >
-                                                                <PlayArrowIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            </IconButton>
-                                                            <span className={cx('order-number')}>{index + 2}</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left' sx={{ minWidth: '250px', padding: '10px' }}>
-                                                <div className={cx('info')}>
-                                                    <div className={cx('left')}>
-                                                        <Avatar src={item?.track?.image} variant='square' />
-                                                    </div>
-                                                    <div className={cx('right')}>
-                                                        <div className={cx('name')}>
-                                                            <Link
-                                                                className={cx('name-link', {
-                                                                    active: context.context_uri === item?.context_uri,
-                                                                })}
-                                                            >
-                                                                {item?.track?.name}
-                                                            </Link>
-                                                        </div>
-                                                        <div className={cx('artists')}>
-                                                            {item?.track?.artists.map((artist, index) => {
-                                                                return (
-                                                                    <span key={index}>
-                                                                        {index !== 0 ? ', ' : ''}
-                                                                        <Link to={`/artist/${artist.id}`}>
-                                                                            {artist.name}
-                                                                        </Link>
-                                                                    </span>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('album-name')}>
-                                                    <Link
-                                                        className={cx('album-name-link')}
-                                                        to={`/album/${item?.album._id}`}
-                                                    >
-                                                        {item?.album.name}
-                                                    </Link>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('added-date')}>{item?.track?.plays}</div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <Like
-                                                    type='track'
-                                                    trackId={item?.track._id}
-                                                    albumId={item?.album._id}
-                                                />
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('duration')}>
-                                                    {fancyTimeFormat(item?.track.duration)}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left' sx={{ padding: 0 }}>
-                                                <div className={cx('track-menu')}>
-                                                    <TrackMenu
-                                                        trackId={item?.track._id}
-                                                        albumId={item?.album._id}
-                                                        artists={item?.track.artists}
-                                                        context_uri={item?.context_uri}
-                                                        position={item?.position}
-                                                        inPage='album'
-                                                        albumOwnerId={item?.album?.owner?._id}
-                                                    />
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>
-                </section>
-            )}
-
-            {nextTracks.length !== 0 && (
-                <section className={cx('section-container')}>
-                    <div className={cx('heading')}>Next up</div>
-                    <div className={cx('content')}>
-                        <TableContainer
-                            component={Paper}
-                            className={cx('table-container')}
-                            sx={{ overflowX: 'inherit' }}
-                        >
-                            <Table sx={{ minWidth: 650 }} stickyHeader>
-                                <TableBody>
-                                    {nextTracks.map((item, index) => (
-                                        <TableRow
-                                            key={index}
-                                            className={cx('track-container', {
-                                                active: context.context_uri === item?.context_uri,
-                                            })}
-                                            onDoubleClick={() =>
-                                                handlePlayTrack({
-                                                    context_uri: item?.context_uri,
-                                                    position: item?.position,
-                                                })
-                                            }
-                                        >
-                                            <TableCell align='left'>
-                                                <div className={cx('order')}>
-                                                    {context.context_uri === item?.context_uri ? (
-                                                        <IconButton
-                                                            disableRipple
-                                                            onClick={handleTogglePlay}
-                                                            sx={{ padding: 0 }}
-                                                        >
-                                                            {isPlaying ? (
-                                                                <PauseIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            ) : (
-                                                                <PlayArrowIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            )}
-                                                        </IconButton>
-                                                    ) : (
-                                                        <>
-                                                            <IconButton
-                                                                disableRipple
-                                                                onClick={() =>
-                                                                    handlePlayTrack({
-                                                                        context_uri: item?.context_uri,
-                                                                        position: item?.position,
-                                                                    })
-                                                                }
-                                                                className={cx('play-btn')}
-                                                                sx={{ padding: 0 }}
-                                                            >
-                                                                <PlayArrowIcon
-                                                                    className={cx('control')}
-                                                                    sx={{
-                                                                        width: '20px',
-                                                                        height: '20px',
-                                                                        color: 'var(--primary-color)',
-                                                                    }}
-                                                                />
-                                                            </IconButton>
-                                                            <span className={cx('order-number')}>
-                                                                {index + 2 + tracksInQueue.length}
-                                                            </span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left' sx={{ minWidth: '250px', padding: '10px' }}>
-                                                <div className={cx('info')}>
-                                                    <div className={cx('left')}>
-                                                        <Avatar src={item?.track?.image} variant='square' />
-                                                    </div>
-                                                    <div className={cx('right')}>
-                                                        <div className={cx('name')}>
-                                                            <Link
-                                                                className={cx('name-link', {
-                                                                    active: context.context_uri === item?.context_uri,
-                                                                })}
-                                                            >
-                                                                {item?.track?.name}
-                                                            </Link>
-                                                        </div>
-                                                        <div className={cx('artists')}>
-                                                            {item?.track?.artists.map((artist, index) => {
-                                                                return (
-                                                                    <span key={index}>
-                                                                        {index !== 0 ? ', ' : ''}
-                                                                        <Link to={`/artist/${artist.id}`}>
-                                                                            {artist.name}
-                                                                        </Link>
-                                                                    </span>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('album-name')}>
-                                                    <Link
-                                                        className={cx('album-name-link')}
-                                                        to={`/album/${item?.album._id}`}
-                                                    >
-                                                        {item?.album.name}
-                                                    </Link>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('added-date')}>{item?.track?.plays}</div>
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <Like
-                                                    type='track'
-                                                    trackId={item?.track._id}
-                                                    albumId={item?.album._id}
-                                                />
-                                            </TableCell>
-                                            <TableCell align='left'>
-                                                <div className={cx('duration')}>
-                                                    {fancyTimeFormat(item?.track.duration)}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align='left' sx={{ padding: 0 }}>
-                                                <div className={cx('track-menu')}>
-                                                    <TrackMenu
-                                                        trackId={item?.track._id}
-                                                        albumId={item?.album._id}
-                                                        artists={item?.track.artists}
-                                                        context_uri={item?.context_uri}
-                                                        position={item?.position}
-                                                        inPage='album'
-                                                        albumOwnerId={item?.album?.owner?._id}
-                                                    />
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>
-                </section>
-            )} */}
         </div>
     );
 };

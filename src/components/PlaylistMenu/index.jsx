@@ -15,6 +15,7 @@ import { deletePlaylistUrl, togglePublicPlaylistUrl } from '~/api/urls/playlists
 import { useAuth } from '~/hooks';
 import { routes } from '~/config';
 import PlaylistForm from '../Forms/PlaylistForm';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +26,7 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userId } = useAuth();
+    const { t } = useTranslation();
 
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -87,16 +89,16 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
-                                Add to queue
+                                {t('Add to queue')}
                             </div>
                             {playlistOwnerId === userId && (
                                 <>
                                     <Divider />
                                     <div className={cx('menu-item')} onClick={handleOpenPlaylistForm}>
-                                        Edit details
+                                        {t('Edit detail')}
                                     </div>
                                     <div className={cx('menu-item')} onClick={handleTogglePublicOfPlaylist}>
-                                        {isPublic ? 'Private this playlist' : 'Public this playlist'}
+                                        {isPublic ? t('Private this playlist') : t('Public this playlist')}
                                     </div>
                                     <Modal
                                         open={openPlaylistForm}
@@ -127,7 +129,7 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
                                                 component='h2'
                                                 sx={{ mt: 2, mb: 4, fontSize: '2rem' }}
                                             >
-                                                Playlist detail
+                                                {t('Playlist detail')}
                                             </Typography>
                                             <div
                                                 id='modal-playlist-detail-description'
@@ -171,22 +173,22 @@ const PlaylistMenu = ({ tracks, playlistId, playlistOwnerId, isPublic }) => {
                                         onClick={() => {
                                             setAnchorEl(null);
                                             confirmAlert({
-                                                title: 'Confirm to delete this playlist',
+                                                title: t('Confirm to delete this playlist'),
 
-                                                message: 'Are you sure to do this.',
+                                                message: t('Are you sure to do this.'),
                                                 buttons: [
                                                     {
-                                                        label: 'Yes',
+                                                        label: t('Yes'),
                                                         onClick: () => handleDeletePlaylist(),
                                                     },
                                                     {
-                                                        label: 'No',
+                                                        label: t('No'),
                                                     },
                                                 ],
                                             });
                                         }}
                                     >
-                                        Delete this playlist
+                                        {t('Delete this playlist')}
                                     </div>
                                 </>
                             )}

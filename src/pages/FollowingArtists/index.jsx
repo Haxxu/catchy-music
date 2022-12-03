@@ -6,11 +6,13 @@ import styles from './styles.scoped.scss';
 import { getFollowingUsersUrl } from '~/api/urls/me';
 import axiosInstance from '~/api/axiosInstance';
 import UserItem from '~/components/UserItem';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const FollowingArtists = () => {
     const [artists, setArtists] = useState();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,7 +27,7 @@ const FollowingArtists = () => {
     return (
         <div className={cx('container')}>
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Artists</h1>
+                <h1 className={cx('heading')}>{t('Artists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {artists?.length !== 0 &&

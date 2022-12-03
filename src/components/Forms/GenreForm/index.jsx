@@ -12,6 +12,7 @@ import { createGenreUrl, updateGenreUrl, getGenreByIdUrl } from '~/api/urls/genr
 import { routes } from '~/config';
 import TextField from '~/components/Inputs/TextField';
 import FileInput from '~/components/Inputs/FileInput';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +27,7 @@ const GenreForm = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const schema = {
         name: Joi.string()
@@ -79,12 +81,12 @@ const GenreForm = () => {
     return (
         <div className={cx('container')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>{id === 'new-genre' ? 'Add new genre' : 'Edit genre'}</h1>
+                <h1 className={cx('heading')}>{id === 'new-genre' ? t('Add new genre') : t('Edit genre')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField
                             name='name'
-                            label='Genre Name'
+                            label={t('Genre Name')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.name}
@@ -96,7 +98,7 @@ const GenreForm = () => {
                     <div className={cx('input-container')}>
                         <TextField
                             name='description'
-                            label='Description'
+                            label={t('Description')}
                             handleInputState={handleInputState}
                             handleErrorState={handleErrorState}
                             schema={schema.description}
@@ -108,7 +110,7 @@ const GenreForm = () => {
                     <div className={cx('input-container')}>
                         <FileInput
                             name='image'
-                            label='Choose image'
+                            label={t('Choose image')}
                             icon={<ImageIcon />}
                             type='image'
                             value={data.image}
@@ -122,7 +124,7 @@ const GenreForm = () => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        {id === 'new-genre' ? 'Add Genre' : 'Update Genre'}
+                        {id === 'new-genre' ? t('Add Genre') : t('Update Genre')}
                     </Button>
                 </form>
             </Paper>

@@ -9,6 +9,7 @@ import { getSavedPlaylistsUrl } from '~/api/urls/me';
 import { addTrackToPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { toast } from 'react-toastify';
 import { useAuth } from '~/hooks';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -17,6 +18,7 @@ const AddToPlaylistMenu = ({ trackId, albumId }) => {
     const [playlists, setPlaylists] = useState([]);
 
     const { userId } = useAuth();
+    const { t } = useTranslation();
 
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -51,7 +53,7 @@ const AddToPlaylistMenu = ({ trackId, albumId }) => {
     return (
         <div className={cx('container')}>
             <div onClick={handleClick} className={cx('sub-menu')}>
-                <div>Add to playlist</div>
+                <div>{t('Add to playlist')}</div>
                 <ArrowRightRoundedIcon className={cx('icon')} />
             </div>
             <Popper placement='left-start' open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: 9999 }}>

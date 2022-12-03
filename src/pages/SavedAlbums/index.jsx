@@ -6,11 +6,13 @@ import styles from './styles.scoped.scss';
 import AlbumItem from '~/components/AlbumItem';
 import { getSavedAlbumsUrl } from '~/api/urls/me';
 import axiosInstance from '~/api/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const SavedAlbums = () => {
     const [savedAlbums, setSavedAlbums] = useState();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchSavedAlbums = async () => {
@@ -25,7 +27,7 @@ const SavedAlbums = () => {
     return (
         <div className={cx('container')}>
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Albums</h1>
+                <h1 className={cx('heading')}>{t('Albums')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {savedAlbums?.length !== 0 &&

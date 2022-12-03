@@ -18,6 +18,7 @@ import { useAuth } from '~/hooks';
 import { updatePlaylistInSidebarState } from '~/redux/updateStateSlice';
 import unknownPlaylistImage from '~/assets/images/playlist_unknown.jpg';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +31,7 @@ const Sidebar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useTranslation();
 
     const handleCreateNewPlaylist = async () => {
         try {
@@ -73,11 +75,11 @@ const Sidebar = () => {
             <div className={cx('navigation')}>
                 <NavLink className={({ isActive }) => cx('link', { active: isActive })} end to={routes.home}>
                     <HomeIcon />
-                    <span>Home</span>
+                    <span>{t('Home')}</span>
                 </NavLink>
                 <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={routes.search}>
                     <SearchIcon />
-                    <span>Search</span>
+                    <span>{t('Search')}</span>
                 </NavLink>
                 <NavLink
                     className={({ isActive }) =>
@@ -91,15 +93,15 @@ const Sidebar = () => {
                     to={routes.library_home}
                 >
                     <LibraryMusicIcon />
-                    <span>Library</span>
+                    <span>{t('Library')}</span>
                 </NavLink>
                 <div className={cx('create-playlist-btn link')} onClick={handleCreateNewPlaylist}>
                     <AddBoxIcon />
-                    <span>Create playlist</span>
+                    <span>{t('Create playlist')}</span>
                 </div>
                 <NavLink className={({ isActive }) => cx('link', { active: isActive })} to={routes.likedTracks}>
                     <FavoriteIcon />
-                    <span>Liked Tracks</span>
+                    <span>{t('Liked tracks')}</span>
                 </NavLink>
             </div>
             <div className={cx('playlist-container')}>

@@ -51,8 +51,8 @@ const LikedTracksItem = ({ type = 'default', playlist, to }) => {
                                 sx={{ width: '75px', height: '75px' }}
                             />
                             <div className={cx('info')}>
-                                Bài hát yêu thích fdsf asdf sdf sdafsd afsdfsdfsdaf sdf asdf sdafa sdf sdfa dsfas fds
-                                fsdaf asdfads fas fasfa fdsf sdfasd fasdf sadf as <p className={cx('name')} />
+                                Bài hát yêu thích
+                                <p className={cx('name')} />
                             </div>
                         </div>
                     </Link>

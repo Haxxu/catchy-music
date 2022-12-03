@@ -15,6 +15,7 @@ import { removeLikedTrackFromLibraryUrl } from '~/api/urls/me';
 import { updateLikeTrackState, updatePlaylistState, updateQueueState } from '~/redux/updateStateSlice';
 import { removeTrackFromPlaylistUrl } from '~/api/urls/playlistsUrl';
 import { useAuth } from '~/hooks';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -34,6 +35,7 @@ const TrackMenu = ({
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { userId } = useAuth();
+    const { t } = useTranslation();
 
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -112,11 +114,11 @@ const TrackMenu = ({
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
-                                Add to queue
+                                {t('Add to queue')}
                             </div>
                             {inPage === 'queue' && (
                                 <div className={cx('menu-item')} onClick={removeTrackFromQueue}>
-                                    Remove from queue
+                                    {t('Remove from queue')}
                                 </div>
                             )}
                             <div className={cx('menu-item', 'item-have-sub-menu')}>
@@ -124,13 +126,13 @@ const TrackMenu = ({
                             </div>
                             <Divider />
                             <div className={cx('menu-item')} onClick={goToTrackPage}>
-                                Go to track
+                                {t('Go to track')}
                             </div>
                             <div className={cx('menu-item', 'item-have-sub-menu')}>
                                 <GoToArtistMenu artists={artists} />
                             </div>
                             <div className={cx('menu-item')} onClick={goToAlbumPage}>
-                                Go to album
+                                {t('Go to album')}
                             </div>
                             <Divider />
                             {inPage === 'liked-tracks' && (
@@ -138,7 +140,7 @@ const TrackMenu = ({
                                     className={cx('menu-item')}
                                     onClick={() => removeTrackFromLikedTracks(trackId, albumId)}
                                 >
-                                    Remove from your liked tracks
+                                    {t('Remove from your liked tracks')}
                                 </div>
                             )}
                             {inPage === 'playlist' && playlistOwnerId === userId && (
@@ -146,7 +148,7 @@ const TrackMenu = ({
                                     className={cx('menu-item')}
                                     onClick={() => removeTrackFromPlaylist(trackId, albumId)}
                                 >
-                                    Remove track from this playlist
+                                    {t('Remove track from this playlist')}
                                 </div>
                             )}
                         </div>

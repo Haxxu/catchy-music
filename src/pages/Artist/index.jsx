@@ -33,6 +33,7 @@ import AlbumItem from '~/components/AlbumItem';
 import { playTrack, pauseTrack } from '~/api/audioPlayer';
 import { fancyTimeFormat } from '~/utils/Format';
 import Like from '~/components/Like';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -43,6 +44,7 @@ const Artist = () => {
     const dispatch = useDispatch();
     const { userPageState } = useSelector((state) => state.updateState);
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
+    const { t } = useTranslation();
 
     const handlePlayTrack = async (payload) => {
         playTrack(dispatch, payload).catch(console.error);
@@ -83,16 +85,20 @@ const Artist = () => {
                 <div className={cx('info')}>
                     <h2 className={cx('type')}>
                         <VerifiedIcon sx={{ width: '25px', height: '25px', marginRight: '10px' }} color='primary' />
-                        Verified Artist
+                        {t('Verified Artist')}
                     </h2>
                     <span className={cx('name')}>{user?.name}</span>
                     {/* <div className='description'>{album?.description}</div> */}
                     <div className={cx('detail')}>
                         <span className={cx('total-publicPlaylist')}>
-                            {user?.publicPlaylists?.length} Public Playlists
+                            {user?.publicPlaylists?.length} {t('Public Playlists')}
                         </span>
-                        <span className={cx('total')}>{user?.followers?.length} Followers</span>
-                        <span className={cx('total')}>{user?.followings?.length} Following</span>
+                        <span className={cx('total')}>
+                            {user?.followers?.length} {t('Followers')}
+                        </span>
+                        <span className={cx('total')}>
+                            {user?.followings?.length} {t('Following')}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -110,7 +116,7 @@ const Artist = () => {
             </div>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Popular Tracks</h1>
+                <h1 className={cx('heading')}>{t('Popular Tracks')}</h1>
                 <div className={cx('content')}>
                     {user?.popularTracks?.length !== 0 ? (
                         <TableContainer
@@ -122,9 +128,9 @@ const Artist = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align='center'>#</TableCell>
-                                        <TableCell align='left'>Track</TableCell>
-                                        <TableCell align='left'>Album</TableCell>
-                                        <TableCell align='left'>Plays</TableCell>
+                                        <TableCell align='left'>{t('Track')}</TableCell>
+                                        <TableCell align='left'>{t('Album')}</TableCell>
+                                        <TableCell align='left'>{t('Plays')}</TableCell>
                                         <TableCell align='left' />
                                         <TableCell align='left'>
                                             <AccessTimeIcon sx={{ width: '20px', height: '20px' }} />
@@ -295,14 +301,14 @@ const Artist = () => {
                             </Table>
                         </TableContainer>
                     ) : (
-                        <div className={cx('notification')}>Do not have item yet.</div>
+                        <div className={cx('notification')}>{t('Do not have item yet')}.</div>
                     )}
                 </div>
             </section>
 
             {user?.releasedAlbums?.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>New Release Album</h1>
+                    <h1 className={cx('heading')}>{t('New Release Album')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {user?.releasedAlbums?.map((item, index) => (
@@ -317,7 +323,7 @@ const Artist = () => {
 
             {user?.publicPlaylists?.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Public Playlist</h1>
+                    <h1 className={cx('heading')}>{t('Public Playlists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {user?.publicPlaylists?.map((item, index) => (
@@ -332,7 +338,7 @@ const Artist = () => {
 
             {user?.followers?.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Followers</h1>
+                    <h1 className={cx('heading')}>{t('Followers')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {user?.followers?.map((item, index) => (
@@ -352,7 +358,7 @@ const Artist = () => {
 
             {user?.followings?.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Following</h1>
+                    <h1 className={cx('heading')}>{t('Following')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {user?.followings?.map((item, index) => (

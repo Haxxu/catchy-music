@@ -31,6 +31,7 @@ import TrackMenu from '~/components/TrackMenu';
 import { playTrack, pauseTrack } from '~/api/audioPlayer';
 import { fancyTimeFormat } from '~/utils/Format';
 import Like from '~/components/Like';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -44,6 +45,7 @@ const SearchResults = ({ searchInput }) => {
 
     const { context, isPlaying } = useSelector((state) => state.audioPlayer);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handlePlayTrack = async (payload) => {
         playTrack(dispatch, payload).catch(console.error);
@@ -91,11 +93,15 @@ const SearchResults = ({ searchInput }) => {
 
     return (
         <div className={cx('container')}>
-            {searchInput.trim() !== '' && <div className={cx('heading')}>Search results: {searchInput}</div>}
+            {searchInput.trim() !== '' && (
+                <div className={cx('heading')}>
+                    {t('Search results:')} {searchInput}
+                </div>
+            )}
 
             {tracks.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Top Tracks</h1>
+                    <h1 className={cx('heading')}>{t('Top Tracks')}</h1>
                     <div className={cx('content')}>
                         <TableContainer
                             component={Paper}
@@ -284,7 +290,7 @@ const SearchResults = ({ searchInput }) => {
 
             {artists.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Artists</h1>
+                    <h1 className={cx('heading')}>{t('Artists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {artists?.map((item, index) => (
@@ -304,7 +310,7 @@ const SearchResults = ({ searchInput }) => {
 
             {albums.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Albums</h1>
+                    <h1 className={cx('heading')}>{t('Albums')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {albums?.length !== 0 &&
@@ -320,7 +326,7 @@ const SearchResults = ({ searchInput }) => {
 
             {playlists.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Playlists</h1>
+                    <h1 className={cx('heading')}>{t('Playlists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {playlists?.length !== 0 &&
@@ -336,7 +342,7 @@ const SearchResults = ({ searchInput }) => {
 
             {users.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Users Profile</h1>
+                    <h1 className={cx('heading')}>{t('Users Profile')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {users?.map((item, index) => (

@@ -174,5 +174,101 @@
     "Edit Profile": "Edit Profile",
     "Date of birth": "Date of birth",
     "Gender": "Gender",
-    "Update Profile": "Update Profile"
+    "Update Profile": "Update Profile",
+
+    "Add to playlist": "Add to playlist",
+    "Add to queue": "Add to queue",
+    "FOLLOWING": "FOLLOWING",
+    "FOLLOW": "FOLLOW",
+
+    "About Catchy Music": "About Catchy Music",
+    "Catchy Music is a music website that can give user interested experience": "Catchy Music is a music website that can give user interested experience",
+    "Other": "Other",
+    "About Us": "About Us",
+    "Contact Us": "Contact Us",
+    "Privacy Policy": "Privacy Policy",
+
+    "Powered By": "Powered By",
+    "Copyright by": "Copyright by",
+    "Edit genre": "Edit genre",
+    "Genre Name": "Genre Name",
+    "Add Genre": "Add Genre",
+    "Update Genre": "Update Genre",
+
+    "Edit Playlist": "Edit Playlist",
+    "Update playlist": "Update playlist",
+
+    "Search genre": "Search genre",
+    "Search artist": "Search artist",
+
+    "Logout": "Logout",
+
+    "Home": "Home",
+    "Profile": "Profile",
+    "Dashboard": "Dashboard",
+    "Settings": "Settings",
+    "Edit detail": "Edit detail",
+    "Private this playlist": "Private this playlist",
+    "Public this playlist": "Public this playlist",
+    "Delete this playlist": "Delete this playlist",
+
+    "Search results:": "Search results:",
+    "Top Tracks": "Top Tracks",
+    "Users Profile": "Users Profile",
+
+    "Search": "Search",
+    "Library": "Library",
+    "Create playlist": "Create playlist",
+    "Liked Tracks": "Liked Tracks",
+
+    "Remove from queue": "Remove from queue",
+    "Go to track": "Go to track",
+    "Go to album": "Go to album",
+    "Remove from your liked tracks": "Remove from your liked tracks",
+    "Remove track from this playlist": "Remove track from this playlist",
+
+    "SINGLE": "SINGLE",
+    "ALBUM": "ALBUM",
+    "likes": "likes",
+    "tracks": "tracks",
+    "Total time": "Total time",
+    "Track": "Track",
+    "Added Date": "Added Date",
+    "Do not have item yet": "Do not have item yet",
+
+    "More albums of": "More albums of",
+
+    "Verified Artist": "Verified Artist",
+    "Public Playlists": "Public Playlists",
+    "Following": "Following",
+    "Popular Tracks": "Popular Tracks",
+
+    "New Release Album": "New Release Album",
+    "Liked tracks": "Liked tracks",
+    "Recommend Playlists": "Recommend Playlists",
+    "Popular Playlists": "Popular Playlists",
+    "Popular Albums": "Popular Albums",
+
+    "Good Morning": "Good Morning",
+    "Good Afternoon": "Good Afternoon",
+    "Good Evening": "Good Evening",
+    "New Release Albums": "New Release Albums",
+    "Discover New Playlists": "Discover New Playlists",
+    "Discover New Albums": "Discover New Albums",
+    "Saved Playlists": "Saved Playlists",
+    "PLAYLIST": "PLAYLIST",
+
+    "Song not update lyrics yet": "Song not update lyrics yet",
+
+    "Now playing": "Now playing",
+    "Queue": "Queue",
+    "Next in queue": "Next in queue",
+    "Clear queue": "Clear queue",
+    "Next up": "Next up",
+
+    "Browse All": "Browse All",
+    "What do you want to listen to?": "What do you want to listen to?",
+
+    "TRACK": "TRACK",
+    "PROFILE": "PROFILE"
 }

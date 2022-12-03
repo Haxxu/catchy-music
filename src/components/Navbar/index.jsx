@@ -7,14 +7,21 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
+import { routes } from '~/config';
+import HomeIcon from '@mui/icons-material/Home';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import SettingsIcon from '@mui/icons-material/Settings';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined';
 
 import DarkModeToggle from '~/components/DarkMode/DarkModeToggle';
-import { menuOptions } from './config';
+// import { menuOptions } from './config';
 import useAuth from '~/hooks/useAuth';
 import { logout } from '~/redux/authSlice';
 import axiosInstance from '~/api/axiosInstance';
 import styles from './styles.module.scss';
 import { getCurrentUserProfileUrl } from '~/api/urls/me';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +33,40 @@ const Navbar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userProfileState } = useSelector((state) => state.updateState);
+    const { t } = useTranslation();
+
+    const menuOptions = [
+        {
+            title: t('Home'),
+            path: routes.home,
+            icon: <HomeIcon fontSize='large' />,
+            roles: ['admin', 'artist', 'user'],
+        },
+        {
+            title: t('Profile'),
+            path: routes.profile,
+            icon: <AccountBoxIcon fontSize='large' />,
+            roles: ['admin', 'artist', 'user'],
+        },
+        {
+            title: t('Dashboard'),
+            path: routes.admin_dashboard,
+            icon: <AdminPanelSettingsIcon fontSize='large' />,
+            roles: ['admin'],
+        },
+        {
+            title: t('Dashboard'),
+            path: routes.artist_dashboard,
+            icon: <DashboardCustomizeOutlinedIcon fontSize='large' />,
+            roles: ['artist'],
+        },
+        {
+            title: t('Settings'),
+            path: routes.settings,
+            icon: <SettingsIcon fontSize='large' />,
+            roles: ['admin', 'artist', 'user'],
+        },
+    ];
 
     const toggleProfileMenu = () => {
         setProfileMenu((prev) => !prev);
@@ -107,7 +148,7 @@ const Navbar = () => {
                                         <span className={cx('icon')}>
                                             <LogoutIcon fontSize='large' />
                                         </span>{' '}
-                                        Logout
+                                        {t('Logout')}
                                     </div>
                                 </div>
                             </div>

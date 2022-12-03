@@ -7,11 +7,14 @@ import PlaylistItem from '~/components/PlaylistItem';
 import { useEffect } from 'react';
 import { getSavedPlaylistsUrl } from '~/api/urls/me';
 import axiosInstance from '~/api/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const SavedPlaylists = () => {
     const [savedPlaylists, setSavedPlaylists] = useState();
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchSavedPlaylists = async () => {
@@ -26,7 +29,7 @@ const SavedPlaylists = () => {
     return (
         <div className={cx('container')}>
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Playlists</h1>
+                <h1 className={cx('heading')}>{t('Playlists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {savedPlaylists?.length !== 0 &&

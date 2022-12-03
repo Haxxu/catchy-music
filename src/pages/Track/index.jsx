@@ -15,6 +15,7 @@ import Like from '~/components/Like';
 import { fancyTimeFormat } from '~/utils/Format';
 import unknownPlaylistImg from '~/assets/images/playlist_unknown.jpg';
 import { getTrackByIdUrl } from '~/api/urls/tracksUrls';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -24,6 +25,7 @@ const Track = () => {
 
     const { id, albumId } = useParams();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handleTogglePlay = async () => {
         if (isPlaying) {
@@ -60,7 +62,7 @@ const Track = () => {
                     />
                 </div>
                 <div className={cx('info')}>
-                    <h2 className={cx('type')}>TRACK</h2>
+                    <h2 className={cx('type')}>{t('TRACK')}</h2>
                     <span className={cx('name')}>{track?.name}</span>
                     {/* <div className='description'>{album?.description}</div> */}
                     <div className={cx('detail')}>
@@ -74,7 +76,9 @@ const Track = () => {
                                 </Link>
                             </span>
                         ))}
-                        <span className={cx('total-saved')}>{track?.saved} likes</span>
+                        <span className={cx('total-saved')}>
+                            {track?.saved} {t('likes')}
+                        </span>
                         <span className={cx('total-time')}>{fancyTimeFormat(track?.duration)}</span>
                     </div>
                 </div>
@@ -125,7 +129,7 @@ const Track = () => {
             <div className={cx('content')}>
                 {track?.lyrics?.length !== 0 && (
                     <div className={cx('lyrics')}>
-                        <h3 className={cx('heading')}>Lyrics</h3>
+                        <h3 className={cx('heading')}>{t('Lyrics')}</h3>
                         {track?.lyrics[0]?.content?.split('\n').map((item, index) => (
                             <h5 className={cx('sentence')} key={index}>
                                 {item}
@@ -134,7 +138,7 @@ const Track = () => {
                     </div>
                 )}
                 <div className={cx('artist-container')}>
-                    <h3 className={cx('heading')}>Artists</h3>
+                    <h3 className={cx('heading')}>{t('Artists')}</h3>
                     <Grid container spacing={2}>
                         {track?.artists?.map((item, index) => (
                             <Grid item xs={12} key={index}>
@@ -154,7 +158,9 @@ const Track = () => {
                 <>
                     {track?.artists?.map((artist, index) => (
                         <section className={cx('section-container')} key={index}>
-                            <h1 className={cx('heading')}>More albums of {artist?.name}</h1>
+                            <h1 className={cx('heading')}>
+                                {t('More albums of')} {artist?.name}
+                            </h1>
                             <div className={cx('section-content')}>
                                 <Grid container spacing={2}>
                                     {artist?.popularAlbums?.length !== 0 &&

@@ -7,11 +7,15 @@ import { toast } from 'react-toastify';
 import styles from './styles.module.scss';
 import axiosInstance from '~/api/axiosInstance';
 import { addItemsToQueueUrl } from '~/api/urls/me';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const AlbumMenu = ({ tracks, albumId, albumOwnerId }) => {
     const [anchorEl, setAnchorEl] = useState(null);
+
+    const { t } = useTranslation();
+
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
     };
@@ -42,7 +46,7 @@ const AlbumMenu = ({ tracks, albumId, albumOwnerId }) => {
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={addTrackToQueue}>
-                                Add to queue
+                                {t('Add to queue')}
                             </div>
                         </div>
                     </Paper>

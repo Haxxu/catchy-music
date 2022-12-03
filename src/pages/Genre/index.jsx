@@ -9,12 +9,14 @@ import UserItem from '~/components/UserItem';
 import PlaylistItem from '~/components/PlaylistItem';
 import axiosInstance from '~/api/axiosInstance';
 import { getGenreByIdUrl } from '~/api/urls/genresUrl';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const Genre = () => {
     const [genre, setGenre] = useState(null);
     const { id } = useParams();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,11 +29,11 @@ const Genre = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('heading')}>Hip Hop</div>
+            <div className={cx('heading')}>{genre?.name}</div>
 
             {genre && genre?.newReleaseAlbums.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Albums</h1>
+                    <h1 className={cx('heading')}>{t('Albums')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {genre?.newReleaseAlbums?.length !== 0 &&
@@ -47,7 +49,7 @@ const Genre = () => {
 
             {genre && genre?.artists.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Artists</h1>
+                    <h1 className={cx('heading')}>{t('Artists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {genre?.artists?.map((item, index) => (
@@ -67,7 +69,7 @@ const Genre = () => {
 
             {genre && genre?.recommendPlaylists.length !== 0 && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Recommend Playlists</h1>
+                    <h1 className={cx('heading')}>{t('Recommend Playlists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {genre?.recommendPlaylists?.length !== 0 &&
@@ -83,7 +85,7 @@ const Genre = () => {
 
             {genre && genre?.popularAlbums.length !== 0 && genre && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Albums</h1>
+                    <h1 className={cx('heading')}>{t('Popular Albums')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {genre?.popularAlbums?.length !== 0 &&
@@ -99,7 +101,7 @@ const Genre = () => {
 
             {genre && genre?.popularPlaylists.length !== 0 && genre && (
                 <section className={cx('section-container')}>
-                    <h1 className={cx('heading')}>Recommend Playlists</h1>
+                    <h1 className={cx('heading')}>{t('Popular Playlists')}</h1>
                     <div className={cx('section-content')}>
                         <Grid container spacing={2}>
                             {genre?.popularPlaylists?.length !== 0 &&

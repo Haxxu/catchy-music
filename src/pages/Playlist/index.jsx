@@ -31,6 +31,7 @@ import TrackMenu from '~/components/TrackMenu';
 import { getPlaylistByIdUrl } from '~/api/urls/playlistsUrl';
 import unknownPlaylistImg from '~/assets/images/playlist_unknown.jpg';
 import PlaylistMenu from '~/components/PlaylistMenu';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -41,6 +42,7 @@ const Playlist = () => {
     const { id } = useParams();
     const { userId } = useAuth();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handleTogglePlay = async () => {
         if (isPlaying) {
@@ -86,17 +88,21 @@ const Playlist = () => {
                     />
                 </div>
                 <div className={cx('info')}>
-                    <h2 className={cx('type')}>PLAYLIST</h2>
+                    <h2 className={cx('type')}>{t('PLAYLIST')}</h2>
                     <span className={cx('name')}>{playlist?.name}</span>
                     <div className='description'>{playlist?.description}</div>
                     <div className={cx('detail')}>
                         <Link to={`/${playlist?.owner?.type}/${playlist?.owner?._id}`} className={cx('owner-name')}>
                             {playlist?.owner?.name}
                         </Link>
-                        <span className={cx('total-saved')}>{playlist?.saved} likes</span>
-                        <span className={cx('total-tracks')}>{playlist?.tracks?.length} tracks. </span>
+                        <span className={cx('total-saved')}>
+                            {playlist?.saved} {t('likes')}
+                        </span>
+                        <span className={cx('total-tracks')}>
+                            {playlist?.tracks?.length} {t('tracks')}.{' '}
+                        </span>
                         <span className={cx('total-time')}>
-                            Total time:{' '}
+                            {t('Total time')}:{' '}
                             {fancyTimeFormat(playlist?.tracks?.reduce((sum, item) => sum + item.track.duration, 0))}
                         </span>
                     </div>
@@ -160,9 +166,9 @@ const Playlist = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align='center'>#</TableCell>
-                                    <TableCell align='left'>Track</TableCell>
-                                    <TableCell align='left'>Album</TableCell>
-                                    <TableCell align='left'>Added Date</TableCell>
+                                    <TableCell align='left'>{t('Track')}</TableCell>
+                                    <TableCell align='left'>{t('Album')}</TableCell>
+                                    <TableCell align='left'>{t('Added Date')}</TableCell>
                                     <TableCell align='left' />
                                     <TableCell align='left'>
                                         <AccessTimeIcon sx={{ width: '20px', height: '20px' }} />
@@ -333,7 +339,7 @@ const Playlist = () => {
                         </Table>
                     </TableContainer>
                 ) : (
-                    <div className={cx('notification')}>Do not have item yet.</div>
+                    <div className={cx('notification')}>{t('Do not have item yet')}.</div>
                 )}
             </div>
         </div>

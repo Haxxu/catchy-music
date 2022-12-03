@@ -85,7 +85,7 @@ const PlaylistForm = ({ customStyles, handleClose }) => {
     return (
         <div className={cx('container')}>
             <Paper className={cx('form-container')}>
-                <h1 className={cx('heading')}>Edit Playlist</h1>
+                <h1 className={cx('heading')}>{t('Edit Playlist')}</h1>
                 <form onSubmit={handleSubmit}>
                     <div className={cx('input-container')}>
                         <TextField
@@ -133,7 +133,7 @@ const PlaylistForm = ({ customStyles, handleClose }) => {
                         type='submit'
                         sx={{ marginTop: '2rem', fontSize: '1.4rem', fontWeight: 700 }}
                     >
-                        Update playlist
+                        {t('Update playlist')}
                     </Button>
                 </form>
             </Paper>

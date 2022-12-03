@@ -7,11 +7,13 @@ import ClearIcon from '@mui/icons-material/Clear';
 import styles from './styles.scoped.scss';
 import GenreList from '~/components/GenreList';
 import SearchResults from '~/components/SearchResults';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const Search = () => {
     const [searchInput, setSearchInput] = useState('');
+    const { t } = useTranslation();
 
     const searchInputRef = useRef();
 
@@ -23,7 +25,7 @@ const Search = () => {
                 </IconButton>
                 <input
                     type='text'
-                    placeholder='What do you want to listen to?'
+                    placeholder={t('What do you want to listen to?')}
                     value={searchInput}
                     ref={searchInputRef}
                     onChange={() => setSearchInput(searchInputRef.current.value)}
@@ -37,7 +39,7 @@ const Search = () => {
             <div className={cx('data-container')}>
                 <SearchResults searchInput={searchInput} />
                 <div className={cx('genres')}>
-                    <div className={cx('heading')}>Browse All</div>
+                    <div className={cx('heading')}>{t('Browse All')}</div>
                     <GenreList />
                 </div>
                 {/* <div className={cx('genres', { hide: searchInput.trim() !== '' })}>

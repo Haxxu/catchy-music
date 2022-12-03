@@ -5,12 +5,14 @@ import { useSelector } from 'react-redux';
 import styles from './styles.scoped.scss';
 import { getLyricsOfTrack } from '~/api/urls/tracksUrls';
 import axiosInstance from '~/api/axiosInstance';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const Lyrics = () => {
     const { context } = useSelector((state) => state.audioPlayer);
     const [lyrics, setLyrics] = useState([]);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,7 +25,7 @@ const Lyrics = () => {
 
     return (
         <div className={cx('container')}>
-            <div className={cx('heading')}>Lyrics</div>
+            <div className={cx('heading')}>{t('Lyrics')}</div>
             {lyrics.length !== 0 ? (
                 <div className={cx('lyrics')}>
                     {lyrics[0]?.content?.split('\n').map((item, index) => (
@@ -33,7 +35,7 @@ const Lyrics = () => {
                     ))}
                 </div>
             ) : (
-                <div className={cx('notification')}>Song not update lyrics yet</div>
+                <div className={cx('notification')}>{t('Song not update lyrics yet')}</div>
             )}
         </div>
     );

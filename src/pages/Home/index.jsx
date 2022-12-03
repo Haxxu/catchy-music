@@ -10,6 +10,7 @@ import axiosInstance from '~/api/axiosInstance';
 import { getPlaylistsByTagsUrl } from '~/api/urls/playlistsUrl';
 import { getSavedPlaylistsUrl } from '~/api/urls/me';
 import { getAlbumsByTagsUrl } from '~/api/urls/albumsUrl';
+import { useTranslation } from 'react-i18next';
 const cx = classNames.bind(styles);
 
 const Home = () => {
@@ -21,16 +22,18 @@ const Home = () => {
     const [newReleaseAlbums, setNewReleaseAlbums] = useState([]);
     const [randomAlbums, setRandomAlbums] = useState([]);
 
+    const { t } = useTranslation();
+
     const hiToUser = () => {
         var today = new Date();
         var curHr = today.getHours();
 
         if (curHr < 12) {
-            return 'Good Morning';
+            return t('Good Morning');
         } else if (curHr < 18) {
-            return 'Good Afternoon';
+            return t('Good Afternoon');
         } else {
-            return 'Good Evening';
+            return t('Good Evening');
         }
     };
 
@@ -120,7 +123,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>New Release Albums</h1>
+                <h1 className={cx('heading')}>{t('New Release Albums')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {newReleaseAlbums?.length !== 0 &&
@@ -134,7 +137,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Popular Playlists</h1>
+                <h1 className={cx('heading')}>{t('Popular Playlists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {popularPlaylists?.length !== 0 &&
@@ -148,7 +151,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Recommend Playlists</h1>
+                <h1 className={cx('heading')}>{t('Recommend Playlists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {recommendPlaylists?.length !== 0 &&
@@ -162,7 +165,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Discover New Playlists</h1>
+                <h1 className={cx('heading')}>{t('Discover New Playlists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {randomPlaylists?.length !== 0 &&
@@ -176,7 +179,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Discover New Albums</h1>
+                <h1 className={cx('heading')}>{t('Discover New Albums')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {randomAlbums?.length !== 0 &&
@@ -190,7 +193,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Popular Albums</h1>
+                <h1 className={cx('heading')}>{t('Popular Albums')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {popularAlbums?.length !== 0 &&
@@ -204,7 +207,7 @@ const Home = () => {
             </section>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>Saved Playlists</h1>
+                <h1 className={cx('heading')}>{t('Saved Playlists')}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {savedPlaylists?.length !== 0 &&

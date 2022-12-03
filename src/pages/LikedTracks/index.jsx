@@ -30,6 +30,7 @@ import { updateTrack } from '~/redux/audioPlayerSlice';
 import Like from '~/components/Like';
 import { timeAgoFormat, fancyTimeFormat } from '~/utils/Format';
 import TrackMenu from '~/components/TrackMenu';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -40,6 +41,7 @@ const LikedTracks = () => {
 
     const { userId, name } = useAuth();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handleTogglePlay = async () => {
         if (isPlaying) {
@@ -78,8 +80,8 @@ const LikedTracks = () => {
                     <FavoriteIcon sx={{ width: '80px', height: '80px' }} />
                 </div>
                 <div className={cx('info')}>
-                    <h2 className={cx('type')}>PLAYLIST</h2>
-                    <span className={cx('name')}>Liked Tracks</span>
+                    <h2 className={cx('type')}>{t('PLAYLIST')}</h2>
+                    <span className={cx('name')}>{t('Liked Tracks')}</span>
                     {/* <div className='description'>
                         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam quis eos ipsam dicta veritatis
                         rem porro odit eligendi molestiae pariatur, blanditiis numquam adipisci voluptatibus velit quos
@@ -89,9 +91,11 @@ const LikedTracks = () => {
                         <Link to={`/user/${userId}`} className={cx('owner-name')}>
                             {name}
                         </Link>
-                        <span className={cx('total-tracks')}>{likedTracks?.length} tracks</span>
+                        <span className={cx('total-tracks')}>
+                            {likedTracks?.length} {t('tracks')}
+                        </span>
                         <span className={cx('total-time')}>
-                            Total time:{' '}
+                            {t('Total time')}:{' '}
                             {fancyTimeFormat(likedTracks?.reduce((sum, item) => sum + item.track.duration, 0))}
                         </span>
                     </div>
@@ -141,9 +145,9 @@ const LikedTracks = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align='center'>#</TableCell>
-                                    <TableCell align='left'>Track</TableCell>
-                                    <TableCell align='left'>Album</TableCell>
-                                    <TableCell align='left'>Added Date</TableCell>
+                                    <TableCell align='left'>{t('Track')}</TableCell>
+                                    <TableCell align='left'>{t('Album')}</TableCell>
+                                    <TableCell align='left'>{t('Added Date')}</TableCell>
                                     <TableCell align='left' />
                                     <TableCell align='left'>
                                         <AccessTimeIcon sx={{ width: '20px', height: '20px' }} />
@@ -312,7 +316,7 @@ const LikedTracks = () => {
                         </Table>
                     </TableContainer>
                 ) : (
-                    <div className={cx('notification')}>Do not have item yet</div>
+                    <div className={cx('notification')}>{t('Do not have item yet')}</div>
                 )}
             </div>
         </div>

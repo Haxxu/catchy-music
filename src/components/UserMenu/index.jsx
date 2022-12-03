@@ -6,12 +6,15 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from './styles.module.scss';
 import { routes } from '~/config';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const UserMenu = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+
+    const { t } = useTranslation();
 
     const handleClick = (e) => {
         setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -35,7 +38,7 @@ const UserMenu = () => {
                     <Paper className={cx('menu-container')}>
                         <div className={cx('menu-list')}>
                             <div className={cx('menu-item')} onClick={editProfile}>
-                                Edit Profile
+                                {t('Edit Profile')}
                             </div>
                         </div>
                     </Paper>

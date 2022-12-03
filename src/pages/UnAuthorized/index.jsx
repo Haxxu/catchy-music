@@ -26,7 +26,7 @@ const UnAuthorized = () => {
                     </p>
                 </div>
                 <div className={cx('navigation')}>
-                    <CustomButton onClick={() => goBack()}>Go Back</CustomButton>
+                    <CustomButton onClick={() => goBack()}>{t('Go Back')}</CustomButton>
                 </div>
             </div>
             <div className={cx('right')}>

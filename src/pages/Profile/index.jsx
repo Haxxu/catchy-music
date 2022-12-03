@@ -49,6 +49,7 @@ const Profile = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const handleInputState = (name, value) => {
         setData((prev) => ({ ...prev, [name]: value }));
     };

@@ -34,6 +34,7 @@ import unknownPlaylistImg from '~/assets/images/playlist_unknown.jpg';
 import { getAlbumByIdUrl } from '~/api/urls/albumsUrl';
 import { getArtistAlbumsUrl } from '~/api/urls/artistsUrl';
 import AlbumMenu from '~/components/AlbumMenu';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
@@ -45,6 +46,7 @@ const Album = () => {
     const { id } = useParams();
     const { userId } = useAuth();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const handleTogglePlay = async () => {
         if (isPlaying) {
@@ -98,7 +100,7 @@ const Album = () => {
                     />
                 </div>
                 <div className={cx('info')}>
-                    <h2 className={cx('type')}>{album?.type === 'single' ? 'SINGLE' : 'ALBUM'}</h2>
+                    <h2 className={cx('type')}>{album?.type === 'single' ? t('SINGLE') : t('ALBUM')}</h2>
                     <span className={cx('name')}>{album?.name}</span>
                     {/* <div className='description'>{album?.description}</div> */}
                     <div className={cx('detail')}>
@@ -106,10 +108,14 @@ const Album = () => {
                             {album?.owner?.name}
                         </Link>
                         <span className={cx('year')}>{album?.year}</span>
-                        <span className={cx('total-saved')}>{album?.saved} likes</span>
-                        <span className={cx('total-tracks')}>{album?.tracks?.length} tracks. </span>
+                        <span className={cx('total-saved')}>
+                            {album?.saved} {t('likes')}
+                        </span>
+                        <span className={cx('total-tracks')}>
+                            {album?.tracks?.length} {t('tracks')}.{' '}
+                        </span>
                         <span className={cx('total-time')}>
-                            Total time:{' '}
+                            {t('Total time')}:{' '}
                             {fancyTimeFormat(album?.tracks?.reduce((sum, item) => sum + item.track.duration, 0))}
                         </span>
                     </div>
@@ -168,8 +174,8 @@ const Album = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align='center'>#</TableCell>
-                                    <TableCell align='left'>Track</TableCell>
-                                    <TableCell align='left'>Added Date</TableCell>
+                                    <TableCell align='left'>{t('Track')}</TableCell>
+                                    <TableCell align='left'>{t('Added Date')}</TableCell>
                                     <TableCell align='left' />
                                     <TableCell align='left'>
                                         <AccessTimeIcon sx={{ width: '20px', height: '20px' }} />
@@ -325,12 +331,12 @@ const Album = () => {
                         </Table>
                     </TableContainer>
                 ) : (
-                    <div className={cx('notification')}>Do not have item yet.</div>
+                    <div className={cx('notification')}>{t('Do not have item yet')}.</div>
                 )}
             </div>
 
             <section className={cx('section-container')}>
-                <h1 className={cx('heading')}>More albums of {album?.owner?.name}</h1>
+                <h1 className={cx('heading')}> {album?.owner?.name}</h1>
                 <div className={cx('section-content')}>
                     <Grid container spacing={2}>
                         {moreAlbums?.length !== 0 &&

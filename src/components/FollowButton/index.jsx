@@ -8,6 +8,7 @@ import axiosInstance from '~/api/axiosInstance';
 import { followUserUrl, unfollowUserUrl, checkFollowingUserUrl } from '~/api/urls/me';
 import { updateUserPageState } from '~/redux/updateStateSlice';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 // const cx = classNames.bind(styles);
 
@@ -15,6 +16,8 @@ const FollowButton = ({ userId }) => {
     const [following, setFollowing] = useState(false);
 
     const dispatch = useDispatch();
+
+    const { t } = useTranslation();
 
     const handleFollow = async () => {
         try {
@@ -53,7 +56,7 @@ const FollowButton = ({ userId }) => {
             variant='outlined'
             onClick={handleFollow}
         >
-            {following ? 'FOLLOWING' : 'FOLLOW'}
+            {following ? t('FOLLOWING') : t('FOLLOW')}
         </Button>
     );
 };

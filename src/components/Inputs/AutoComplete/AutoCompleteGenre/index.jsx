@@ -5,12 +5,15 @@ import classNames from 'classnames/bind';
 import { getGenresUrl } from '~/api/urls/genresUrl';
 import axiosInstance from '~/api/axiosInstance';
 import styles from './styles.scoped.scss';
+import { useTranslation } from 'react-i18next';
 
 const cx = classNames.bind(styles);
 
 const AutoCompleteGenre = ({ genres, handleInputState, label }) => {
     const [value, setValue] = useState([]);
     const [detailGenres, setDetailGenres] = useState([]);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,7 +49,7 @@ const AutoCompleteGenre = ({ genres, handleInputState, label }) => {
                     <TextField
                         {...params}
                         variant='outlined'
-                        placeholder='Search genre'
+                        placeholder={t('Search genre')}
                         sx={{
                             '& input': {
                                 fontSize: '1.5rem',
