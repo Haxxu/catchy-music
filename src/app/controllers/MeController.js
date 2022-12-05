@@ -7,9 +7,14 @@ const { Track } = require('../models/Track');
 class MeController {
     // Get current user profile
     async getCurrentUserProfile(req, res, next) {
-        const user = await User.findOne({ _id: req.user._id }).select('-password -__v');
+        try {
+            const user = await User.findOne({ _id: req.user._id }).select('-password -__v');
 
-        res.status(200).send({ data: user, message: 'Get user profile successfully' });
+            return res.status(200).send({ data: user, message: 'Get user profile successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Check saved playlist
@@ -40,26 +45,31 @@ class MeController {
 
     // Get liked tracks
     async getLikedTracks(req, res, next) {
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Library not found' });
+        try {
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Library not found' });
+            }
+
+            async function getLikedTrack(item, index) {
+                const track = await Track.findOne({ _id: item.track });
+                const album = await Album.findOne({ _id: item.album });
+                return {
+                    track: track,
+                    album: album,
+                    addedAt: item.addedAt,
+                    context_uri: 'liked' + ':' + library._id.toString() + ':' + item.track + ':' + item.album,
+                    position: index,
+                };
+            }
+
+            const likedTracks = await Promise.all(library.likedTracks.map(getLikedTrack));
+
+            return res.status(200).send({ data: likedTracks, message: 'Get liked tracks successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        async function getLikedTrack(item, index) {
-            const track = await Track.findOne({ _id: item.track });
-            const album = await Album.findOne({ _id: item.album });
-            return {
-                track: track,
-                album: album,
-                addedAt: item.addedAt,
-                context_uri: 'liked' + ':' + library._id.toString() + ':' + item.track + ':' + item.album,
-                position: index,
-            };
-        }
-
-        const likedTracks = await Promise.all(library.likedTracks.map(getLikedTrack));
-
-        res.status(200).send({ data: likedTracks, message: 'Get liked tracks successfully' });
     }
 
     // Check following user
@@ -109,64 +119,74 @@ class MeController {
 
     // Follow user or arist
     async followUser(req, res, next) {
-        if (req.body.user === req.user._id) {
-            return res.status(404).send({ message: 'Cannot perform this action' });
-        }
+        try {
+            if (req.body.user === req.user._id) {
+                return res.status(404).send({ message: 'Cannot perform this action' });
+            }
 
-        const userFollowLibrary = await Library.findOne({ owner: req.body.user });
-        if (!userFollowLibrary) {
-            return res.status(404).send({ message: 'User does not exist' });
-        }
+            const userFollowLibrary = await Library.findOne({ owner: req.body.user });
+            if (!userFollowLibrary) {
+                return res.status(404).send({ message: 'User does not exist' });
+            }
 
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
 
-        const index = library.followings.map((item) => item.user).indexOf(req.body.user);
-        if (index === -1) {
-            library.followings.push({
-                user: req.body.user,
-                addedAt: Date.now(),
-            });
-            userFollowLibrary.followers.push({
-                user: req.user._id,
-                addedAt: Date.now(),
-            });
-        }
-        await library.save();
-        await userFollowLibrary.save();
+            const index = library.followings.map((item) => item.user).indexOf(req.body.user);
+            if (index === -1) {
+                library.followings.push({
+                    user: req.body.user,
+                    addedAt: Date.now(),
+                });
+                userFollowLibrary.followers.push({
+                    user: req.user._id,
+                    addedAt: Date.now(),
+                });
+            }
+            await library.save();
+            await userFollowLibrary.save();
 
-        res.status(200).send({ message: 'Follow user or artist successfully' });
+            return res.status(200).send({ message: 'Follow user or artist successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Unfollow user or arist
     async unfollowUser(req, res, next) {
-        if (req.body.user === req.user._id) {
-            return res.status(404).send({ message: 'Cannot perform this action' });
+        try {
+            if (req.body.user === req.user._id) {
+                return res.status(404).send({ message: 'Cannot perform this action' });
+            }
+
+            const userFollowLibrary = await Library.findOne({ owner: req.body.user });
+            if (!userFollowLibrary) {
+                return res.status(404).send({ message: 'User does not exist' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const indexFollowing = library.followings.map((item) => item.user).indexOf(req.body.user);
+            if (indexFollowing !== -1) {
+                library.followings.splice(indexFollowing, 1);
+                const indexFollower = userFollowLibrary.followers.map((item) => item.user).indexOf(req.user._id);
+                userFollowLibrary.followers.splice(indexFollower, 1);
+            }
+
+            await library.save();
+            await userFollowLibrary.save();
+
+            return res.status(200).send({ message: 'Unfollow user or artist successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const userFollowLibrary = await Library.findOne({ owner: req.body.user });
-        if (!userFollowLibrary) {
-            return res.status(404).send({ message: 'User does not exist' });
-        }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const indexFollowing = library.followings.map((item) => item.user).indexOf(req.body.user);
-        if (indexFollowing !== -1) {
-            library.followings.splice(indexFollowing, 1);
-            const indexFollower = userFollowLibrary.followers.map((item) => item.user).indexOf(req.user._id);
-            userFollowLibrary.followers.splice(indexFollower, 1);
-        }
-
-        await library.save();
-        await userFollowLibrary.save();
-
-        res.status(200).send({ message: 'Unfollow user or artist successfully' });
     }
 
     // Check saved albums
@@ -235,60 +255,70 @@ class MeController {
 
     // Save album to user library
     async saveAblum(req, res, next) {
-        const album = await Album.findOne({ _id: req.body.album });
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
+        try {
+            const album = await Album.findOne({ _id: req.body.album });
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.albums.map((item) => item.album).indexOf(req.body.album);
+            if (index === -1) {
+                library.albums.push({
+                    album: req.body.album,
+                    addedAt: Date.now(),
+                });
+                album.saved = album.saved + 1;
+            }
+
+            await library.save();
+            await album.save();
+
+            return res.status(200).send({ message: 'Saved to library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.albums.map((item) => item.album).indexOf(req.body.album);
-        if (index === -1) {
-            library.albums.push({
-                album: req.body.album,
-                addedAt: Date.now(),
-            });
-            album.saved = album.saved + 1;
-        }
-
-        await library.save();
-        await album.save();
-
-        res.status(200).send({ message: 'Saved to library' });
     }
 
     // Remove album from user library
     async removeSavedAlbum(req, res, next) {
-        const album = await Album.findOne({ _id: req.body.album });
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
-
-        if (album.owner.toString() === req.user._id) {
-            return res.status(403).send({ message: 'You should not remove your album from your library' });
-        }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.albums.map((item) => item.album).indexOf(req.body.album);
-        if (index !== -1) {
-            library.albums.splice(index, 1);
-            album.saved = album.saved - 1;
-            if (album.saved < 0) {
-                album.saved = 0;
+        try {
+            const album = await Album.findOne({ _id: req.body.album });
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
             }
+
+            if (album.owner.toString() === req.user._id) {
+                return res.status(403).send({ message: 'You should not remove your album from your library' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.albums.map((item) => item.album).indexOf(req.body.album);
+            if (index !== -1) {
+                library.albums.splice(index, 1);
+                album.saved = album.saved - 1;
+                if (album.saved < 0) {
+                    album.saved = 0;
+                }
+            }
+
+            await library.save();
+            await album.save();
+
+            return res.status(200).send({ message: 'Removed from library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await library.save();
-        await album.save();
-
-        res.status(200).send({ message: 'Removed from library' });
     }
 
     // Check saved playlist
@@ -343,7 +373,7 @@ class MeController {
                 };
             });
 
-            await res.status(200).send({ data: detailSavedPlaylists, message: 'Get saved playlist successfully' });
+            return res.status(200).send({ data: detailSavedPlaylists, message: 'Get saved playlist successfully' });
         } catch (err) {
             console.log(err);
             return res.status(500).send({ message: 'Something went wrong' });
@@ -352,134 +382,154 @@ class MeController {
 
     // Save playlist to user library
     async savePlaylist(req, res, next) {
-        const playlist = await Playlist.findOne({ _id: req.body.playlist });
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
+        try {
+            const playlist = await Playlist.findOne({ _id: req.body.playlist });
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
+            if (index === -1) {
+                library.playlists.push({
+                    playlist: req.body.playlist,
+                    addedAt: Date.now(),
+                });
+                playlist.saved = playlist.saved + 1;
+            }
+
+            await library.save();
+            await playlist.save();
+
+            return res.status(200).send({ message: 'Saved to library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
-        if (index === -1) {
-            library.playlists.push({
-                playlist: req.body.playlist,
-                addedAt: Date.now(),
-            });
-            playlist.saved = playlist.saved + 1;
-        }
-
-        await library.save();
-        await playlist.save();
-
-        res.status(200).send({ message: 'Saved to library' });
     }
 
     // Remove album from user library
     async removeSavedPlaylist(req, res, next) {
-        const playlist = await Playlist.findOne({ _id: req.body.playlist });
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-
-        if (playlist.owner.toString() === req.user._id) {
-            return res.status(403).send({ message: 'You should not remove your playlist from your library' });
-        }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
-        if (index !== -1) {
-            library.playlists.splice(index, 1);
-            playlist.saved = playlist.saved - 1;
-            if (playlist.saved < 0) {
-                playlist.saved = 0;
+        try {
+            const playlist = await Playlist.findOne({ _id: req.body.playlist });
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
             }
+
+            if (playlist.owner.toString() === req.user._id) {
+                return res.status(403).send({ message: 'You should not remove your playlist from your library' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.playlists.map((item) => item.playlist).indexOf(req.body.playlist);
+            if (index !== -1) {
+                library.playlists.splice(index, 1);
+                playlist.saved = playlist.saved - 1;
+                if (playlist.saved < 0) {
+                    playlist.saved = 0;
+                }
+            }
+
+            await library.save();
+            await playlist.save();
+
+            res.status(200).send({ message: 'Removed from library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await library.save();
-        await playlist.save();
-
-        res.status(200).send({ message: 'Removed from library' });
     }
 
     // Save track to user library
     async saveTrack(req, res, next) {
-        const track = await Track.findOne({ _id: req.body.track });
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        }
-        const album = await Album.findOne({ _id: req.body.album });
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
+        try {
+            const track = await Track.findOne({ _id: req.body.track });
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            }
+            const album = await Album.findOne({ _id: req.body.album });
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
 
-        // Check track in album
-        const indexOfTrackInAlbum = album.tracks.map((obj) => obj.track).indexOf(req.body.track);
-        if (indexOfTrackInAlbum === -1) {
-            return res.status(404).send({ message: 'Track does not in album' });
+            // Check track in album
+            const indexOfTrackInAlbum = album.tracks.map((obj) => obj.track).indexOf(req.body.track);
+            if (indexOfTrackInAlbum === -1) {
+                return res.status(404).send({ message: 'Track does not in album' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.likedTracks
+                .map((item) => item.track + item.album)
+                .indexOf(req.body.track + req.body.album);
+            if (index === -1) {
+                library.likedTracks.unshift({
+                    track: req.body.track,
+                    album: req.body.album,
+                    addedAt: Date.now(),
+                });
+                track.saved = track.saved + 1;
+            }
+
+            await library.save();
+            await track.save();
+
+            return res.status(200).send({ message: 'Saved to library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.likedTracks
-            .map((item) => item.track + item.album)
-            .indexOf(req.body.track + req.body.album);
-        if (index === -1) {
-            library.likedTracks.unshift({
-                track: req.body.track,
-                album: req.body.album,
-                addedAt: Date.now(),
-            });
-            track.saved = track.saved + 1;
-        }
-
-        await library.save();
-        await track.save();
-
-        res.status(200).send({ message: 'Saved to library' });
     }
 
     // Remove track from user library
     async removeLikedTrack(req, res, next) {
-        const track = await Track.findOne({ _id: req.body.track });
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        }
-
-        const album = await Album.findOne({ _id: req.body.album });
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
-
-        const library = await Library.findOne({ owner: req.user._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Cannot find user library' });
-        }
-
-        const index = library.likedTracks
-            .map((item) => item.track + item.album)
-            .indexOf(req.body.track + req.body.album);
-        if (index !== -1) {
-            library.likedTracks.splice(index, 1);
-            track.saved = track.saved - 1;
-            if (track.saved < 0) {
-                track.saved = 0;
+        try {
+            const track = await Track.findOne({ _id: req.body.track });
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
             }
+
+            const album = await Album.findOne({ _id: req.body.album });
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
+
+            const library = await Library.findOne({ owner: req.user._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Cannot find user library' });
+            }
+
+            const index = library.likedTracks
+                .map((item) => item.track + item.album)
+                .indexOf(req.body.track + req.body.album);
+            if (index !== -1) {
+                library.likedTracks.splice(index, 1);
+                track.saved = track.saved - 1;
+                if (track.saved < 0) {
+                    track.saved = 0;
+                }
+            }
+
+            await library.save();
+            await track.save();
+
+            return res.status(200).send({ message: 'Removed from library' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await library.save();
-        await track.save();
-
-        res.status(200).send({ message: 'Removed from library' });
     }
 }
 

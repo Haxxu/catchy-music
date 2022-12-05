@@ -5,29 +5,34 @@ const { Track } = require('../models/Track');
 
 class LyricController {
     async addLyricToTrack(req, res, next) {
-        const { error } = validateLyric(req.body);
-        if (error) {
-            return res.status(404).send({ message: error.details[0].message });
-        }
-
-        if (!mongoose.isValidObjectId(req.body.track)) {
-            return res.status(404).send({ message: 'Invalid ID.' });
-        }
-        const track = await Track.findOne({ _id: req.body.track });
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        } else {
-            if (track.owner.toString() !== req.user._id) {
-                return res.status(400).send({ message: "You don't have permission to add lyric to this track" });
+        try {
+            const { error } = validateLyric(req.body);
+            if (error) {
+                return res.status(404).send({ message: error.details[0].message });
             }
+
+            if (!mongoose.isValidObjectId(req.body.track)) {
+                return res.status(404).send({ message: 'Invalid ID.' });
+            }
+            const track = await Track.findOne({ _id: req.body.track });
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            } else {
+                if (track.owner.toString() !== req.user._id) {
+                    return res.status(400).send({ message: "You don't have permission to add lyric to this track" });
+                }
+            }
+
+            const newLyric = await new Lyric({
+                ...req.body,
+                owner: req.user._id,
+            }).save();
+
+            return res.status(200).send({ data: newLyric, message: 'Added lyric to track successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const newLyric = await new Lyric({
-            ...req.body,
-            owner: req.user._id,
-        }).save();
-
-        res.status(200).send({ data: newLyric, message: 'Added lyric to track successfully' });
     }
 
     async getLyricById(req, res, next) {
@@ -37,33 +42,37 @@ class LyricController {
                 return res.status(404).send({ message: 'Lyric not found' });
             }
 
-            res.status(200).send({ data: lyric, message: 'Get lyric successfully' });
+            return res.status(200).send({ data: lyric, message: 'Get lyric successfully' });
         } catch (error) {
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 
     async updateLyric(req, res, next) {
-        const { error } = validateLyric(req.body);
-        if (error) {
-            return res.status(400).send({ message: error.details[0].message });
-        }
-
-        if (!mongoose.isValidObjectId(req.body.track)) {
-            return res.status(404).send({ message: 'Invalid ID.' });
-        }
-        const track = await Track.findOne({ _id: req.body.track });
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        } else {
-            if (track.owner.toString() !== req.user._id) {
-                return res.status(400).send({ message: "You don't have permission to update lyric to this track" });
+        try {
+            const { error } = validateLyric(req.body);
+            if (error) {
+                return res.status(400).send({ message: error.details[0].message });
             }
+
+            if (!mongoose.isValidObjectId(req.body.track)) {
+                return res.status(404).send({ message: 'Invalid ID.' });
+            }
+            const track = await Track.findOne({ _id: req.body.track });
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            } else {
+                if (track.owner.toString() !== req.user._id) {
+                    return res.status(400).send({ message: "You don't have permission to update lyric to this track" });
+                }
+            }
+
+            let updatedLyric = await Lyric.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+
+            return res.status(200).send({ data: updatedLyric, message: 'Updated lyric successfully' });
+        } catch (error) {
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        let updatedLyric = await Lyric.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-
-        res.status(200).send({ data: updatedLyric, message: 'Updated lyric successfully' });
     }
 
     async getAllLyricsOfTrack(req, res, next) {
@@ -72,7 +81,7 @@ class LyricController {
 
             // const newLyrics = lyrics.map((lyric) => ({ ...lyric, track: lyric.track.name }));
 
-            res.status(200).send({ data: lyrics, message: 'Get lyrics successfully' });
+            return res.status(200).send({ data: lyrics, message: 'Get lyrics successfully' });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ message: 'Something went wrong' });
@@ -81,18 +90,23 @@ class LyricController {
 
     // remove lyric by id
     async removeLyric(req, res, next) {
-        const lyric = await Lyric.findById(req.params.id); //lyric_id
-        if (!lyric) {
-            return res.status(404).send({ message: 'Lyric does not exist' });
+        try {
+            const lyric = await Lyric.findById(req.params.id); //lyric_id
+            if (!lyric) {
+                return res.status(404).send({ message: 'Lyric does not exist' });
+            }
+
+            if (lyric.owner.toString() !== req.user._id) {
+                return res.status(400).send({ message: "You don't have permision to remove this lyric" });
+            }
+
+            await Lyric.findOneAndRemove({ _id: req.params.id });
+
+            res.status(200).send({ message: 'Remove lyric successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        if (lyric.owner.toString() !== req.user._id) {
-            return res.status(400).send({ message: "You don't have permision to remove this lyric" });
-        }
-
-        await Lyric.findOneAndRemove({ _id: req.params.id });
-
-        res.status(200).send({ message: 'Remove lyric successfully' });
     }
 }
 

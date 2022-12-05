@@ -8,89 +8,94 @@ const { Album } = require('../models/Album');
 
 class ArtistController {
     async getArtistById(req, res, next) {
-        const artist = await User.findOne({ _id: req.params.id, type: 'artist' })
-            .select('-email -password -createdAt -updatedAt -status -__v')
-            .lean();
-        if (!artist) {
-            return res.status(404).send({ message: 'Artist not found' });
-        }
+        try {
+            const artist = await User.findOne({ _id: req.params.id, type: 'artist' })
+                .select('-email -password -createdAt -updatedAt -status -__v')
+                .lean();
+            if (!artist) {
+                return res.status(404).send({ message: 'Artist not found' });
+            }
 
-        const library = await Library.findOne({ owner: artist._id });
-        if (!library) {
-            return res.status(404).send({ message: 'Library not found' });
-        }
+            const library = await Library.findOne({ owner: artist._id });
+            if (!library) {
+                return res.status(404).send({ message: 'Library not found' });
+            }
 
-        const detailGenres = [];
-        for (let genre of artist.genres) {
-            const g = await Genre.findOne({ _id: genre });
-            detailGenres.push({
-                _id: genre,
-                name: g.name,
-                description: g.description,
-            });
-        }
+            const detailGenres = [];
+            for (let genre of artist.genres) {
+                const g = await Genre.findOne({ _id: genre });
+                detailGenres.push({
+                    _id: genre,
+                    name: g.name,
+                    description: g.description,
+                });
+            }
 
-        let moreInfo = {
-            followers: { total: library.followers.length },
-            followings: { total: library.followings.length },
-        };
-        if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
-            const albums = await Album.find({ owner: req.user._id }).lean();
-            const tracks = await Track.find({ owner: req.user._id }).lean();
-
-            const [totalPlays, totalSaved] = tracks.reduce(
-                (prev, track) => [prev[0] + track.plays, prev[1] + track.saved],
-                [0, 0],
-            );
-            moreInfo.tracks = {
-                total: tracks.length,
-                items: tracks,
-                totalPlays,
-                totalSaved,
+            let moreInfo = {
+                followers: { total: library.followers.length },
+                followings: { total: library.followings.length },
             };
-            moreInfo.albums = {
-                total: albums.length,
-                totalReleasedAlbums: albums.filter((album) => album.isReleased).length,
-                items: albums,
-                totalSaved: albums.reduce((prev, album) => prev + album.saved, 0),
+            if (req.user._id === artist._id.toString() && req.query.context === 'detail') {
+                const albums = await Album.find({ owner: req.user._id }).lean();
+                const tracks = await Track.find({ owner: req.user._id }).lean();
+
+                const [totalPlays, totalSaved] = tracks.reduce(
+                    (prev, track) => [prev[0] + track.plays, prev[1] + track.saved],
+                    [0, 0],
+                );
+                moreInfo.tracks = {
+                    total: tracks.length,
+                    items: tracks,
+                    totalPlays,
+                    totalSaved,
+                };
+                moreInfo.albums = {
+                    total: albums.length,
+                    totalReleasedAlbums: albums.filter((album) => album.isReleased).length,
+                    items: albums,
+                    totalSaved: albums.reduce((prev, album) => prev + album.saved, 0),
+                };
+
+                const today = moment().startOf('day');
+
+                moreInfo.followers.newFollowersToday = library.followers.filter(
+                    (follower) =>
+                        follower.addedAt >= today.toDate() && follower.addedAt <= moment(today).endOf('day').toDate(),
+                ).length;
+                moreInfo.followers.newFollowersThisMonth = library.followers.filter(
+                    (follower) =>
+                        follower.addedAt >= moment(today).startOf('month').toDate() &&
+                        follower.addedAt <= moment(today).endOf('month').toDate(),
+                ).length;
+                moreInfo.followers.newFollowersLastMonth = library.followers.filter(
+                    (follower) =>
+                        follower.addedAt >= moment(today).subtract(1, 'months').startOf('month').toDate() &&
+                        follower.addedAt <= moment(today).subtract(1, 'months').endOf('month').toDate(),
+                ).length;
+            } else {
+                const albums = await Album.find({ owner: req.user._id, isReleased: true }).lean();
+                const tracks = await Track.find({ owner: req.user._id }).lean();
+                moreInfo.tracks = {
+                    total: tracks.length,
+                    items: tracks,
+                };
+                moreInfo.albums = {
+                    total: albums.length,
+                    items: albums,
+                };
+            }
+
+            const artistDetail = {
+                ...artist,
+                genres: detailGenres,
+                ...moreInfo,
             };
 
-            const today = moment().startOf('day');
-
-            moreInfo.followers.newFollowersToday = library.followers.filter(
-                (follower) =>
-                    follower.addedAt >= today.toDate() && follower.addedAt <= moment(today).endOf('day').toDate(),
-            ).length;
-            moreInfo.followers.newFollowersThisMonth = library.followers.filter(
-                (follower) =>
-                    follower.addedAt >= moment(today).startOf('month').toDate() &&
-                    follower.addedAt <= moment(today).endOf('month').toDate(),
-            ).length;
-            moreInfo.followers.newFollowersLastMonth = library.followers.filter(
-                (follower) =>
-                    follower.addedAt >= moment(today).subtract(1, 'months').startOf('month').toDate() &&
-                    follower.addedAt <= moment(today).subtract(1, 'months').endOf('month').toDate(),
-            ).length;
-        } else {
-            const albums = await Album.find({ owner: req.user._id, isReleased: true }).lean();
-            const tracks = await Track.find({ owner: req.user._id }).lean();
-            moreInfo.tracks = {
-                total: tracks.length,
-                items: tracks,
-            };
-            moreInfo.albums = {
-                total: albums.length,
-                items: albums,
-            };
+            return res.status(200).send({ data: artistDetail, message: 'Get artist successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const artistDetail = {
-            ...artist,
-            genres: detailGenres,
-            ...moreInfo,
-        };
-
-        res.status(200).send({ data: artistDetail, message: 'Get artist successfully' });
     }
 
     // Get artist info (for admin)
@@ -100,6 +105,7 @@ class ArtistController {
 
             return res.status(200).send({ data: { totalArtists }, message: 'Get artist info successfully' });
         } catch (error) {
+            console.log(err);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }

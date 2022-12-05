@@ -10,41 +10,46 @@ const { User } = require('../models/User');
 class PlaylistController {
     // get playlist public or playlist (user own)
     async getPlaylistById(req, res, next) {
-        const playlist = await Playlist.findOne({ _id: req.params.id })
-            .populate({ path: 'owner', select: '_id name type' })
-            .select('-__v');
+        try {
+            const playlist = await Playlist.findOne({ _id: req.params.id })
+                .populate({ path: 'owner', select: '_id name type' })
+                .select('-__v');
 
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-
-        if (playlist.owner.type !== 'artist') {
-            playlist.owner.type = 'user';
-        }
-
-        if (playlist.isPublic || req.user._id === playlist.owner._id.toString()) {
-            const detailTracks = [];
-            let position = 0;
-
-            for (let track of playlist.tracks) {
-                const t = await Track.findOne({ _id: track.track });
-                const a = await Album.findOne({ _id: track.album });
-                detailTracks.push({
-                    ...track.toObject(),
-                    track: t,
-                    album: a,
-                    context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
-                    position: position,
-                });
-                position++;
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
             }
 
-            res.status(200).send({
-                data: { ...playlist.toObject(), tracks: detailTracks },
-                message: 'Get playlist successfully',
-            });
-        } else {
-            res.status(403).send({ message: 'Playlist does not public' });
+            if (playlist.owner.type !== 'artist') {
+                playlist.owner.type = 'user';
+            }
+
+            if (playlist.isPublic || req.user._id === playlist.owner._id.toString()) {
+                const detailTracks = [];
+                let position = 0;
+
+                for (let track of playlist.tracks) {
+                    const t = await Track.findOne({ _id: track.track });
+                    const a = await Album.findOne({ _id: track.album });
+                    detailTracks.push({
+                        ...track.toObject(),
+                        track: t,
+                        album: a,
+                        context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
+                        position: position,
+                    });
+                    position++;
+                }
+
+                return res.status(200).send({
+                    data: { ...playlist.toObject(), tracks: detailTracks },
+                    message: 'Get playlist successfully',
+                });
+            } else {
+                return res.status(403).send({ message: 'Playlist does not public' });
+            }
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 
@@ -240,65 +245,84 @@ class PlaylistController {
     }
 
     async createPlaylist(req, res, next) {
-        const { error } = validatePlaylist(req.body);
-        if (error) {
-            return res.status(404).send({ message: error.details[0].message });
+        try {
+            const { error } = validatePlaylist(req.body);
+            if (error) {
+                return res.status(404).send({ message: error.details[0].message });
+            }
+
+            const playlist = await new Playlist({
+                ...req.body,
+                owner: req.user._id,
+            }).save();
+
+            await Library.updateOne(
+                { owner: req.user._id },
+                { $push: { playlists: { playlist: playlist._id, addedAt: Date.now() } } },
+            );
+
+            return res.status(200).send({ data: playlist, message: 'Playlist created successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const playlist = await new Playlist({
-            ...req.body,
-            owner: req.user._id,
-        }).save();
-
-        await Library.updateOne(
-            { owner: req.user._id },
-            { $push: { playlists: { playlist: playlist._id, addedAt: Date.now() } } },
-        );
-
-        res.status(200).send({ data: playlist, message: 'Playlist created successfully' });
     }
 
     async updatePlaylist(req, res, next) {
-        const { error } = validatePlaylist(req.body);
-        if (error) {
-            return res.status(404).send({ message: error.details[0].message });
+        try {
+            const { error } = validatePlaylist(req.body);
+            if (error) {
+                return res.status(404).send({ message: error.details[0].message });
+            }
+
+            const playlist = await Playlist.findById(req.params.id).select('-__v');
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+
+            if (req.user._id !== playlist.owner.toString()) {
+                return res.status(403).send({ message: "You don't have permission to change this playlist" });
+            }
+
+            const newPlaylist = await Playlist.findOneAndUpdate(
+                { _id: req.params.id },
+                { $set: req.body },
+                { new: true },
+            );
+
+            return res.status(200).send({ data: newPlaylist, message: 'Playlist updated successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const playlist = await Playlist.findById(req.params.id).select('-__v');
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-
-        if (req.user._id !== playlist.owner.toString()) {
-            return res.status(403).send({ message: "You don't have permission to change this playlist" });
-        }
-
-        const newPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, { new: true });
-
-        res.status(200).send({ data: newPlaylist, message: 'Playlist updated successfully' });
     }
 
     async deletePlaylist(req, res, next) {
-        const playlist = await Playlist.findOne({ _id: req.params.id });
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-        if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
-            return res.status(403).send({ message: "User doesn't have access to delete" });
-        }
+        try {
+            const playlist = await Playlist.findOne({ _id: req.params.id });
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+            if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
+                return res.status(403).send({ message: "User doesn't have access to delete" });
+            }
 
-        await Library.updateMany(
-            {},
-            {
-                $pull: {
-                    playlists: { playlist: req.params.id },
+            await Library.updateMany(
+                {},
+                {
+                    $pull: {
+                        playlists: { playlist: req.params.id },
+                    },
                 },
-            },
-        );
+            );
 
-        await Playlist.findByIdAndRemove(req.params.id);
+            await Playlist.findByIdAndRemove(req.params.id);
 
-        res.status(200).send({ message: 'Delete playlist successfully' });
+            return res.status(200).send({ message: 'Delete playlist successfully' });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     async togglePublicPlaylist(req, res, next) {
@@ -320,167 +344,191 @@ class PlaylistController {
             }
             await playlist.updateOne({ isPublic: !flag });
 
-            res.status(200).send({ message: message });
-        } catch (error) {
+            return res.status(200).send({ message: message });
+        } catch (err) {
+            console.log(err);
             return res.status(500).send({ message: 'Something went wrong' });
         }
     }
 
     async addTrackToPlaylist(req, res, next) {
-        if (!mongoose.isValidObjectId(req.body.track)) {
-            return res.status(404).send({ message: 'Invalid track ID' });
-        }
+        try {
+            if (!mongoose.isValidObjectId(req.body.track)) {
+                return res.status(404).send({ message: 'Invalid track ID' });
+            }
 
-        const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-        if (playlist.owner.toString() !== req.user._id) {
-            return res.status(403).send({ message: "User don't have access to add" });
-        }
+            const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+            if (playlist.owner.toString() !== req.user._id) {
+                return res.status(403).send({ message: "User don't have access to add" });
+            }
 
-        const track = await Track.findOne({ _id: req.body.track }).select('-__v');
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        }
+            const track = await Track.findOne({ _id: req.body.track }).select('-__v');
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            }
 
-        const album = await Album.findOne({ _id: req.body.album }).select('-__v');
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
-        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
-            return res.status(404).send({ message: 'Add track to playlist failure' });
-        }
+            const album = await Album.findOne({ _id: req.body.album }).select('-__v');
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
+            if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
+                return res.status(404).send({ message: 'Add track to playlist failure' });
+            }
 
-        const index = playlist.tracks.map((obj) => obj.track).indexOf(req.body.track);
-        if (index === -1) {
-            playlist.tracks.push({
-                track: req.body.track,
-                album: req.body.album,
-                addedAt: Date.now(),
-            });
-        }
-        await playlist.save();
+            const index = playlist.tracks.map((obj) => obj.track).indexOf(req.body.track);
+            if (index === -1) {
+                playlist.tracks.push({
+                    track: req.body.track,
+                    album: req.body.album,
+                    addedAt: Date.now(),
+                });
+            }
+            await playlist.save();
 
-        res.status(200).send({ data: playlist, message: 'Added to playlist' });
+            return res.status(200).send({ data: playlist, message: 'Added to playlist' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     async addTrackToPlaylist(req, res, next) {
-        if (!mongoose.isValidObjectId(req.body.track) || !mongoose.isValidObjectId(req.body.album)) {
-            return res.status(404).send({ message: 'Invalid ID' });
-        }
+        try {
+            if (!mongoose.isValidObjectId(req.body.track) || !mongoose.isValidObjectId(req.body.album)) {
+                return res.status(404).send({ message: 'Invalid ID' });
+            }
 
-        const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-        if (playlist.owner.toString() !== req.user._id) {
-            return res.status(403).send({ message: "User don't have access to add" });
-        }
+            const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+            if (playlist.owner.toString() !== req.user._id) {
+                return res.status(403).send({ message: "User don't have access to add" });
+            }
 
-        const track = await Track.findOne({ _id: req.body.track }).select('-__v');
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        }
+            const track = await Track.findOne({ _id: req.body.track }).select('-__v');
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            }
 
-        const album = await Album.findOne({ _id: req.body.album }).select('-__v');
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
-        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
-            return res.status(404).send({ message: 'Add track to playlist failure' });
-        }
+            const album = await Album.findOne({ _id: req.body.album }).select('-__v');
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
+            if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
+                return res.status(404).send({ message: 'Add track to playlist failure' });
+            }
 
-        const index = playlist.tracks.map((obj) => obj.track).indexOf(req.body.track);
-        if (index === -1) {
-            playlist.tracks.push({
-                track: req.body.track,
-                album: req.body.album,
-                addedAt: Date.now(),
-            });
-        }
-        await playlist.save();
+            const index = playlist.tracks.map((obj) => obj.track).indexOf(req.body.track);
+            if (index === -1) {
+                playlist.tracks.push({
+                    track: req.body.track,
+                    album: req.body.album,
+                    addedAt: Date.now(),
+                });
+            }
+            await playlist.save();
 
-        res.status(200).send({ data: playlist, message: 'Added to playlist' });
+            return res.status(200).send({ data: playlist, message: 'Added to playlist' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     async removeTrackFromPlaylist(req, res, next) {
-        if (!mongoose.isValidObjectId(req.body.track) || !mongoose.isValidObjectId(req.body.album)) {
-            return res.status(404).send({ message: 'Invalid ID' });
-        }
-
-        const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
-        if (!playlist) {
-            return res.status(404).send({ message: 'Playlist does not exist' });
-        }
-        if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
-            return res.status(403).send({ message: "User don't have access to remove" });
-        }
-
-        const track = await Track.findOne({ _id: req.body.track }).select('-__v');
-        if (!track) {
-            return res.status(404).send({ message: 'Track does not exist' });
-        }
-
-        const album = await Album.findOne({ _id: req.body.album }).select('-__v');
-        if (!album) {
-            return res.status(404).send({ message: 'Album does not exist' });
-        }
-        if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
-            return res.status(404).send({ message: 'Remove track from playlist failure' });
-        }
-
-        var index = -1;
-        playlist.tracks.forEach((item, i) => {
-            if (item.track.toString() === req.body.track && item.album.toString() === req.body.album) {
-                index = i;
+        try {
+            if (!mongoose.isValidObjectId(req.body.track) || !mongoose.isValidObjectId(req.body.album)) {
+                return res.status(404).send({ message: 'Invalid ID' });
             }
-        });
-        if (index !== -1) {
-            playlist.tracks.splice(index, 1);
-        }
-        await playlist.save();
 
-        res.status(200).send({ data: playlist, message: 'Removed from playlist' });
+            const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v');
+            if (!playlist) {
+                return res.status(404).send({ message: 'Playlist does not exist' });
+            }
+            if (playlist.owner.toString() !== req.user._id && req.user.type !== 'admin') {
+                return res.status(403).send({ message: "User don't have access to remove" });
+            }
+
+            const track = await Track.findOne({ _id: req.body.track }).select('-__v');
+            if (!track) {
+                return res.status(404).send({ message: 'Track does not exist' });
+            }
+
+            const album = await Album.findOne({ _id: req.body.album }).select('-__v');
+            if (!album) {
+                return res.status(404).send({ message: 'Album does not exist' });
+            }
+            if (album.tracks.map((obj) => obj.track).indexOf(req.body.track) === -1) {
+                return res.status(404).send({ message: 'Remove track from playlist failure' });
+            }
+
+            var index = -1;
+            playlist.tracks.forEach((item, i) => {
+                if (item.track.toString() === req.body.track && item.album.toString() === req.body.album) {
+                    index = i;
+                }
+            });
+            if (index !== -1) {
+                playlist.tracks.splice(index, 1);
+            }
+            await playlist.save();
+
+            return res.status(200).send({ data: playlist, message: 'Removed from playlist' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Get user playlists by user id
     async getUserPlaylists(req, res, next) {
-        let playlists;
-        if (req.user._id === req.params.id) {
-            playlists = await Playlist.find({ owner: req.params.id }).populate({ path: 'owner', select: '_id name' });
-        } else {
-            playlists = await Playlist.find({ owner: req.params.id, isPublic: true }).populate({
-                path: 'owner',
-                select: '_id name',
-            });
-        }
-
-        const detailPlaylists = [];
-        for (let playlist of playlists) {
-            const tracks = playlist.tracks;
-
-            const detailTracks = [];
-            let position = 0;
-            for (let track of tracks) {
-                const t = await Track.findOne({ _id: track.track });
-                const a = await Album.findOne({ _id: track.album });
-                detailTracks.push({
-                    ...track.toObject(),
-                    track: t,
-                    album: a,
-                    context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
-                    position: position,
+        try {
+            let playlists;
+            if (req.user._id === req.params.id) {
+                playlists = await Playlist.find({ owner: req.params.id }).populate({
+                    path: 'owner',
+                    select: '_id name',
                 });
-                position++;
+            } else {
+                playlists = await Playlist.find({ owner: req.params.id, isPublic: true }).populate({
+                    path: 'owner',
+                    select: '_id name',
+                });
             }
-            detailPlaylists.push({
-                ...playlist.toObject(),
-                tracks: detailTracks,
-            });
-        }
 
-        res.status(200).send({ data: detailPlaylists, message: 'Get user playlists' });
+            const detailPlaylists = [];
+            for (let playlist of playlists) {
+                const tracks = playlist.tracks;
+
+                const detailTracks = [];
+                let position = 0;
+                for (let track of tracks) {
+                    const t = await Track.findOne({ _id: track.track });
+                    const a = await Album.findOne({ _id: track.album });
+                    detailTracks.push({
+                        ...track.toObject(),
+                        track: t,
+                        album: a,
+                        context_uri: 'playlist' + ':' + playlist._id + ':' + t._id + ':' + a._id,
+                        position: position,
+                    });
+                    position++;
+                }
+                detailPlaylists.push({
+                    ...playlist.toObject(),
+                    tracks: detailTracks,
+                });
+            }
+
+            return res.status(200).send({ data: detailPlaylists, message: 'Get user playlists' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 }
 

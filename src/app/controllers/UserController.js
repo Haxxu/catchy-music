@@ -11,121 +11,126 @@ const { Track } = require('../models/Track');
 class UserController {
     // Get user by id
     async getUserById(req, res, next) {
-        const user = await User.findOne({ _id: req.params.id }).select('-password -__v -email').lean();
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
-        }
+        try {
+            const user = await User.findOne({ _id: req.params.id }).select('-password -__v -email').lean();
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
 
-        user.password = undefined;
-        user.__v = undefined;
-        if (user.type === 'admin') user.type = 'user';
+            user.password = undefined;
+            user.__v = undefined;
+            if (user.type === 'admin') user.type = 'user';
 
-        if (req.query.detail) {
-            const library = await Library.findOne({ owner: req.params.id });
+            if (req.query.detail) {
+                const library = await Library.findOne({ owner: req.params.id });
 
-            const playlistIds = library.playlists.map((item) => item.playlist);
-            const playlists = await Playlist.find({ isPublic: true, _id: { $in: playlistIds } })
-                .sort({ saved: 'desc' })
-                .limit(12)
-                .lean();
-
-            const publicPlaylists = playlists.map((playlist) => {
-                if (playlist.tracks.length === 0) {
-                    return playlist;
-                } else {
-                    return {
-                        ...playlist,
-                        firstTrack: {
-                            context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
-                            position: 0,
-                        },
-                    };
-                }
-            });
-
-            const followerIds = library.followers.map((item) => item.user);
-            const followers = await User.find({ _id: { $in: followerIds } })
-                .select('_id name description image type')
-                .lean();
-
-            const followingIds = library.followings.map((item) => item.user);
-            const followings = await User.find({ _id: { $in: followingIds } })
-                .select('_id name description image type')
-                .lean();
-
-            user.publicPlaylists = publicPlaylists;
-            user.followers = followers.map((item) => {
-                if (item.type === 'admin') {
-                    item.type === 'user';
-                }
-                return item;
-            });
-            user.followings = followings.map((item) => {
-                if (item.type === 'admin') {
-                    item.type === 'user';
-                }
-                return item;
-            });
-
-            if (user.type === 'artist') {
-                const albums = await Album.find({ isReleased: true, owner: req.params.id })
-                    .populate({ path: 'owner', select: '_id name' })
-                    .sort({ releaseDate: 'desc' })
+                const playlistIds = library.playlists.map((item) => item.playlist);
+                const playlists = await Playlist.find({ isPublic: true, _id: { $in: playlistIds } })
+                    .sort({ saved: 'desc' })
+                    .limit(12)
                     .lean();
 
-                const releasedAlbums = albums.map((album) => {
-                    if (album.tracks.length === 0) {
-                        return album;
+                const publicPlaylists = playlists.map((playlist) => {
+                    if (playlist.tracks.length === 0) {
+                        return playlist;
                     } else {
                         return {
-                            ...album,
+                            ...playlist,
                             firstTrack: {
-                                context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
+                                context_uri: `playlist:${playlist._id}:${playlist.tracks[0]?.track}:${playlist.tracks[0]?.album}`,
                                 position: 0,
                             },
                         };
                     }
                 });
 
-                user.releasedAlbums = releasedAlbums;
-
-                const tracks = await Track.find({ owner: req.params.id })
-                    .populate({
-                        path: 'owner',
-                        select: '_id name',
-                    })
-                    .sort({ plays: 'desc' })
-                    .limit(10)
+                const followerIds = library.followers.map((item) => item.user);
+                const followers = await User.find({ _id: { $in: followerIds } })
+                    .select('_id name description image type')
                     .lean();
 
-                let trackLenght = tracks.length;
-                const popularTracks = [];
+                const followingIds = library.followings.map((item) => item.user);
+                const followings = await User.find({ _id: { $in: followingIds } })
+                    .select('_id name description image type')
+                    .lean();
 
-                for (let i = 0; i < trackLenght; ++i) {
-                    const album = await Album.findOne({
-                        isReleased: true,
-                        tracks: { $elemMatch: { track: tracks[i]._id } },
-                    }).lean();
+                user.publicPlaylists = publicPlaylists;
+                user.followers = followers.map((item) => {
+                    if (item.type === 'admin') {
+                        item.type === 'user';
+                    }
+                    return item;
+                });
+                user.followings = followings.map((item) => {
+                    if (item.type === 'admin') {
+                        item.type === 'user';
+                    }
+                    return item;
+                });
 
-                    if (!album) {
-                        continue;
+                if (user.type === 'artist') {
+                    const albums = await Album.find({ isReleased: true, owner: req.params.id })
+                        .populate({ path: 'owner', select: '_id name' })
+                        .sort({ releaseDate: 'desc' })
+                        .lean();
+
+                    const releasedAlbums = albums.map((album) => {
+                        if (album.tracks.length === 0) {
+                            return album;
+                        } else {
+                            return {
+                                ...album,
+                                firstTrack: {
+                                    context_uri: `album:${album._id}:${album.tracks[0]?.track}:${album._id}`,
+                                    position: 0,
+                                },
+                            };
+                        }
+                    });
+
+                    user.releasedAlbums = releasedAlbums;
+
+                    const tracks = await Track.find({ owner: req.params.id })
+                        .populate({
+                            path: 'owner',
+                            select: '_id name',
+                        })
+                        .sort({ plays: 'desc' })
+                        .limit(10)
+                        .lean();
+
+                    let trackLenght = tracks.length;
+                    const popularTracks = [];
+
+                    for (let i = 0; i < trackLenght; ++i) {
+                        const album = await Album.findOne({
+                            isReleased: true,
+                            tracks: { $elemMatch: { track: tracks[i]._id } },
+                        }).lean();
+
+                        if (!album) {
+                            continue;
+                        }
+
+                        let position = album.tracks.map((item) => item.track).indexOf(tracks[i]._id.toString());
+
+                        popularTracks.push({
+                            track: tracks[i],
+                            album: album,
+                            context_uri: 'album' + ':' + album._id + ':' + tracks[i]._id + ':' + album._id,
+                            position: position,
+                        });
                     }
 
-                    let position = album.tracks.map((item) => item.track).indexOf(tracks[i]._id.toString());
-
-                    popularTracks.push({
-                        track: tracks[i],
-                        album: album,
-                        context_uri: 'album' + ':' + album._id + ':' + tracks[i]._id + ':' + album._id,
-                        position: position,
-                    });
+                    user.popularTracks = popularTracks;
                 }
-
-                user.popularTracks = popularTracks;
             }
-        }
 
-        res.status(200).send({ data: user, message: 'Get user successfully' });
+            res.status(200).send({ data: user, message: 'Get user successfully' });
+        } catch (err) {
+            console.log(err);
+            res.status(500).send({ message: 'Something went wrong' });
+        }
     }
 
     // Get user info
@@ -212,146 +217,186 @@ class UserController {
 
     // Create user
     async createUser(req, res, next) {
-        const { error } = validateUser(req.body);
-        if (error) {
-            return res.status(400).send({ message: error.details[0].message });
+        try {
+            const { error } = validateUser(req.body);
+            if (error) {
+                return res.status(400).send({ message: error.details[0].message });
+            }
+
+            const user = await User.findOne({ email: req.body.email });
+            if (user) {
+                return res.status(403).send({ message: 'User with given email already exists!' });
+            }
+
+            const salt = await bcrypt.genSalt(Number(process.env.SALT));
+            const hashPassword = await bcrypt.hash(req.body.password, salt);
+            delete req.body.confirm_password;
+
+            let newUser = await new User({
+                ...req.body,
+                password: hashPassword,
+            }).save();
+
+            let library = await new Library({
+                owner: newUser._id,
+            }).save();
+
+            let audioPlayer = await new AudioPlayer({
+                owner: newUser._id,
+            }).save();
+
+            newUser.password = undefined;
+            newUser.__v = undefined;
+
+            return res.status(200).send({ data: newUser, message: 'Account created successfully!' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const user = await User.findOne({ email: req.body.email });
-        if (user) {
-            return res.status(403).send({ message: 'User with given email already exists!' });
-        }
-
-        const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        const hashPassword = await bcrypt.hash(req.body.password, salt);
-        delete req.body.confirm_password;
-
-        let newUser = await new User({
-            ...req.body,
-            password: hashPassword,
-        }).save();
-
-        let library = await new Library({
-            owner: newUser._id,
-        }).save();
-
-        let audioPlayer = await new AudioPlayer({
-            owner: newUser._id,
-        }).save();
-
-        newUser.password = undefined;
-        newUser.__v = undefined;
-
-        res.status(200).send({ data: newUser, message: 'Account created successfully!' });
     }
 
     // Update user by id
     async updateUser(req, res, next) {
-        if (req.user._id !== req.params.id) {
-            return res.status(403).send({ message: "User don't have permisson to perform this action" });
+        try {
+            if (req.user._id !== req.params.id) {
+                return res.status(403).send({ message: "User don't have permisson to perform this action" });
+            }
+
+            delete req.body.email;
+
+            const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).select(
+                '-password -__v',
+            );
+            return res.status(200).send({ data: user, message: 'Profile updated successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        delete req.body.email;
-
-        const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).select(
-            '-password -__v',
-        );
-        res.status(200).send({ data: user, message: 'Profile updated successfully' });
     }
 
     // remove user by id
     async removeUser(req, res, next) {
-        const user = await User.findById(req.params.id); //user_id
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
+        try {
+            const user = await User.findById(req.params.id); //user_id
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
+
+            await User.findOneAndRemove({ _id: req.params.id });
+
+            return res.status(200).send({ message: 'Remove user successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await User.findOneAndRemove({ _id: req.params.id });
-
-        res.status(200).send({ message: 'Remove user successfully' });
     }
 
     // breeze user by id
     async freezeUser(req, res, next) {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
+        try {
+            const user = await User.findById(req.params.id);
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
+
+            let password = user.password;
+
+            if (password[0] !== '!') {
+                password = '!' + password;
+            }
+            await User.findByIdAndUpdate(req.params.id, { password: password, status: 'freezed' });
+
+            return res.status(200).send({ message: 'Freeze user successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        let password = user.password;
-
-        if (password[0] !== '!') {
-            password = '!' + password;
-        }
-        await User.findByIdAndUpdate(req.params.id, { password: password, status: 'freezed' });
-
-        res.status(200).send({ message: 'Freeze user successfully' });
     }
 
     // unbreeze user by id
     async unfreezeUser(req, res, next) {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
+        try {
+            const user = await User.findById(req.params.id);
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
+
+            let password = user.password;
+
+            if (password[0] === '!') {
+                password = password.slice(1);
+            }
+            await User.findByIdAndUpdate(req.params.id, { password: password, status: 'actived' });
+
+            return res.status(200).send({ message: 'Unfreeze user successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        let password = user.password;
-
-        if (password[0] === '!') {
-            password = password.slice(1);
-        }
-        await User.findByIdAndUpdate(req.params.id, { password: password, status: 'actived' });
-
-        res.status(200).send({ message: 'Unfreeze user successfully' });
     }
 
     // Update password
     async updatePassword(req, res, next) {
-        const { error } = validateUpdatedPassword(req.body);
-        if (error) {
-            return res.status(400).send({ message: error.details[0].message });
+        try {
+            const { error } = validateUpdatedPassword(req.body);
+            if (error) {
+                return res.status(400).send({ message: error.details[0].message });
+            }
+
+            const user = await User.findOne({ email: req.body.email });
+            if (!user) {
+                return res.status(400).send({ message: 'Invalid email or password' });
+            }
+
+            const validPassword = await bcrypt.compare(req.body.password, user.password);
+            if (!validPassword) {
+                return res.status(400).send({ message: 'Invalid email or password' });
+            }
+
+            const salt = await bcrypt.genSalt(Number(process.env.SALT));
+            const hashNewPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+            await User.findOneAndUpdate({ email: req.body.email }, { password: hashNewPassword });
+
+            return res.status(200).send({ message: 'Changed password successfully' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        const user = await User.findOne({ email: req.body.email });
-        if (!user) {
-            return res.status(400).send({ message: 'Invalid email or password' });
-        }
-
-        const validPassword = await bcrypt.compare(req.body.password, user.password);
-        if (!validPassword) {
-            return res.status(400).send({ message: 'Invalid email or password' });
-        }
-
-        const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        const hashNewPassword = await bcrypt.hash(req.body.newPassword, salt);
-
-        await User.findOneAndUpdate({ email: req.body.email }, { password: hashNewPassword });
-
-        res.status(200).send({ message: 'Changed password successfully' });
     }
 
     // Verify artist
     async verifyArtist(req, res, next) {
-        const user = await User.findById(req.params.id); //user_id
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
+        try {
+            const user = await User.findById(req.params.id); //user_id
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
+
+            await user.updateOne({ type: 'artist' });
+
+            return res.status(200).send({ message: 'Verify artist successfullly' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await user.updateOne({ type: 'artist' });
-
-        res.status(200).send({ message: 'Verify artist successfullly' });
     }
 
     // Unverify artist
     async unverifyArtist(req, res, next) {
-        const user = await User.findById(req.params.id); //user_id
-        if (!user) {
-            return res.status(400).send({ message: 'User does not exist' });
+        try {
+            const user = await User.findById(req.params.id); //user_id
+            if (!user) {
+                return res.status(400).send({ message: 'User does not exist' });
+            }
+
+            await user.updateOne({ type: 'user' });
+
+            return res.status(200).send({ message: 'Unverify artist successfullly' });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({ message: 'Something went wrong' });
         }
-
-        await user.updateOne({ type: 'user' });
-
-        res.status(200).send({ message: 'Unverify artist successfullly' });
     }
 }
 
