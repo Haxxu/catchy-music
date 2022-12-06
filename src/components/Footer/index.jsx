@@ -74,7 +74,7 @@ const Footer = () => {
             <div className={cx('bottom')}>
                 <div className={cx('info')}>
                     <div className={cx('copyright')}>
-                        &copy; <span className={cx('highlight')}>Catchy Music</span>
+                        &copy; <span className={cx('highlight')}>Copyright by Catchy Music</span>
                     </div>
                     <div className={cx('powered')}>
                         {t('Powered By')} <span className={cx('highlight')}>Nguyen Ngoc Minh</span>
