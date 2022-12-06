@@ -35,7 +35,7 @@ root.render(
             </Provider>
             <ToastContainer
                 position='top-center'
-                autoClose={2000}
+                autoClose={1500}
                 hideProgressBar={false}
                 closeButton={true}
                 theme='colored'
